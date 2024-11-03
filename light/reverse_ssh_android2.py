@@ -76,7 +76,7 @@ def max_timeout(seconds=10):
 
 
 def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
-    global ssh_client, ssh_session, user
+    global ssh_client, ssh_session
     ssh_client = paramiko.SSHClient()
 
     # Load host keys if available, or use AutoAddPolicy to add new ones
@@ -143,7 +143,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
 if __name__ == "__main__":
 
-    global user
+    #global user
 
     # Try forever the commands
     while True:
