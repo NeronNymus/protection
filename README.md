@@ -53,8 +53,8 @@ This will automatically download the install.ps1 script and execute it to comple
    git clone https://github.com/NeronNymus/protection.git
 ```
 
-### Navigate to the Secuserver Directory
-After cloning the repository, change to the Secuserver directory:
+### Navigate to the Protection Directory
+After cloning the repository, change to the protection directory:
 
 ```powershell
 cd protection
