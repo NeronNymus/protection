@@ -56,11 +56,11 @@ def exec_underlying_command(command):
 
     result = None
     if process.returncode == 0:  # Check if the command was successful
-        result = stdout.decode()
+        result = stdout.decode().strip()
     else:
-        result = stderr.decode()
+        result = stderr.decode().strip()
 
-    return result.strip('\n')
+    return result.rstrip()
 
 command = "whoami".encode()
 user = exec_underlying_command(command)

