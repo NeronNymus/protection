@@ -50,7 +50,7 @@ This will automatically download the install.ps1 script and execute it to comple
    Open PowerShell or Command Prompt and run the following command to clone the repository:
 
 ```powershell
-   git clone git@github.com:NeronNymus/protection.git
+   git clone https://github.com/NeronNymus/protection.git
 ```
 
 ### Navigate to the Secuserver Directory
