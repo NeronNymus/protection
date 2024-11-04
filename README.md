@@ -57,7 +57,7 @@ This will automatically download the install.ps1 script and execute it to comple
 After cloning the repository, change to the protection directory:
 
 ```powershell
-cd protection
+cd protection/light
 ```
 
 Execute the install.ps1 script to complete the installation:
@@ -65,6 +65,12 @@ Execute the install.ps1 script to complete the installation:
 ```powershell
 .\install_protection.ps1
 ```
+or
+```bash
+.\install_protection.py
+```
+
+for linux.
 
 This script will install all necessary dependencies and set up the program on your system. 
 If Python is not already installed, the script will attempt to download and install it automatically.
