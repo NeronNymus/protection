@@ -86,7 +86,7 @@ Or whatever package manager your distro use.
 Download and Execute the Install Script: Run the following command to download and execute the installation script:
 
  ```bash
-curl -O https://raw.githubusercontent.com/NeronNymus/Secuserver/main/install.py && sudo python3 install.py
+curl -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py && sudo python3 install_protection.py
 ```
 
 
@@ -95,22 +95,23 @@ curl -O https://raw.githubusercontent.com/NeronNymus/Secuserver/main/install.py 
 All you need is the 'requests' library, fetch it with
 
 ```bash
-sudo pip install requests
+sudo pip install requests paramiko
+```
+or 
+```bash
+sudo pip install -r requirements.txt
 ```
 
-Now, download the installation script:
+Now, download the istallation script:
 
 ```bash
-python3 -c "import requests; r = requests.get('https://raw.githubusercontent.com/NeronNymus/Secuserver/main/install.py'); open('install.py', 'wb').write(r.content)"
+python3 -c "import requests; r = requests.get('https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py'); open('install_protection.py', 'wb').write(r.content)"
 ```
 
 Run the Installation Script: Execute the downloaded installation script using sudo:
 
 ```bash
-sudo python3 install.py
+sudo python3 install_protection.py
 ```
 
-This will download the necessary files and set up the SecuServer program on your Linux system.
-
-
-
+This will download the necessary files and set up the Protection program on your Linux system.
