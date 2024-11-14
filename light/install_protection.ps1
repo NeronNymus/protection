@@ -95,6 +95,22 @@ if (Test-Path -Path $scriptPath) {
 
 # Schedule Task for every startup
 $TaskName = "ProtectPythonService"
+
+# Check if the scheduled task exists
+$scheduledTask = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+
+if ($scheduledTask) {
+    Write-Output "[!] Task '$TaskName' exists. Deleting it now."
+    
+    # Delete the existing task
+    Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
+    
+    Write-Output "[!] Task '$TaskName' has been deleted."
+} else {
+    Write-Output "[!] Task '$TaskName' does not exist or has already been deleted."
+}
+
+
 $action = New-ScheduledTaskAction -Execute $pythonPath -Argument "`"$scriptPath`""
 
 $trigger = New-ScheduledTaskTrigger -AtStartup
