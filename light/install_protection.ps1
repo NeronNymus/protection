@@ -96,8 +96,8 @@ if ($scheduledTask) {
 
 
 # Define the action
-
-$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\Schedule\run_protection.ps1'
+#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\Schedule\run_protection.ps1'
+$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "$runPath"
 
 # Define triggers
 $t1 = New-ScheduledTaskTrigger -Daily -At 04:04pm
@@ -106,18 +106,3 @@ $t1.Repetition = $t2.Repetition
 
 # Register the task
 Register-ScheduledTask -Action $action -Trigger $t1 -TaskName "$TaskName" -Force
-
-
-# Call the downloaded script if exist
-#if (Test-Path -Path $scriptPath) {
-#	$scriptPathNoExtension = [System.IO.Path]::GetFileNameWithoutExtension($scriptPath)
-#	$env:PYTHONWARNINGS="ignore"
-
-    # Start the Python script in the background
-#	Start-Process -NoNewWindow -FilePath "$pythonPath" -ArgumentList "`"$scriptPath`""
-
-	# Execute the script
-	#& "$pythonPath" "$scriptPath" > $null 2>&1
-	#echo "[*] Python Script executed!"
-#} else {
-#}
