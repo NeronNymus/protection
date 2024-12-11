@@ -100,9 +100,10 @@ if ($scheduledTask) {
 #$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\Schedule\run_schedule.ps1'
 #$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "C:\Users\Beatriz Adriana G\Other\protection\light\run_protection.ps1"
 
+
 $action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "`"C:\Users\Beatriz Adriana G\Other\protection\light\run_protection.ps1`""
 
-type "$scriptPath"
+type "$runPath"
 
 # Define triggers
 $t1 = New-ScheduledTaskTrigger -Daily -At 03:14pm
