@@ -35,6 +35,10 @@ def setup_python_environment(env_path, requirements_path):
         # Create the virtual environment
         subprocess.run([sys.executable, '-m', 'venv', env_path], check=True)
 
+        # Check if the requirements file exists
+        if not os.path.exists(requirements_path):
+            return None
+
         # Install requirements
         pip_executable = os.path.join(env_path, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(env_path, 'bin', 'pip')
         subprocess.run([pip_executable, 'install', '-r', requirements_path], check=True)
@@ -43,6 +47,9 @@ def setup_python_environment(env_path, requirements_path):
 
     except subprocess.CalledProcessError as e:
         return None
+    except Exception as e:
+        return None
+
 
 # Function to create a systemd service file (Linux only)
 def create_service_file(service_file_path, python_path):
