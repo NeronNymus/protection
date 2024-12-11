@@ -85,7 +85,7 @@ if ($scheduledTask) {
 
 
 # Define the action
-#$python_path = (Get-Command python).Definition
+$python_path = (Get-Command python).Definition
 #$action = New-ScheduledTaskAction -Execute "$python_path" -Argument "`"$scriptPath`""
 #$action = New-ScheduledTaskAction -Execute "$python_path" -Argument "`"C:\Users\Beatriz Adriana G\Other\protection\light\protection.py`""
 #$action = New-ScheduledTaskAction -Execute "$python_path" -Argument 'C:\Users\Public\Other\Schedule\schedule.py'
