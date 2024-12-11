@@ -10,10 +10,10 @@ import threading
 import paramiko
 import subprocess
 
+# Supress warnings
 import warnings
-
-# Suppress the specific warning for TripleDES
-warnings.filterwarnings("ignore", message=".*TripleDES.*")
+with warnings.catch_warnings(action="ignore"):
+    warnings.warn("deprecated", DeprecationWarning)
 
 # Global variables to track SSH client and session
 ssh_client = None
