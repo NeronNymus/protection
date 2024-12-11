@@ -33,6 +33,7 @@ if (Test-Path -Path $scriptPath) {
 	$env:PYTHONWARNINGS="ignore"
 
     # Start the Python script in the background
+    Write-Output "[!] Trying to run script in the background!" 
 	Start-Process -NoNewWindow -FilePath "$python_path" -ArgumentList "`"$scriptPath`""
     Write-Output "[*] Python script executed in the background!" 
 
