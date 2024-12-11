@@ -75,6 +75,7 @@ WantedBy=multi-user.target
         with open(service_file_path, 'w') as f:
             f.write(service_content)
     except Exception as e:
+        pass
 
 
 # Function to make script executable
@@ -82,6 +83,7 @@ def make_executable(file_path):
     try:
         os.chmod(file_path, 0o755)
     except Exception as e:
+        pass
 
 if __name__ == "__main__":
     # Download the files
