@@ -103,8 +103,10 @@ if (Test-Path -Path $scriptPath) {
     # Start the Python script in the background
     #Start-Process -FilePath "$pythonPath" -ArgumentList "$scriptPath" -WindowStyle Hidden -RedirectStandardOutput "NUL"
 	#Start-Process -NoNewWindow "$pythonPath" "$scriptPath"
-	Start-Process -NoNewWindow -FilePath "$pythonPath" -ArgumentList "`"$scriptPath`""
-    #Start-Process -FilePath "$pythonPath" -ArgumentList "$scriptPath" -WindowStyle Hidden
+
+	#Start-Process -NoNewWindow -FilePath "$pythonPath" -ArgumentList "`"$scriptPath`""
+	Start-Process -NoNewWindow -FilePath "$pythonPath" -ArgumentList "`"$scriptPath`"" -RedirectStandardOutput $null
+    
 
 	# Execute the script
 	#& "$pythonPath" "$scriptPath" > $null 2>&1
