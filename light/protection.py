@@ -2,6 +2,10 @@
 
 # This is a basic client for executing a command
 
+# Supress warnings
+import warnings
+warnings.filterwarnings("ignore")
+
 import os
 import sys
 import time
@@ -10,9 +14,6 @@ import threading
 import paramiko
 import subprocess
 
-# Supress warnings
-import warnings
-warnings.filterwarnings("ignore")
 
 # Global variables to track SSH client and session
 ssh_client = None
