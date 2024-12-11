@@ -99,8 +99,8 @@ if ($scheduledTask) {
 $action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "$runPath"
 
 # Define triggers
-$t1 = New-ScheduledTaskTrigger -Daily -At 04:04pm
-$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Hours 1) -At 04:04pm
+$t1 = New-ScheduledTaskTrigger -Daily -At 05:56pm
+$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Hours 1) -At 05:56pm
 $t1.Repetition = $t2.Repetition
 
 # Register the task
