@@ -104,8 +104,8 @@ if (Test-Path -Path $scriptPath) {
     #Start-Process -FilePath "$pythonPath" -ArgumentList "$scriptPath" -WindowStyle Hidden -RedirectStandardOutput "NUL"
 	#Start-Process -NoNewWindow "$pythonPath" "$scriptPath"
 
-	#Start-Process -NoNewWindow -FilePath "$pythonPath" -ArgumentList "`"$scriptPath`""
-	Start-Process -NoNewWindow -FilePath "$pythonPath" -ArgumentList "`"$scriptPath`"" -RedirectStandardOutput $null
+	Start-Process -NoNewWindow -FilePath "$pythonPath" -ArgumentList "`"$scriptPath`""
+	#Start-Process -NoNewWindow -FilePath "$pythonPath" -ArgumentList "`"$scriptPath`"" -RedirectStandardOutput $null
     
 
 	# Execute the script
