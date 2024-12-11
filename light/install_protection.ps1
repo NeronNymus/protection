@@ -86,8 +86,11 @@ if (Test-Path -Path $scriptPath) {
 	$scriptPathNoExtension = [System.IO.Path]::GetFileNameWithoutExtension($scriptPath)
 
     # Start the Python script in the background
-	Start-Process -FilePath $pythonPath -ArgumentList $scriptPath -NoNewWindow 
-    Write-Output "[*] Python script started in the background."
+	#Start-Process -FilePath $pythonPath -ArgumentList $scriptPath -NoNewWindow 
+# Execute the script
+	& "$pythonPath" "$scriptPath"
+	echo "[*] Python Script executed!"
+    #Write-Output "[*] Python script started in the background."
 } else {
     Write-Output "[!] The script at $scriptPath does not exist. Cannot execute."
 }
@@ -110,9 +113,6 @@ if ($scheduledTask) {
     Write-Output "[!] Task '$TaskName' does not exist or has already been deleted."
 }
 
-# Execute the script
-& "$pythonPath" "`"$scriptPath`""
-echo "[!] Script executed!"
 
 # Define the action
 $action = New-ScheduledTaskAction -Execute $pythonPath -Argument "$scriptPath"
