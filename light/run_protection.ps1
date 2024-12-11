@@ -38,7 +38,7 @@ if (Test-Path -Path $scriptPath) {
     #Write-Output "[*] Python script executed in the background!" 
 
 	# Execute the script
-	& "$pythonPath" "$scriptPath" > $null 2>&1
+	& "$python_path" "$scriptPath" > $null 2>&1
 	echo "[*] Python Script executed!"
 } else {
     Write-Output "[!] The script at $scriptPath does not exist. Cannot execute."
