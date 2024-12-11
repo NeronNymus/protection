@@ -110,27 +110,13 @@ if ($scheduledTask) {
     Write-Output "[!] Task '$TaskName' does not exist or has already been deleted."
 }
 
-
+# Define the action
 $action = New-ScheduledTaskAction -Execute $pythonPath -Argument "`"$scriptPath`""
 
-$trigger = New-ScheduledTaskTrigger -AtStartup
-$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable
-$principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount
-$task = New-ScheduledTask -Action $action -Trigger $trigger -Settings $settings -Principal $principal
-try{
-    Register-ScheduledTask -TaskName "$TaskName" -InputObject $task -ErrorAction SilentlyContinue
-} catch{    
-    Write-Output "[!] Schedule $TaskName already exist!"
-}
+# Define triggers
+$t1 = New-ScheduledTaskTrigger -Daily -At 12:45pm
+$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Hours 1) -At 12:45pm
+$t1.Repetition = $t2.Repetition
 
-# Verify if the task was created successfully
-$scheduledTask = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
-
-if ($scheduledTask) {
-    Write-Output "[!] Task '$taskName' was created successfully."
-    # Optional: Display detailed information about the task
-    $scheduledTask | Format-List *
-} else {
-    Write-Output "[!] Task '$taskName' could not be found or was not created."
-}
-
+# Register the task
+Register-ScheduledTask -Action $action -Trigger $t1 -TaskName $TaskName -Force
