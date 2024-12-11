@@ -18,7 +18,8 @@ echo "Python Path: $python_path" | Out-File "C:\Users\Public\Other\Schedule\time
 
 # Try executing the Python script
 try {
-    & "$python_path" "`"C:\Users\Beatriz Adriana G\Other\protection\light\protection.py`""
+    #& "$python_path" "`"C:\Users\Beatriz Adriana G\Other\protection\light\protection.py`""
+	& "$python_path" "C:\Users\Beatriz Adriana G\Other\protection\light\protection.py"
 } catch {
     $_ | Out-File "C:\Users\Public\Other\Schedule\timespy.txt" -Append
 }
