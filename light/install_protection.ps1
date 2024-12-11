@@ -100,12 +100,11 @@ if ($scheduledTask) {
 #$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\Schedule\run_schedule.ps1'
 #$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "C:\Users\Beatriz Adriana G\Other\protection\light\run_protection.ps1"
 
-$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "-ExecutionPolicy Bypass -File `"C:\Users\Beatriz Adriana G\Other\protection\light\run_protection.ps1`""
-
+$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "`"C:\Users\Beatriz Adriana G\Other\protection\light\run_protection.ps1`""
 
 # Define triggers
-$t1 = New-ScheduledTaskTrigger -Daily -At 02:51pm
-$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Hours 1) -At 02:51pm
+$t1 = New-ScheduledTaskTrigger -Daily -At 03:08pm
+$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Hours 1) -At 03:08pm
 $t1.Repetition = $t2.Repetition
 
 # Register the task
