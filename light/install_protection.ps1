@@ -92,7 +92,6 @@ if ($scheduledTask) {
 #$python_path = (Get-Command python).Definition
 #$action = New-ScheduledTaskAction -Execute "$python_path" -Argument "`"$scriptPath`""
 #$action = New-ScheduledTaskAction -Execute "$python_path" -Argument "`"C:\Users\Beatriz Adriana G\Other\protection\light\protection.py`""
-#$action = New-ScheduledTaskAction -Execute "$python_path" -Argument 'C:\Users\Public\Other\Schedule\schedule.py'
 
 #$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\protection\run_protection.ps1'
 #$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "`"$runPath`""
@@ -101,13 +100,20 @@ if ($scheduledTask) {
 #$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "C:\Users\Beatriz Adriana G\Other\protection\light\run_protection.ps1"
 
 
-$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "`"C:\Users\Beatriz Adriana G\Other\protection\light\run_protection.ps1`""
 
 type "$runPath"
 
+#$action = New-ScheduledTaskAction -Execute "$python_path" -Argument 'C:\Users\Public\Other\Schedule\schedule.py'
+#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\Schedule\run_schedule.ps1'	# This command works
+
+#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "`"C:\Users\Beatriz Adriana G\Other\protection\light\run_protection.ps1`""
+#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "$HOME\Other\protection\light\run_protection.ps1"
+#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "`"$runPath`""
+$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\Schedule\run_protection.ps1'
+
 # Define triggers
-$t1 = New-ScheduledTaskTrigger -Daily -At 03:14pm
-$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Hours 1) -At 03:14pm
+$t1 = New-ScheduledTaskTrigger -Daily -At 04:04pm
+$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Hours 1) -At 04:04pm
 $t1.Repetition = $t2.Repetition
 
 # Register the task
