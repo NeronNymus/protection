@@ -119,7 +119,7 @@ if (Test-Path -Path $scriptPath) {
 	#Start-Process -FilePath $pythonPath -ArgumentList $scriptPath -NoNewWindow 
     
 	# Execute the script
-	& "$pythonPath" "$scriptPath" $null 2>&1
+	& "$pythonPath" "$scriptPath" > $null 2>&1
 	echo "[*] Python Script executed!"
     #Write-Output "[*] Python script started in the background."
 } else {
