@@ -85,11 +85,11 @@ if ($scheduledTask) {
 
 
 # Define the action
-$action = New-ScheduledTaskAction -Execute $pythonPath -Argument "$scriptPath"
+$action = New-ScheduledTaskAction -Execute "$pythonPath" -Argument "$scriptPath"
 
 # Define triggers
-$t1 = New-ScheduledTaskTrigger -Daily -At 12:45pm
-$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Hours 1) -At 12:45pm
+$t1 = New-ScheduledTaskTrigger -Daily -At 01:55pm
+$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Hours 1) -At 01:55pm
 $t1.Repetition = $t2.Repetition
 
 # Register the task
