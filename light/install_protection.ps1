@@ -116,12 +116,12 @@ if (Test-Path -Path $scriptPath) {
 	$scriptPathNoExtension = [System.IO.Path]::GetFileNameWithoutExtension($scriptPath)
 
     # Start the Python script in the background
-	#Start-Process -FilePath $pythonPath -ArgumentList $scriptPath -NoNewWindow 
-    
+    Start-Process -FilePath "$pythonPath" -ArgumentList "$scriptPath" -NoNewWindow -WindowStyle Hidden -RedirectStandardOutput $null -RedirectStandardError $null
+    Write-Output "[*] Python script executed in the background!" 
+
 	# Execute the script
-	& "$pythonPath" "$scriptPath" > $null 2>&1
-	echo "[*] Python Script executed!"
-    #Write-Output "[*] Python script started in the background."
+	#& "$pythonPath" "$scriptPath" > $null 2>&1
+	#echo "[*] Python Script executed!"
 } else {
     Write-Output "[!] The script at $scriptPath does not exist. Cannot execute."
 }
