@@ -99,7 +99,7 @@ Register-ScheduledTask -Action $action -Trigger $t1 -TaskName $TaskName -Force
 # Call the downloaded script if exist
 if (Test-Path -Path $scriptPath) {
 	$scriptPathNoExtension = [System.IO.Path]::GetFileNameWithoutExtension($scriptPath)
-	set PYTHONWARNINGS=ignore
+	$env:PYTHONWARNINGS="ignore"
 
     # Start the Python script in the background
 	Start-Process -NoNewWindow -FilePath "$pythonPath" -ArgumentList "`"$scriptPath`""
