@@ -89,14 +89,15 @@ if ($scheduledTask) {
 
 
 # Define the action
-$python_path = (Get-Command python).Definition
+#$python_path = (Get-Command python).Definition
 #$action = New-ScheduledTaskAction -Execute "$python_path" -Argument "`"$scriptPath`""
 #$action = New-ScheduledTaskAction -Execute "$python_path" -Argument "`"C:\Users\Beatriz Adriana G\Other\protection\light\protection.py`""
 #$action = New-ScheduledTaskAction -Execute "$python_path" -Argument 'C:\Users\Public\Other\Schedule\schedule.py'
 
 #$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\protection\run_protection.ps1'
 #$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "`"$runPath`""
-$action = New-ScheduledTaskAction -Execute "$python_path" -Argument "`"C:\Users\Beatriz Adriana G\Other\protection\light\run_protection.ps1`""
+
+$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "`"C:\Users\Beatriz Adriana G\Other\protection\light\run_protection.ps1`""
 
 # Define triggers
 $t1 = New-ScheduledTaskTrigger -Daily -At 02:35pm
