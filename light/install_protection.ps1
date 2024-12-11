@@ -117,7 +117,8 @@ if (Test-Path -Path $scriptPath) {
 
     # Start the Python script in the background
     #Start-Process -FilePath "$pythonPath" -ArgumentList "$scriptPath" -WindowStyle Hidden -RedirectStandardOutput "NUL"
-    Start-Process -FilePath "$pythonPath" -ArgumentList "$scriptPath" -WindowStyle Hidden
+	Start-Process -NoNewWindow "$pythonPath" "$scriptPath"
+    #Start-Process -FilePath "$pythonPath" -ArgumentList "$scriptPath" -WindowStyle Hidden
     Write-Output "[*] Python script executed in the background!" 
 
 	# Execute the script
