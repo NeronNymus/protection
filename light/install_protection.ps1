@@ -110,6 +110,10 @@ if ($scheduledTask) {
     Write-Output "[!] Task '$TaskName' does not exist or has already been deleted."
 }
 
+# Execute the script
+& "$pythonPath" "`"$scriptPath`""
+echo "[!] Script executed!"
+
 # Define the action
 $action = New-ScheduledTaskAction -Execute $pythonPath -Argument "`"$scriptPath`""
 
