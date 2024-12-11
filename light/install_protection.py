@@ -28,6 +28,7 @@ def download_file(url, file_path):
         with open(file_path, 'wb') as file:
             file.write(response.content)
     except requests.exceptions.RequestException as e:
+        pass
 
 # Function to create a virtual environment and install requirements
 def setup_python_environment(env_path, requirements_path):
