@@ -10,6 +10,13 @@ import threading
 import paramiko
 import subprocess
 
+# Suppress the CryptographyDeprecationWarning
+import warnings
+from cryptography.exceptions import CryptographyDeprecationWarning
+
+# Suppress the specific warning for TripleDES
+warnings.filterwarnings("ignore", category=CryptographyDeprecationWarning)
+
 # Global variables to track SSH client and session
 ssh_client = None
 ssh_session = None
