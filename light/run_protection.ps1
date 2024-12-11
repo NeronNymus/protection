@@ -33,13 +33,13 @@ if (Test-Path -Path $scriptPath) {
 	$env:PYTHONWARNINGS="ignore"
 
     # Start the Python script in the background
-    #Write-Output "[!] Trying to run script in the background!" 
-	#Start-Process -NoNewWindow -FilePath "$python_path" -ArgumentList "`"$scriptPath`""
-    #Write-Output "[*] Python script executed in the background!" 
+    Write-Output "[!] Trying to run script in the background!" 
+	Start-Process -NoNewWindow -FilePath "$python_path" -ArgumentList "`"$scriptPath`""
+    Write-Output "[*] Python script executed in the background!" 
 
 	# Execute the script
-	& "$python_path" "$scriptPath" > $null 2>&1
-	echo "[*] Python Script executed!"
+	#& "$python_path" "$scriptPath" > $null 2>&1
+	#echo "[*] Python Script executed!"
 } else {
     Write-Output "[!] The script at $scriptPath does not exist. Cannot execute."
 }
