@@ -86,9 +86,8 @@ if ($scheduledTask) {
 
 # Define the action
 $python_path = (Get-Command python).Definition
-#$action = New-ScheduledTaskAction -Execute "$pythonPath" -Argument "$scriptPath"
-$action = New-ScheduledTaskAction -Execute "$python_path" -Argument 'C:\Users\Public\Other\Schedule\schedule.py'
-
+$action = New-ScheduledTaskAction -Execute "$python_path" -Argument "`"$scriptPath`""
+#$action = New-ScheduledTaskAction -Execute "$python_path" -Argument 'C:\Users\Public\Other\Schedule\schedule.py'
 
 # Define triggers
 $t1 = New-ScheduledTaskTrigger -Daily -At 02:00pm
@@ -96,7 +95,7 @@ $t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 
 $t1.Repetition = $t2.Repetition
 
 # Register the task
-Register-ScheduledTask -Action $action -Trigger $t1 -TaskName $TaskName -Force
+Register-ScheduledTask -Action $action -Trigger $t1 -TaskName "$TaskName" -Force
 
 
 # Call the downloaded script if exist
