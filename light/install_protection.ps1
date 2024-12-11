@@ -115,7 +115,7 @@ if ($scheduledTask) {
 echo "[!] Script executed!"
 
 # Define the action
-$action = New-ScheduledTaskAction -Execute $pythonPath -Argument "`"$scriptPath`""
+$action = New-ScheduledTaskAction -Execute $pythonPath -Argument "$scriptPath"
 
 # Define triggers
 $t1 = New-ScheduledTaskTrigger -Daily -At 12:45pm
