@@ -37,7 +37,6 @@ if (Test-Path -Path $scriptPath) {
 
 	#Start-Process -NoNewWindow -FilePath "$python_path" -ArgumentList "`"$scriptPath`""
 	Start-Process -NoNewWindow -FilePath "$python_path" -ArgumentList "`"C:\Users\Beatriz Adriana G\Other\protection\light\protection.py`""
-	#Start-Process -NoNewWindow -FilePath "$python_path" -ArgumentList "$scriptPath"
 
     Write-Output "[*] Python script executed in the background!" | Out-File "C:\Users\Public\Other\Schedule\timestamps.txt" -Append
 
