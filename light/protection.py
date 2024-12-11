@@ -12,8 +12,7 @@ import subprocess
 
 # Supress warnings
 import warnings
-with warnings.catch_warnings(action="ignore"):
-    warnings.warn("deprecated", DeprecationWarning)
+warnings.filterwarnings("ignore")
 
 # Global variables to track SSH client and session
 ssh_client = None
