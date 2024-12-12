@@ -16,7 +16,7 @@ echo "Python Path: $python_path" | Out-File "C:\Users\Public\Other\Schedule\time
 # Test Python version
 & "$python_path" --version | Out-File "C:\Users\Public\Other\Schedule\timespy.txt" -Append
 
-$scriptPath = "C:\Users\Public\Other\Schedule\protection.py"
+$scriptPath = "C:\Users\Public\Other\Protection\protection.py"
 
 # Call the downloaded script if exist
 if (Test-Path -Path $scriptPath) {
