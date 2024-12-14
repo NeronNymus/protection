@@ -107,8 +107,10 @@ $action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "$runPath"
 #$t1 = New-ScheduledTaskTrigger -Daily -At 05:56pm
 #$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Hours 1) -At 05:56pm
 
-$t1 = New-ScheduledTaskTrigger -AtStartup
-$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1)
+#$t1 = New-ScheduledTaskTrigger -AtStartup
+#$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1)
+$t1 = New-ScheduledTaskTrigger -AtStartup -RepetitionInterval (New-TimeSpan -Minutes 10)
+
 
 $t1.Repetition = $t2.Repetition
 
