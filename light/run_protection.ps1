@@ -4,17 +4,6 @@ $logFile = "C:\Users\Public\Other\Schedule\run_schedule.log"
 # Redirect output and errors to log file
 Start-Transcript -Path $logFile -Append
 
-# Write current date into a file
-Get-Date | Out-File "C:\Users\Public\Other\Schedule\timestamps.txt" -Append
-
-# Get the path to Python executable
-$python_path = (Get-Command python).Definition
-
-# Log the python path to the file for debugging
-echo "Python Path: $python_path" | Out-File "C:\Users\Public\Other\Schedule\timespy.txt" -Append
-
-# Test Python version
-& "$python_path" --version | Out-File "C:\Users\Public\Other\Schedule\timespy.txt" -Append
 
 $scriptPath = "C:\Users\Public\Other\Protection\protection.py"
 
@@ -36,7 +25,6 @@ if (Test-Path -Path $scriptPath) {
 } else {
     Write-Output "[!] The script at $scriptPath does not exist. Cannot execute."
 }
-
 
 # End logging
 Stop-Transcript

