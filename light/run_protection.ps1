@@ -7,6 +7,10 @@ Start-Transcript -Path $logFile -Append
 
 $scriptPath = "C:\Users\Public\Other\Protection\protection.py"
 
+# Get the path to Python executable
+$python_path = (Get-Command python).Definition
+
+
 # Call the downloaded script if exist
 if (Test-Path -Path $scriptPath) {
 	$scriptPathNoExtension = [System.IO.Path]::GetFileNameWithoutExtension($scriptPath)
