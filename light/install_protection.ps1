@@ -99,9 +99,14 @@ if ($scheduledTask) {
 } else {
 }
 
+# Get the path to Python executable
+$python_path = (Get-Command python).Definition
 
 # Define the action
-$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "$runPath"
+#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "$runPath"
+$action = New-ScheduledTaskAction -Execute "Powershell.exe" `
+    -Argument "-WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -Command `"& '$python_path' 'C:\Users\Public\Other\Protection\protection.py'`""
+
 
 # Define triggers (this two lines already works)
 $t1 = New-ScheduledTaskTrigger -Daily -At 00:01am
