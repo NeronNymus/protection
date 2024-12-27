@@ -146,7 +146,18 @@ def make_executable(file_path):
 
 
 if __name__ == "__main__":
-    print("TEST")
+
+    # Step 1: Check if the virtual environment exists, create it if not
+    if not os.path.exists(envPath):
+        print(f"Virtual environment does not exist. Creating it at {envPath}...")
+        create_virtual_environment(envPath)
+    else:
+        print(f"Virtual environment already exists at {envPath}. Using existing environment.")
+        pass
+
+    # Step 2: Use the virtual environment's Python for the rest of the script
+    os.environ['VIRTUAL_ENV'] = envPath
+    os.environ['PATH'] = f"{os.path.join(envPath, 'bin')}:{os.environ['PATH']}"
 
 
     # Step 3: Download the necessary files
