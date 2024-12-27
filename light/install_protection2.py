@@ -54,7 +54,7 @@ def setup_python_environment(env_path, requirements_path):
 
         # Install requirements
         pip_executable = os.path.join(env_path, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(env_path, 'bin', 'pip')
-        subprocess.run([pip_executable, 'install', '-r', requirements_path], check=True)
+        subprocess.run([pip_executable, 'install', '-r', requirements_path],  capture_output=False, check=True)
         
         return pip_executable  # Return pip path for service configuration if needed
 
