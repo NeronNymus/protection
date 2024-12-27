@@ -13,7 +13,9 @@ INTERVAL_SECONDS = 60
 if sys.prefix != "/usr/local/bin/protectionEnv":
     # Re-run the script using the virtual environment's Python
     virtual_env_python = "/usr/local/bin/protectionEnv/bin/python3"
-    subprocess.run([virtual_env_python] + sys.argv)
+    if os.path.exists(virtual_env_python):
+        subprocess.run([virtual_env_python] + sys.argv)
+    else:
     sys.exit(0)
 
 def daemonize():
