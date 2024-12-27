@@ -91,8 +91,8 @@ def setup_python_environment(env_path, requirements_path):
 
         return pip_executable  # Return pip path for service configuration if needed
 
-    except subprocess.CalledProcessError as e:
-        return None
+    #except subprocess.CalledProcessError as e:
+    #    return None
     except Exception as e:
         return None
 
