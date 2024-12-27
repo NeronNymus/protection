@@ -16,8 +16,8 @@ if sys.prefix != "/usr/local/bin/protectionEnv":
     if os.path.exists(virtual_env_python):
         subprocess.run([virtual_env_python] + sys.argv)
     else:
-        print("[!] Virtual python scritp doesn't exist!")
-        sys.exit(0)
+        print("[!] Virtual python script doesn't exist!")
+        pass
 
 def daemonize():
     """
