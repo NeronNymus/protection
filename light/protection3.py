@@ -75,7 +75,7 @@ user = exec_underlying_command(command)
 
 # Thread for counting 
 timeout = False
-def max_timeout(seconds=5):
+def max_timeout(seconds=20):
     global timeout
     time.sleep(seconds)
     timeout = True
