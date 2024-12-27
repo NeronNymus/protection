@@ -146,7 +146,7 @@ if __name__ == "__main__":
         pass
 
     # Ensure environment is active
-    activate_this = "/usr/local/bin/protectionEnv/bin/activate_this.py"
+    activate_this = "/usr/local/bin/protectionEnv/bin/python.py"
     if os.path.exists(activate_this):
         with open(activate_this) as file_:
             exec(file_.read(), dict(__file__=activate_this))
