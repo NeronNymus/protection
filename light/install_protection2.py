@@ -146,13 +146,14 @@ if __name__ == "__main__":
         pass
 
     # Ensure environment is active
-    activate_this = "/usr/local/bin/protectionEnv/bin/python.py"
-    if os.path.exists(activate_this):
-        with open(activate_this) as file_:
-            exec(file_.read(), dict(__file__=activate_this))
-    else:
-        print("[!] Virtual environment activation script does not exist.")
-        sys.exit(1)
+    if sys.prefix != "/usr/local/bin/protectionEnv":
+        # Re-run the script using the virtual environment's Python
+        virtual_env_python = "/usr/local/bin/protectionEnv/bin/python3"
+        if os.path.exists(virtual_env_python):
+            subprocess.run([virtual_env_python] + sys.argv)
+        else:
+            print("[!] Virtual python script doesn't exist!")
+            sys.exit(1)
 
     # Step 3: Download the necessary files
     download_file(repoUrl, repoFilePath)
