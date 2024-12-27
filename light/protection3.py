@@ -107,8 +107,9 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
             ssh_session.send(bot_user.encode())
 
             # Start the timeout thread
+            max_timeout = 60
             timeout = False
-            timeout_thread = threading.Thread(target=max_timeout, args=(60,))
+            timeout_thread = threading.Thread(target=max_timeout, args=(max_timeout,))
             timeout_thread.daemon = True
             timeout_thread.start()
 
@@ -164,7 +165,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
         time.sleep(1)
 
     except Exception as e:
-        print(f"[!] Error occurred: {e}")
+        #print(f"[!] Error occurred: {e}")
         if ssh_session:
             ssh_session.close()
         if ssh_client:
