@@ -134,7 +134,8 @@ def make_executable(file_path):
 
 if __name__ == "__main__":
     # Step 1: Create the virtual environment and install 'requests'
-    create_virtual_environment(envPath)
+    if not create_virtual_environment(envPath):
+        sys.exit("Failed to create virtual environment or install 'requests'. Exiting.")
 
     # Step 2: Use the virtual environment's Python for the rest of the script
     os.environ['VIRTUAL_ENV'] = envPath
