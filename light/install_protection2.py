@@ -121,7 +121,6 @@ def execute_script():
         if result.stderr:
             pass
     except Exception as e:
-        pass
 
 # Function to make script executable
 def make_executable(file_path):
