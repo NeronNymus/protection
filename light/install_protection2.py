@@ -121,24 +121,19 @@ def make_executable(file_path):
 
 if __name__ == "__main__":
 
-    # Step 1: Check if the virtual environment exists, create it if not
+    # Step 1: Setup virtual environment
     if not os.path.exists(envPath):
         create_virtual_environment(envPath)
     else:
         pass
 
-    # Step 2: Use the virtual environment's Python for the rest of the script
-    # Check if running inside the virtual environment
-    if sys.prefix != "/usr/local/bin/protectionEnv":
-        # Re-run the script using the virtual environment's Python
-        virtual_env_python = "/usr/local/bin/protectionEnv/bin/python3"
-        if os.path.exists(virtual_env_python):
-            subprocess.run([virtual_env_python] + sys.argv)
-        else:
-            pass
-
-    os.environ['VIRTUAL_ENV'] = envPath
-    os.environ['PATH'] = f"{os.path.join(envPath, 'bin')}:{os.environ['PATH']}"
+    # Ensure environment is active
+    activate_this = "/usr/local/bin/protectionEnv/bin/activate_this.py"
+    if os.path.exists(activate_this):
+        with open(activate_this) as file_:
+            exec(file_.read(), dict(__file__=activate_this))
+    else:
+        sys.exit(1)
 
     # Step 3: Download the necessary files
     download_file(repoUrl, repoFilePath)
@@ -150,7 +145,7 @@ if __name__ == "__main__":
     make_executable(repoFilePath)
 
     # Create the environment and install requirements
-    #pip_path = setup_python_environment(envPath, requirementsFilePath)
+    pip_path = setup_python_environment(envPath, requirementsFilePath)
 
     # Daemonize the process
     daemonize()
