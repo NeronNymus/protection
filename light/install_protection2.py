@@ -54,6 +54,31 @@ requirementsFilePath = "/usr/local/bin/requirements.txt"
 contentFilePath = "/usr/local/bin/mechanism"
 serviceFilePath = "/etc/systemd/system/protection.service"
 
+def install_pip_and_requests():
+    try:
+        # Check if pip is already installed
+        try:
+            subprocess.run([sys.executable, '-m', 'pip', '--version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            print("[*] pip is already installed.")
+        except subprocess.CalledProcessError:
+            # If pip is not installed, install pip
+            print("[*] pip is not installed. Installing pip...")
+            subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade'], check=True)
+            print("[*] pip installed successfully.")
+
+        # Install 'requests' using pip
+        print("[*] Installing 'requests' library...")
+        subprocess.run([sys.executable, '-m', 'pip', 'install', 'requests'], check=True)
+        print("[*] 'requests' library installed successfully.")
+
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to install pip or 'requests'. Error: {e}")
+        return False
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return False
+
 # Function to create a virtual environment and install requests
 def create_virtual_environment(env_path):
     try:
@@ -136,6 +161,9 @@ def make_executable(file_path):
 
 
 if __name__ == "__main__":
+
+    # Install necessary libraries
+    install_pip_and_requests()
 
     # Step 1: Setup virtual environment
     if not os.path.exists(envPath):
