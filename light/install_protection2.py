@@ -124,7 +124,6 @@ def make_executable(file_path):
     try:
         os.chmod(file_path, 0o755)
     except Exception as e:
-        pass
 
 
 if __name__ == "__main__":
