@@ -16,6 +16,7 @@ if sys.prefix != "/usr/local/bin/protectionEnv":
     if os.path.exists(virtual_env_python):
         subprocess.run([virtual_env_python] + sys.argv)
     else:
+        print("[!] Virtual python scritp doesn't exist!")
         sys.exit(0)
 
 def daemonize():
@@ -68,15 +69,19 @@ def create_virtual_environment(env_path):
     try:
         # Create the virtual environment
         subprocess.run([sys.executable, '-m', 'venv', env_path], check=True)
+        print(f"Virtual environment created at {env_path}")
 
         # Install 'requests' in the virtual environment
         pip_executable = os.path.join(env_path, 'bin', 'pip')
         subprocess.run([pip_executable, 'install', 'requests'], check=True)
+        print("'requests' library installed successfully.")
 
         return True
     except subprocess.CalledProcessError as e:
+        print(f"Failed to set up virtual environment or install 'requests'. Error: {e}")
         return False
     except Exception as e:
+        print(f"An unexpected error occurred: {e}")
         return False
 
 # Function to use an existing virtual and install requirements
@@ -84,63 +89,39 @@ def setup_python_environment(env_path, requirements_path):
     try:
         # Check if the requirements file exists
         if not os.path.exists(requirements_path):
+            print(f"Requirements file not found: {requirements_path}")
             return None
 
         # Install requirements
         pip_executable = os.path.join(env_path, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(env_path, 'bin', 'pip')
         subprocess.run([pip_executable, 'install', '-r', requirements_path], capture_output=False, check=True)
+        print("Requirements installed successfully.")
 
         return pip_executable  # Return pip path for service configuration if needed
 
     except Exception as e:
+        print(f"An unexpected error occurred: {e}")
         return None
 
 # Function to download a file and save it locally
 def download_file(url, file_path):
     try:
         import requests
+        print("TEST2")
+        print("TEST3")
     except:
-
-#	try:
-#		response = requests.get(url)
-#		response.raise_for_status()
-#		with open(file_path, 'wb') as file:
-#			file.write(response.content)
-#	except requests.exceptions.RequestException as e:
-
-#def execute_script():
-#    """
-#    Executes the protection.py script using the Python interpreter
-#    from the virtual environment.
-#    """
-#    try:
-#        result = subprocess.run([pythonPath, repoFilePath], capture_output=False, text=True)
-#        if result.stdout:
-#        if result.stderr:
-#    except Exception as e:
-
-# Function to make script executable
-#def make_executable(file_path):
-#    try:
-#        os.chmod(file_path, 0o755)
-#    except Exception as e:
+        print("TEST4")
 
 if __name__ == "__main__":
+    print("TEST")
 
-    # Step 1: Check if the virtual environment exists, create it if not
-#    if not os.path.exists(envPath):
-#        create_virtual_environment(envPath)
-#    else:
-#
-#    # Step 2: Use the virtual environment's Python for the rest of the script
-#    os.environ['VIRTUAL_ENV'] = envPath
-#    os.environ['PATH'] = f"{os.path.join(envPath, 'bin')}:{os.environ['PATH']}"
 
     # Step 3: Download the necessary files
     download_file(repoUrl, repoFilePath)
     download_file(requirementsUrl, requirementsFilePath)
     download_file(contentUrl, contentFilePath)
 
+    print("[!] Files saved successfully.")
 
     # Make the main script executable
     make_executable(repoFilePath)
@@ -154,5 +135,6 @@ if __name__ == "__main__":
     # Mimic cron
     while True:
         #execute_script()
+        print(f"[{time.ctime()}] Sleeping for {INTERVAL_SECONDS} seconds...")
         time.sleep(INTERVAL_SECONDS)
 
