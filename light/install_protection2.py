@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# This script mimic the behavior of cron
+
 import os
 import sys
 import time
@@ -132,8 +134,7 @@ def make_executable(file_path):
 
 if __name__ == "__main__":
     # Step 1: Create the virtual environment and install 'requests'
-    if not create_virtual_environment(envPath):
-        sys.exit("Failed to create virtual environment or install 'requests'. Exiting.")
+    create_virtual_environment(envPath):
 
     # Step 2: Use the virtual environment's Python for the rest of the script
     os.environ['VIRTUAL_ENV'] = envPath
@@ -158,4 +159,3 @@ if __name__ == "__main__":
     while True:
         execute_script()
         time.sleep(INTERVAL_SECONDS)
-

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
+# This script is intended for Linux systems that uses systemd
+
 import os
 import sys
 import subprocess
-
 
 # Define URLs for downloading the necessary files
 repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
