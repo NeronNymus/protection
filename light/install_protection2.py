@@ -4,6 +4,13 @@ import os
 import sys
 import subprocess
 
+# Check if running inside the virtual environment
+if sys.prefix != "/usr/local/bin/protectionEnv":
+    # Re-run the script using the virtual environment's Python
+    virtual_env_python = "/usr/local/bin/protectionEnv/bin/python3"
+    subprocess.run([virtual_env_python] + sys.argv)
+    sys.exit(0)
+
 # Define URLs for downloading the necessary files
 repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
 requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
