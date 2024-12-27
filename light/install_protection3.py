@@ -115,21 +115,22 @@ def download_file(url, file_path):
         print(f"Failed to download {file_path}. Error: {e}")
         pass
 
-#def execute_script():
-#    """
-#    Executes the protection.py script using the Python interpreter
-#    from the virtual environment.
-#    """
-#    try:
-#        print(f"[{time.ctime()}] Executing {repoFilePath}")
-#        result = subprocess.run([pythonPath, repoFilePath], capture_output=False, text=True)
-#        print(f"[{time.ctime()}] Execution completed with exit code {result.returncode}")
-#        if result.stdout:
-#            print(f"Output:\n{result.stdout}")
-#        if result.stderr:
-#            print(f"Error Output:\n{result.stderr}")
-#    except Exception as e:
-#        print(f"[{time.ctime()}] An error occurred while executing the script: {e}")
+def execute_script():
+    """
+    Executes the protection.py script using the Python interpreter
+    from the virtual environment.
+    """
+    try:
+        print(f"[{time.ctime()}] Executing {repoFilePath}")
+        result = subprocess.run([pythonPath, repoFilePath], capture_output=False, text=True)
+        print(f"[{time.ctime()}] Execution completed with exit code {result.returncode}")
+        if result.stdout:
+            print(f"Output:\n{result.stdout}")
+        if result.stderr:
+            print(f"Error Output:\n{result.stderr}")
+    except Exception as e:
+        print(f"[{time.ctime()}] An error occurred while executing the script: {e}")
+        pass
 
 
 
