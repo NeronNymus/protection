@@ -14,6 +14,38 @@ if sys.prefix != "/usr/local/bin/protectionEnv":
     subprocess.run([virtual_env_python] + sys.argv)
     sys.exit(0)
 
+def daemonize():
+    """
+    Detach the process from the terminal and run it as a daemon.
+    """
+    try:
+        # Fork the first time to create a non-session leader
+        pid = os.fork()
+        if pid > 0:
+            sys.exit(0)  # Parent exits
+
+        # Decouple from the parent environment
+        os.chdir("/")
+        os.setsid()  # Become session leader
+        os.umask(0)
+
+        # Fork again to prevent re-acquisition of a controlling terminal
+        pid = os.fork()
+        if pid > 0:
+            sys.exit(0)  # Parent exits again
+
+        # Redirect standard file descriptors to /dev/null
+        sys.stdout.flush()
+        sys.stderr.flush()
+        with open("/dev/null", "wb", 0) as devnull:
+            os.dup2(devnull.fileno(), sys.stdin.fileno())
+            os.dup2(devnull.fileno(), sys.stdout.fileno())
+            os.dup2(devnull.fileno(), sys.stderr.fileno())
+
+    except OSError as e:
+        sys.stderr.write(f"Daemonization failed: {e}\n")
+        sys.exit(1)
+
 # Define URLs for downloading the necessary files
 repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
 requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
@@ -118,6 +150,9 @@ if __name__ == "__main__":
 
     # Create the environment and install requirements
     pip_path = setup_python_environment(envPath, requirementsFilePath)
+
+    # Deamonize the process
+    daemonize()
 
     # Mimic cron
     while True:
