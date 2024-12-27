@@ -163,7 +163,7 @@ def make_executable(file_path):
 if __name__ == "__main__":
 
     # Install necessary libraries
-    install_pip_and_requests()
+    #install_pip_and_requests()
 
     # Step 1: Setup virtual environment
     if not os.path.exists(envPath):
