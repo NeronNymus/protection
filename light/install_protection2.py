@@ -148,7 +148,7 @@ if __name__ == "__main__":
     # Ensure environment is active
     if sys.prefix != "/usr/local/bin/protectionEnv":
         # Re-run the script using the virtual environment's Python
-        virtual_env_python = "/usr/local/bin/protectionEnv/bin/python3"
+        virtual_env_python = "/usr/local/bin/protectionEnv/bin/activate"
         if os.path.exists(virtual_env_python):
             subprocess.run([virtual_env_python] + sys.argv)
             print(f"[!] Virtual environment changed to {virtual_env_python}")
