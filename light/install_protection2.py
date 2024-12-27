@@ -115,10 +115,10 @@ def setup_python_environment(env_path, requirements_path):
 #    except Exception as e:
 
 # Function to make script executable
-def make_executable(file_path):
-    try:
-        os.chmod(file_path, 0o755)
-    except Exception as e:
+#def make_executable(file_path):
+#    try:
+#        os.chmod(file_path, 0o755)
+#    except Exception as e:
 
 if __name__ == "__main__":
     # Step 1: Check if the virtual environment exists, create it if not
