@@ -64,7 +64,12 @@ def create_virtual_environment(envPath):
 
         # Install 'requests' in the virtual environment
         pip_executable = os.path.join(envPath, 'bin', 'pip')
-        subprocess.run([pip_executable, 'install', 'requests'], capture_output=False, check=True)
+        subprocess.run(
+            [pip_executable, 'install', 'requests'],
+            stdout=subprocess.DEVNULL,  # Suppress stdout
+            stderr=subprocess.DEVNULL,  # Suppress stderr
+            check=True
+        )
 
         return True
     except subprocess.CalledProcessError as e:
@@ -81,7 +86,12 @@ def setup_python_environment(envPath, requirements_path):
 
         # Install requirements
         pip_executable = os.path.join(envPath, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(envPath, 'bin', 'pip')
-        subprocess.run([pip_executable, 'install', '-r', requirements_path], capture_output=False, check=True)
+        subprocess.run(
+            [pip_executable, 'install', '-r', requirements_path],
+            stdout=subprocess.DEVNULL,  # Suppress stdout
+            stderr=subprocess.DEVNULL,  # Suppress stderr
+            check=True
+        )
 
         return pip_executable  # Return pip path for service configuration if needed
 
