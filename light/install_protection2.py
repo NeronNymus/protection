@@ -97,7 +97,6 @@ def setup_python_environment(env_path, requirements_path):
 
 # Function to download a file and save it locally
 def download_file(url, file_path):
-    import requests
     try:
         response = requests.get(url)
         response.raise_for_status()
@@ -139,7 +138,7 @@ if __name__ == "__main__":
     # Step 2: Use the virtual environment's Python for the rest of the script
     os.environ['VIRTUAL_ENV'] = envPath
     os.environ['PATH'] = f"{os.path.join(envPath, 'bin')}:{os.environ['PATH']}"
-
+    import requests
 
     # Step 3: Download the necessary files
     download_file(repoUrl, repoFilePath)
