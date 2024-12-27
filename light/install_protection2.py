@@ -109,15 +109,15 @@ def download_file(url, file_path):
     except requests.exceptions.RequestException as e:
 
 def execute_script():
-    """
-    Executes the protection.py script using the Python interpreter
-    from the virtual environment.
-    """
-    try:
-        result = subprocess.run([pythonPath, repoFilePath], capture_output=False, text=True)
-        if result.stdout:
-        if result.stderr:
-    except Exception as e:
+#    """
+#    Executes the protection.py script using the Python interpreter
+#    from the virtual environment.
+#    """
+#    try:
+#        result = subprocess.run([pythonPath, repoFilePath], capture_output=False, text=True)
+#        if result.stdout:
+#        if result.stderr:
+#    except Exception as e:
 
 # Function to make script executable
 def make_executable(file_path):
