@@ -5,6 +5,7 @@
 import os
 import sys
 import time
+import site
 import subprocess
 
 INTERVAL_SECONDS = 60
@@ -54,40 +55,16 @@ requirementsFilePath = "/usr/local/bin/requirements.txt"
 contentFilePath = "/usr/local/bin/mechanism"
 serviceFilePath = "/etc/systemd/system/protection.service"
 
-def install_pip_and_requests():
-    try:
-        # Check if pip is already installed
-        try:
-            subprocess.run([sys.executable, '-m', 'pip', '--version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            print("[*] pip is already installed.")
-        except subprocess.CalledProcessError:
-            # If pip is not installed, install pip
-            print("[*] pip is not installed. Installing pip...")
-            subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade'], check=True)
-            print("[*] pip installed successfully.")
-
-        # Install 'requests' using pip
-        print("[*] Installing 'requests' library...")
-        subprocess.run([sys.executable, '-m', 'pip', 'install', 'requests'], check=True)
-        print("[*] 'requests' library installed successfully.")
-
-        return True
-    except subprocess.CalledProcessError as e:
-        print(f"Failed to install pip or 'requests'. Error: {e}")
-        return False
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        return False
 
 # Function to create a virtual environment and install requests
-def create_virtual_environment(env_path):
+def create_virtual_environment(envPath):
     try:
         # Create the virtual environment
-        subprocess.run([sys.executable, '-m', 'venv', env_path], check=True)
-        print(f"Virtual environment created at {env_path}")
+        subprocess.run([sys.executable, '-m', 'venv', envPath], check=True)
+        print(f"Virtual environment created at {envPath}")
 
         # Install 'requests' in the virtual environment
-        pip_executable = os.path.join(env_path, 'bin', 'pip')
+        pip_executable = os.path.join(envPath, 'bin', 'pip')
         subprocess.run([pip_executable, 'install', 'requests'], check=True)
         print("'requests' library installed successfully.")
 
@@ -100,7 +77,7 @@ def create_virtual_environment(env_path):
         return False
 
 # Function to use an existing virtual and install requirements
-def setup_python_environment(env_path, requirements_path):
+def setup_python_environment(envPath, requirements_path):
     try:
         # Check if the requirements file exists
         if not os.path.exists(requirements_path):
@@ -108,7 +85,7 @@ def setup_python_environment(env_path, requirements_path):
             return None
 
         # Install requirements
-        pip_executable = os.path.join(env_path, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(env_path, 'bin', 'pip')
+        pip_executable = os.path.join(envPath, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(envPath, 'bin', 'pip')
         subprocess.run([pip_executable, 'install', '-r', requirements_path], capture_output=False, check=True)
         print("Requirements installed successfully.")
 
@@ -160,10 +137,36 @@ def make_executable(file_path):
         pass
 
 
-if __name__ == "__main__":
+def activate_virtual_environment(envPath):
+    """
+    Dynamically activate a virtual environment.
+    """
+    bin_path = os.path.join(envPath, 'bin')
+    lib_path = os.path.join(envPath, 'lib', f'python{sys.version_info.major}.{sys.version_info.minor}', 'site-packages')
 
-    # Install necessary libraries
-    #install_pip_and_requests()
+    if not os.path.exists(bin_path) or not os.path.exists(lib_path):
+        print(f"Virtual environment paths not found in {envPath}")
+        return False
+
+    # Add the virtual environment's site-packages to sys.path
+    sys.path.insert(0, lib_path)
+
+    # Update os.environ to use the virtual environment's executables
+    os.environ['VIRTUAL_ENV'] = envPath
+    os.environ['PATH'] = f"{bin_path}:{os.environ['PATH']}"
+
+    # Update sys.prefix to reflect the virtual environment
+    sys.prefix = envPath
+
+    print(f"Activated virtual environment at {envPath}")
+    print(f"sys.prefix: {sys.prefix}")
+    print(f"sys.path: {sys.path}")
+    return True
+
+
+
+
+if __name__ == "__main__":
 
     # Step 1: Setup virtual environment
     if not os.path.exists(envPath):
@@ -174,21 +177,18 @@ if __name__ == "__main__":
         pass
 
     # Ensure environment is active
-    virtual_env_python = os.path.join(envPath, 'bin', 'python3')
     if sys.prefix != envPath:
-        print(f"sys.prefix: {sys.prefix}")
-        print(f"sys.executable: {sys.executable}")
+        success = activate_virtual_environment(envPath)
+        if success:
+            # Test importing a library from the virtual environment
+            try:
+                import requests
+                print("Successfully imported 'requests' after activating the virtual environment.")
+            except ImportError as e:
+                print(f"Failed to import 'requests' after activation: {e}")
+    else:
+        print("Already inside the virtual environment.")
 
-        # Re-run the script using the virtual environment's Python
-        virtual_env_python = "/usr/local/bin/protectionEnv/bin/python3"
-        if os.path.exists(virtual_env_python):
-            subprocess.run([virtual_env_python] + sys.argv)
-            print(f"[!] Virtual environment changed to {virtual_env_python}")
-
-            import requests
-        else:
-            print("[!] Virtual python script doesn't exist!")
-            sys.exit(1)
 
     # Step 3: Download the necessary files
     download_file(repoUrl, repoFilePath)
