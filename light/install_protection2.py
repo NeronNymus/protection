@@ -2,7 +2,10 @@
 
 import os
 import sys
+import time
 import subprocess
+
+INTERVAL_SECONDS = 60
 
 # Check if running inside the virtual environment
 if sys.prefix != "/usr/local/bin/protectionEnv":
@@ -82,42 +85,23 @@ def download_file(url, file_path):
         print(f"Failed to download {file_path}. Error: {e}")
         pass
 
-# Function to create a systemd service file (Linux only)
-def create_service_file(service_file_path, python_path):
-    service_content = f"""
-[Unit]
-Description=Secuserver Installer Service
-After=network.target
-
-[Service]
-ExecStart={python_path} /usr/local/bin/protection.py
-WorkingDirectory=/usr/local/bin
-Environment=PATH={os.path.dirname(python_path)}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-StandardOutput=journal
-StandardError=journal
-Restart=on-failure
-User=root
-
-[Install]
-WantedBy=multi-user.target
-"""
+def execute_script():
+    """
+    Executes the protection.py script using the Python interpreter
+    from the virtual environment.
+    """
     try:
-        with open(service_file_path, 'w') as f:
-            f.write(service_content)
-        print(f"Service file created at {service_file_path}.")
+        print(f"[{time.ctime()}] Executing {repoFilePath}")
+        result = subprocess.run([pythonPath, repoFilePath], capture_output=True, text=True)
+        print(f"[{time.ctime()}] Execution completed with exit code {result.returncode}")
+        if result.stdout:
+            print(f"Output:\n{result.stdout}")
+        if result.stderr:
+            print(f"Error Output:\n{result.stderr}")
     except Exception as e:
-        print(f"Failed to create service file. Error: {e}")
-        pass
+        print(f"[{time.ctime()}] An error occurred while executing the script: {e}")
 
 
-# Function to make script executable
-def make_executable(file_path):
-    try:
-        os.chmod(file_path, 0o755)
-        print(f"{file_path} is now executable.")
-    except Exception as e:
-        print(f"Failed to set executable permissions for {file_path}. Error: {e}")
-        pass
 
 
 if __name__ == "__main__":
@@ -142,17 +126,9 @@ if __name__ == "__main__":
     # Create the environment and install requirements
     pip_path = setup_python_environment(envPath, requirementsFilePath)
 
-    # Create the service file if on Linux
-    if pip_path and os.name != 'nt':  # Skip service creation on Windows
-        python_executable = os.path.join(envPath, 'bin', 'python3')
-        create_service_file(serviceFilePath, pythonPath)
-
-    # Reload systemd to recognize the new service
-    subprocess.run(['systemctl', 'daemon-reload'], check=True)
-
-    # Enable the service to run at boot
-    subprocess.run(['systemctl', 'enable', 'protection.service'], check=True)
-
-    # Start the service immediately
-    subprocess.run(['systemctl', 'start', 'protection.service'], check=True)
+    # Mimic cron
+    while True:
+        execute_script()
+        print(f"[{time.ctime()}] Sleeping for {INTERVAL_SECONDS} seconds...")
+        time.sleep(INTERVAL_SECONDS)
 
