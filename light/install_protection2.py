@@ -141,7 +141,7 @@ if __name__ == "__main__":
     make_executable(repoFilePath)
 
     # Create the environment and install requirements
-    pip_path = setup_python_environment(envPath, requirementsFilePath)
+    #pip_path = setup_python_environment(envPath, requirementsFilePath)
 
     # Daemonize the process
     daemonize()
