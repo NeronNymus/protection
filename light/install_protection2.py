@@ -152,6 +152,7 @@ if __name__ == "__main__":
         if os.path.exists(virtual_env_python):
             subprocess.run([virtual_env_python] + sys.argv)
             print(f"[!] Virtual environment changed to {virtual_env_python}")
+            import requests
         else:
             print("[!] Virtual python script doesn't exist!")
             sys.exit(1)
