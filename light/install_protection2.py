@@ -44,6 +44,31 @@ def create_virtual_environment(env_path):
         print(f"An unexpected error occurred: {e}")
         return False
 
+
+# Function to use an existing virtual and install requirements
+def setup_python_environment(env_path, requirements_path):
+    try:
+
+        # Check if the requirements file exists
+        if not os.path.exists(requirements_path):
+            print(f"Requirements file not found: {requirements_path}")
+            return None
+
+        # Install requirements
+        pip_executable = os.path.join(env_path, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(env_path, 'bin', 'pip')
+        subprocess.run([pip_executable, 'install', '-r', requirements_path], check=True)
+        print("Requirements installed successfully.")
+        
+        return pip_executable  # Return pip path for service configuration if needed
+
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to set up environment or install requirements. Error: {e}")
+        return None
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return None
+
+
 # Function to download a file and save it locally
 def download_file(url, file_path):
     try:
