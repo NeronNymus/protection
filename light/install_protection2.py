@@ -95,7 +95,7 @@ def setup_python_environment(env_path, requirements_path):
 
 # Function to download a file and save it locally
 def download_file(url, file_path):
-    import requests
+    #import requests
     try:
         response = requests.get(url)
         response.raise_for_status()
