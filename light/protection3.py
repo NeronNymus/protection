@@ -149,7 +149,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
                         return
 
                 except Exception as e:
-                    print(Colors.RED + f"[*] Error: {e}" + Colors.R)
+                    print(f"[*] Error: {e}")
                     pass
 
 
