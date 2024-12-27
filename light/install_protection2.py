@@ -151,6 +151,7 @@ if __name__ == "__main__":
         virtual_env_python = "/usr/local/bin/protectionEnv/bin/python3"
         if os.path.exists(virtual_env_python):
             subprocess.run([virtual_env_python] + sys.argv)
+            print(f"[!] Virtual environment changed to {virtual_env_python}")
         else:
             print("[!] Virtual python script doesn't exist!")
             sys.exit(1)
