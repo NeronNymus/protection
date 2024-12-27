@@ -108,7 +108,7 @@ def download_file(url, file_path):
             file.write(response.content)
     except requests.exceptions.RequestException as e:
 
-def execute_script():
+#def execute_script():
 #    """
 #    Executes the protection.py script using the Python interpreter
 #    from the virtual environment.
