@@ -116,9 +116,7 @@ def execute_script():
     try:
         result = subprocess.run([pythonPath, repoFilePath], capture_output=False, text=True)
         if result.stdout:
-            pass
         if result.stderr:
-            pass
     except Exception as e:
 
 # Function to make script executable
