@@ -94,14 +94,14 @@ def setup_python_environment(env_path, requirements_path):
         return None
 
 # Function to download a file and save it locally
-#def download_file(url, file_path):
-#    import requests  # Importing here to ensure it's available in the environment
-#    try:
-#        response = requests.get(url)
-#        response.raise_for_status()
-#        with open(file_path, 'wb') as file:
-#            file.write(response.content)
-#    except requests.exceptions.RequestException as e:
+def download_file(url, file_path):
+    import requests  # Importing here to ensure it's available in the environment
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        with open(file_path, 'wb') as file:
+            file.write(response.content)
+    except requests.exceptions.RequestException as e:
 
 #def execute_script():
 #    """
