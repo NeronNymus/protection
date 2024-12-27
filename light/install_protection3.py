@@ -132,6 +132,16 @@ def execute_script():
         print(f"[{time.ctime()}] An error occurred while executing the script: {e}")
         pass
 
+# Function to make script executable
+def make_executable(file_path):
+    try:
+        os.chmod(file_path, 0o755)
+        print(f"{file_path} is now executable.")
+    except Exception as e:
+        print(f"Failed to set executable permissions for {file_path}. Error: {e}")
+        pass
+
+
 
 
 
