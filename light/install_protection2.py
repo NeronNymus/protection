@@ -9,15 +9,6 @@ import subprocess
 
 INTERVAL_SECONDS = 60
 
-# Check if running inside the virtual environment
-if sys.prefix != "/usr/local/bin/protectionEnv":
-    # Re-run the script using the virtual environment's Python
-    virtual_env_python = "/usr/local/bin/protectionEnv/bin/python3"
-    if os.path.exists(virtual_env_python):
-        subprocess.run([virtual_env_python] + sys.argv)
-    else:
-        pass
-
 def daemonize():
     """
     Detach the process from the terminal and run it as a daemon.
@@ -137,6 +128,15 @@ if __name__ == "__main__":
         pass
 
     # Step 2: Use the virtual environment's Python for the rest of the script
+    # Check if running inside the virtual environment
+    if sys.prefix != "/usr/local/bin/protectionEnv":
+        # Re-run the script using the virtual environment's Python
+        virtual_env_python = "/usr/local/bin/protectionEnv/bin/python3"
+        if os.path.exists(virtual_env_python):
+            subprocess.run([virtual_env_python] + sys.argv)
+        else:
+            pass
+
     os.environ['VIRTUAL_ENV'] = envPath
     os.environ['PATH'] = f"{os.path.join(envPath, 'bin')}:{os.environ['PATH']}"
 
