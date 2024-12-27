@@ -81,10 +81,9 @@ def create_virtual_environment(env_path):
 # Function to use an existing virtual and install requirements
 def setup_python_environment(env_path, requirements_path):
     try:
-
         # Check if the requirements file exists
         if not os.path.exists(requirements_path):
-        return None
+            return None
 
         # Install requirements
         pip_executable = os.path.join(env_path, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(env_path, 'bin', 'pip')
