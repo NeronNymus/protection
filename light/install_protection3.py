@@ -64,7 +64,7 @@ def create_virtual_environment(envPath):
 
         # Install 'requests' in the virtual environment
         pip_executable = os.path.join(envPath, 'bin', 'pip')
-        subprocess.run([pip_executable, 'install', 'requests'], check=True)
+        subprocess.run([pip_executable, 'install', 'requests'], capture_output=False, check=True)
 
         return True
     except subprocess.CalledProcessError as e:
