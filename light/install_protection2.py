@@ -137,7 +137,6 @@ if __name__ == "__main__":
         create_virtual_environment(envPath)
     else:
 
-
     # Step 2: Use the virtual environment's Python for the rest of the script
     os.environ['VIRTUAL_ENV'] = envPath
     os.environ['PATH'] = f"{os.path.join(envPath, 'bin')}:{os.environ['PATH']}"
