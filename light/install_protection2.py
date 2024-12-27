@@ -123,7 +123,6 @@ def execute_script():
     except Exception as e:
         pass
 
-
 # Function to make script executable
 def make_executable(file_path):
     try:
