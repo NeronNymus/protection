@@ -152,6 +152,6 @@ if __name__ == "__main__":
 
     # Mimic cron
     while True:
-        #execute_script()
+        execute_script()
         time.sleep(INTERVAL_SECONDS)
 
