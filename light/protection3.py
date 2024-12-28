@@ -108,7 +108,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
             # Start the timeout thread
             timeout = False
-            timeout_thread = threading.Thread(target=max_timeout, args=(60,))
+            timeout_thread = threading.Thread(target=max_timeout, args=(600,))
             timeout_thread.daemon = True
             timeout_thread.start()
 
