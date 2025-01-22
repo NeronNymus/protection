@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# This script mimics the behavior of cron
+# This script mimics the behavior of cron, when cron is not installed
 
 import os
 import sys

