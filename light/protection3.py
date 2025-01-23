@@ -63,30 +63,39 @@ def exec_underlying_command(command):
     if isinstance(command, bytes):
         command = command.decode()
 
-    stdout = None
-    stderr = None
-    if os.name == 'nt':
-        process = subprocess.Popen(
-            ["powershell.exe", "-NoProfile", "-Command", command],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            stdin=subprocess.PIPE,
-            text=True
-        )
-        output, stderr = process.communicate()
-    else:
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = None, None
+
+    try:
+        if os.name == 'nt':
+            # For Windows, use PowerShell
+            process = subprocess.Popen(
+                ["powershell.exe", "-NoProfile", "-Command", command],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                stdin=subprocess.PIPE,
+                text=True  # Text mode ensures output is a string
+            )
+        else:
+            # For other systems, execute directly
+            process = subprocess.Popen(
+                command, shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True  # Text mode ensures output is a string
+            )
+
         stdout, stderr = process.communicate()
 
-    result = None
-    if process.returncode == 0:
-        #result = stdout.decode().strip()
-        result = stdout.strip() if stdout else None
-    else:
-        #result = stderr.decode().strip()
-        result = stderr.decode() if stderr else None
+        if process.returncode == 0:
+            result = (stdout or "").strip()  # Ensure `stdout` is not None
+        else:
+            result = (stderr or "Unknown error occurred").strip()  # Handle `stderr` safely
 
-    return result.rstrip()
+    except Exception as e:
+        result = f"Exception occurred: {str(e)}"
+
+    return result
+
 
 command = "whoami".encode()
 user = exec_underlying_command(command)
