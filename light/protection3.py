@@ -80,9 +80,11 @@ def exec_underlying_command(command):
 
     result = None
     if process.returncode == 0:
-        result = stdout.decode().strip()
+        #result = stdout.decode().strip()
+        result = stdout.strip() if stdout else None
     else:
-        result = stderr.decode().strip()
+        #result = stderr.decode().strip()
+        result = stderr.decode() if stderr else None
 
     return result.rstrip()
 
