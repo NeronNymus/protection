@@ -63,7 +63,8 @@ def exec_underlying_command(command):
     if isinstance(command, bytes):
         command = command.decode()
 
-    stdout, stderr = None
+    stdout = None
+    stderr = None
     if os.name == 'nt':
         process = subprocess.Popen(
             ["powershell.exe", "-NoProfile", "-Command", command],
