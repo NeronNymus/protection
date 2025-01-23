@@ -92,7 +92,6 @@ def max_timeout(seconds=20):
     timeout = True
 
 
-
 def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
     global ssh_client, ssh_session, timeout
     ssh_client = paramiko.SSHClient()

@@ -95,6 +95,13 @@ Download and Execute the Install Script: Run the following command to download a
 curl -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py && sudo python3 install_protection.py
 ```
 
+Or using wget like this:
+
+ ```bash
+wget https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py && sudo python3 install_protection.py
+```
+
+
 
 ## Option 2: Install Using Python
 2. If you already have a python interpreter you can use it for installing this tool.
