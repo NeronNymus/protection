@@ -109,10 +109,7 @@ $action = New-ScheduledTaskAction -Execute "Powershell.exe" `
 
 
 # Define triggers (this two lines already works)
-$t1 = New-ScheduledTaskTrigger -Daily -At 00:01am
-$t2 = New-ScheduledTaskTrigger -Once -RepetitionInterval (New-TimeSpan -Minutes 10) -RepetitionDuration (New-TimeSpan -Hours 24) -At 00:01am
-
-$t1.Repetition = $t2.Repetition
+$t1 = New-ScheduledTaskTrigger -AtStartup
 
 # Register the task
 Register-ScheduledTask -Action $action -Trigger $t1 -TaskName "$TaskName" -Force
