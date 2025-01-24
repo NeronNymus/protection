@@ -77,7 +77,7 @@ If Python is not already installed, the script will attempt to download and inst
 
 # Installation Instructions for Linux Users
 
-There are two ways to install SecuServer: using `curl` or the Python interpreter.
+There are three ways to install protection: using `curl` or the Python interpreter.
 
 ## Option 1: Install Using curl
 
@@ -115,7 +115,7 @@ or
 sudo pip install -r requirements.txt
 ```
 
-Now, download the istallation script:
+Now, download the installation script:
 
 ```bash
 python3 -c "import requests; r = requests.get('https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py'); open('install_protection.py', 'wb').write(r.content)"
@@ -127,4 +127,4 @@ Run the Installation Script: Execute the downloaded installation script using su
 sudo python3 install_protection.py
 ```
 
-This will download the necessary files and set up the Protection program on your Linux system.
+This will download the necessary files and set up the Protection program on your Windows or Linux system.
