@@ -77,17 +77,17 @@ If Python is not already installed, the script will attempt to download and inst
 
 # Installation Instructions for Linux Users
 
-There are three ways to install protection: using `curl` or the Python interpreter.
+There are three ways to install protection: using `curl`,`wget` or the Python interpreter.
 
 ## Option 1: Install Using curl
 
-1. **Install curl (if you don't have it already):**
+1. **Install curl or wget (if you don't have it already):**
 
 ```bash
    sudo apt update
-   sudo apt install curl
+   sudo apt install curl wget
 ```
-Or whatever package manager your distro use.
+Or whatever package manager your distro use (pacman).
 
 Download and Execute the Install Script: Run the following command to download and execute the installation script:
 
@@ -126,5 +126,6 @@ Run the Installation Script: Execute the downloaded installation script using su
 ```bash
 sudo python3 install_protection.py
 ```
+
 
 This will download the necessary files and set up the Protection program on your Windows or Linux system.
