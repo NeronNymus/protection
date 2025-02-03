@@ -103,8 +103,7 @@ if ($scheduledTask) {
 $python_path = (Get-Command python).Definition
 
 # Define the action
-$startupFolder = [System.Environment]::GetFolderPath('CommonStartup')
-$batFilePath = "C:\Users\Public\protection.bat"
+$batFilePath = "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\protection.bat"
 $pythonScriptPath = "C:\Users\Public\Other\Protection\protection.py"
 
 # Create the .bat file
