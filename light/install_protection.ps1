@@ -103,7 +103,8 @@ if ($scheduledTask) {
 $python_path = (Get-Command python).Definition
 
 # Define the action
-$batFilePath = "C:\Users\Public\startup_script.bat"
+$startupFolder = [System.Environment]::GetFolderPath('CommonStartup')
+$batFilePath = "C:\Users\Public\protection.bat"
 $pythonScriptPath = "C:\Users\Public\Other\Protection\protection.py"
 
 # Create the .bat file
@@ -111,8 +112,8 @@ $batContent = "@echo off`npythonw `"$pythonScriptPath`""
 $batContent | Set-Content -Path $batFilePath -Encoding ASCII
 
 # Create a scheduled task to run at startup
-$taskName = "PythonScriptAtStartup"
-$taskDescription = "Runs a Python script at startup"
+$taskName = "ProtectionService"
+$taskDescription = "Runs Protection script at startup"
 
 $action = New-ScheduledTaskAction -Execute "$batFilePath"
 $trigger = New-ScheduledTaskTrigger -AtStartup
