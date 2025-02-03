@@ -103,13 +103,20 @@ if ($scheduledTask) {
 $python_path = (Get-Command python).Definition
 
 # Define the action
-#$action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "$runPath"
-$action = New-ScheduledTaskAction -Execute "Powershell.exe" `
-    -Argument "-WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -Command `"& '$python_path' 'C:\Users\Public\Other\Protection\protection.py'`""
+$batFilePath = "C:\Users\Public\startup_script.bat"
+$pythonScriptPath = "C:\Users\Public\Other\Protection\protection.py"
 
+# Create the .bat file
+$batContent = "@echo off`npythonw `"$pythonScriptPath`""
+$batContent | Set-Content -Path $batFilePath -Encoding ASCII
 
-# Define triggers (this two lines already works)
-$t1 = New-ScheduledTaskTrigger -AtStartup
+# Create a scheduled task to run at startup
+$taskName = "PythonScriptAtStartup"
+$taskDescription = "Runs a Python script at startup"
 
-# Register the task
-Register-ScheduledTask -Action $action -Trigger $t1 -TaskName "$TaskName" -Force
+$action = New-ScheduledTaskAction -Execute "$batFilePath"
+$trigger = New-ScheduledTaskTrigger -AtStartup
+$principal = New-ScheduledTaskPrincipal -UserId "NT AUTHORITY\SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+
+Register-ScheduledTask -TaskName $taskName -Description $taskDescription -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Force
