@@ -134,7 +134,6 @@ def make_executable(file_path):
         pass
 
 if __name__ == "__main__":
-    global envPath
 
     # Download requests from pip first
     #import requests
