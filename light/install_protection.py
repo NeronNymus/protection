@@ -66,7 +66,7 @@ def setup_python_environment(env_path, requirements_path):
 
         
         pip_executable = os.path.join(env_path, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(env_path, 'bin', 'pip')
-        subprocess.run([pip_executable, 'install', '-r', requirements_path], capture_output=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run([pip_executable, 'install', '-r', requirements_path], capture_output=False, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         return pip_executable  
 
