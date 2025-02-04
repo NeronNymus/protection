@@ -98,7 +98,7 @@ curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/ma
 Or using wget like this:
 
  ```bash
-wget https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py && sudo python3 install_protection.py
+wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py && sudo python3 install_protection.py 2>/dev/null
 ```
 
 
