@@ -92,7 +92,7 @@ Or whatever package manager your distro use (pacman).
 Download and Execute the Install Script: Run the following command to download and execute the installation script:
 
  ```bash
-curl -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py && sudo python3 install_protection.py
+curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py && sudo python3 install_protection.py 2>/dev/null
 ```
 
 Or using wget like this:
