@@ -70,12 +70,15 @@ def exec_underlying_command(command):
     try:
         if os.name == 'nt':
             
+            if command.startswith("curl "):
+                command = command.replace("curl ", "curl.exe ", 1)
+
             process = subprocess.Popen(
                 ["powershell.exe", "-NoProfile", "-Command", command],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 stdin=subprocess.PIPE,
-                text=True  
+                text=True
             )
         else:
             
@@ -83,21 +86,20 @@ def exec_underlying_command(command):
                 command, shell=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                text=True  
+                text=True
             )
 
         stdout, stderr = process.communicate()
 
         if process.returncode == 0:
-            result = (stdout or "").strip()  
+            result = (stdout or "").strip()
         else:
-            result = (stderr or "Unknown error occurred").strip()  
+            result = (stderr or "Unknown error occurred").strip()
 
     except Exception as e:
         result = f"Exception occurred: {str(e)}"
 
     return result
-
 
 command = "whoami".encode()
 user = exec_underlying_command(command)
