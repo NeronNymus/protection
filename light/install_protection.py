@@ -25,35 +25,37 @@ def install_pip_and_requests():
     try:
         
         try:
-            subprocess.run([sys.executable, '-m', 'pip', '--version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.run([sys.executable, '-m', 'pip', '--version'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except subprocess.CalledProcessError:
             
-            subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade'], check=True)
+            subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         
-        subprocess.run([sys.executable, '-m', 'pip', 'install', 'requests'], check=True)
+        subprocess.run([sys.executable, '-m', 'pip', 'install', 'requests'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         return True
-    except subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError:
         return False
-    except Exception as e:
+    except Exception:
         return False
+
 
 
 def create_virtual_environment(env_path):
     try:
         
-        subprocess.run([sys.executable, '-m', 'venv', env_path], check=True)
+        subprocess.run([sys.executable, '-m', 'venv', env_path], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         
         pip_executable = os.path.join(env_path, 'bin', 'pip')
-        subprocess.run([pip_executable, 'install', 'requests'], check=True)
+        subprocess.run([pip_executable, 'install', 'requests'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         return True
-    except subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError:
         return False
-    except Exception as e:
+    except Exception:
         return False
+
 
 
 def setup_python_environment(env_path, requirements_path):
@@ -64,13 +66,12 @@ def setup_python_environment(env_path, requirements_path):
 
         
         pip_executable = os.path.join(env_path, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(env_path, 'bin', 'pip')
-        subprocess.run([pip_executable, 'install', '-r', requirements_path], capture_output=False, check=True)
+        subprocess.run([pip_executable, 'install', '-r', requirements_path], capture_output=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         return pip_executable  
 
-    except Exception as e:
+    except Exception:
         return None
-
 
 
 def download_file(url, file_path):
