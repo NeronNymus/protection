@@ -116,12 +116,17 @@ def execute_script():
     from the virtual environment.
     """
     try:
+        print(f"[{time.ctime()}] Executing {repoFilePath}")
         result = subprocess.run([pythonPath, repoFilePath], capture_output=False, text=True)
+        print(f"[{time.ctime()}] Execution completed with exit code {result.returncode}")
         if result.stdout:
+            print(f"Output:\n{result.stdout}")
             pass
         if result.stderr:
+            print(f"Error Output:\n{result.stderr}")
             pass
     except Exception as e:
+        print(f"[{time.ctime()}] An error occurred while executing the script: {e}")
         pass
 
 
@@ -140,21 +145,27 @@ if __name__ == "__main__":
 
     # Step 1: Setup virtual environment
     if not os.path.exists(envPath):
+        print(f"Virtual environment does not exist. Creating it at {envPath}...")
         create_virtual_environment(envPath)
     else:
+        print(f"Virtual environment already exists at {envPath}. Using existing environment.")
         pass
 
     # Ensure environment is active
     virtual_env_python = os.path.join(envPath, 'bin', 'python3')
     if sys.prefix != envPath:
+        print(f"sys.prefix: {sys.prefix}")
+        print(f"sys.executable: {sys.executable}")
 
         # Re-run the script using the virtual environment's Python
         virtual_env_python = "/usr/local/bin/protectionEnv/bin/python3"
         if os.path.exists(virtual_env_python):
             subprocess.run([virtual_env_python] + sys.argv)
+            print(f"[!] Virtual environment changed to {virtual_env_python}")
 
             import requests
         else:
+            print("[!] Virtual python script doesn't exist!")
             sys.exit(1)
 
 
