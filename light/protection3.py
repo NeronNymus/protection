@@ -185,7 +185,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
             return response
                 
-        time.sleep(1)
+        time.sleep(100)
 
     except Exception as e:
         if ssh_session:
