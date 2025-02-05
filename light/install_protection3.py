@@ -122,7 +122,9 @@ def download_file(url, file_path):
         with open(file_path, 'wb') as file:
             file.write(response.content)
     except requests.exceptions.RequestException as e:
-        pass
+        return False  # Add a return statement or some meaningful action
+
+    return True
 
 # Function to make script executable
 def make_executable(file_path):
