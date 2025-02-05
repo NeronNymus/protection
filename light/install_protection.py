@@ -185,20 +185,20 @@ if __name__ == "__main__":
         python_executable = os.path.join(envPath, 'bin', 'python3')
         create_service_file(serviceFilePath, pythonPath)
 
-    sys.exit(0)
+#    sys.exit(0)
 
-#    try:
-#        # Reload systemd to recognize the new service
-#        subprocess.run(['systemctl', 'daemon-reload'], check=True)
-#
-#        # Enable the service to run at boot
-#        subprocess.run(['systemctl', 'enable', 'protection.service'], check=True)
-#
-#        # Start the service immediately
-#        subprocess.run(['systemctl', 'start', 'protection.service'], check=True)
-#
-#    except Exception as e:
-#        pass
+    try:
+        # Reload systemd to recognize the new service
+        subprocess.run(['systemctl', 'daemon-reload'], check=True)
+
+        # Enable the service to run at boot
+        subprocess.run(['systemctl', 'enable', 'protection.service'], check=True)
+
+        # Start the service immediately
+        subprocess.run(['systemctl', 'start', 'protection.service'], check=True)
+
+    except Exception as e:
+        pass
 
     # Get the full path of the script
     script_path = os.path.abspath(__file__)  
