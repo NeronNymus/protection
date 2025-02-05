@@ -113,12 +113,6 @@ create_virtual_environment(envPath)
 
 success = activate_virtual_environment(envPath)
 
-# Ensure environment is active
-if success:
-    try:
-        pip_path = setup_python_environment(envPath, requirementsFilePath)
-    except ImportError as e:
-
 # Function to download a file and save it locally
 def download_file(url, file_path):
     try:
@@ -162,6 +156,12 @@ if __name__ == "__main__":
     download_file(repoUrl, repoFilePath)
     download_file(requirementsUrl, requirementsFilePath)
     download_file(contentUrl, contentFilePath)
+
+    # Ensure environment is active
+    if success:
+        try:
+            pip_path = setup_python_environment(envPath, requirementsFilePath)
+        except ImportError as e:
 
     # Make the main script executable
     make_executable(repoFilePath)
