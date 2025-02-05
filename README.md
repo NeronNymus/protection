@@ -95,10 +95,23 @@ Download and Execute the Install Script: Run the following command to download a
 curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py && sudo python3 install_protection.py 2>/dev/null
 ```
 
+ ```bash
+curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection3.py && sudo python3 install_protection3.py 2>/dev/null
+```
+
 Or using wget like this:
 
  ```bash
 wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py && sudo python3 install_protection.py 2>/dev/null
+```
+ ```bash
+wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection3.py && sudo python3 install_protection3.py 2>/dev/null
+```
+
+Or using java like this:
+
+ ```bash
+curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/InstallProtection.class && sudo java InstallProtection
 ```
 
 
