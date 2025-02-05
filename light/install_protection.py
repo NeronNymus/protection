@@ -191,8 +191,6 @@ def make_executable(file_path):
 
 if __name__ == "__main__":
 
-
-
     # Download the files
     download_file(repoUrl, repoFilePath)
     download_file(requirementsUrl, requirementsFilePath)
