@@ -131,8 +131,6 @@ def make_executable(file_path):
     try:
         os.chmod(file_path, 0o755)
     except Exception as e:
-        pass
-
 
 def execute_script():
     """
