@@ -85,7 +85,7 @@ There are three ways to install protection: using `curl`,`wget` or the Python in
 
 ```bash
    sudo apt update -y
-   sudo apt install curl wget python3 python3-pip python3-venv default-jre -y
+   sudo apt install sudo curl wget python3 python3-pip python3-venv default-jdk -y
 ```
 Or whatever package manager your distro use (pacman).
 
@@ -113,6 +113,13 @@ Or using java like this:
  ```bash
 curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/InstallProtection.class && sudo java InstallProtection
 ```
+
+Or compiling from source code from java:
+ ```bash
+curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/InstallProtection.java && javac InstallProtection.java && sudo java InstallProtection
+```
+
+
 
 
 
