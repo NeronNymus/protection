@@ -85,7 +85,7 @@ There are three ways to install protection: using `curl`,`wget` or the Python in
 
 ```bash
    sudo apt update
-   sudo apt install curl wget
+   sudo apt install curl wget python3 python3-pip python3-venv
 ```
 Or whatever package manager your distro use (pacman).
 
