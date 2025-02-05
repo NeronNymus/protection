@@ -42,7 +42,6 @@ def daemonize():
         sys.stderr.write(f"Daemonization failed: {e}\n")
         sys.exit(1)
 
-
 # Define URLs for downloading the necessary files
 repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection3.py"
 requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
