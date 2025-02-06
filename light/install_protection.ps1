@@ -36,7 +36,7 @@ $pythonPath = "$pythonPath\python.exe"
 # Download the python script directly with invoke-webrequest
 $outDirectory = "C:\Users\Public\Other\Protection"
 $logDirectory = "C:\Users\Public\Other\Schedule"
-cd "$outDirectory"
+#cd "$outDirectory"
 
 # Check if the directory exists, and create it if not
 if (-not (Test-Path -Path $outDirectory)) {
