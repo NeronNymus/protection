@@ -77,7 +77,7 @@ If Python is not already installed, the script will attempt to download and inst
 
 # Installation Instructions for Linux Users
 
-There are three ways to install protection: using `curl`,`wget` or the Python interpreter.
+There are four ways to install protection: using `curl`,`wget`, the Python interpreter or Java source code.
 
 ## Option 1: Install Using curl
 
