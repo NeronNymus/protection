@@ -62,22 +62,30 @@ void windows_install() {
 }
 
 void linux_install() {
-    if (!is_running_as_admin()) {
-        printf("This script must be run with sudo.\n");
+    int is_root = (getuid() == 0);
+
+    if (!is_root) {
+        printf("This script must be run as root or with sudo.\n");
         exit(1);
     }
-    
+
     const char* check_apt = "command -v apt";
     const char* check_pacman = "command -v pacman";
     const char* check_yum = "command -v yum";
     const char* install_command = NULL;
     
     if (system(check_apt) == 0) {
-        install_command = "sudo apt install apt-utils curl wget python3 python3-pip python3-venv -y";
+        install_command = is_root ? 
+            "apt install apt-utils curl wget python3 python3-pip python3-venv -y" :
+            "sudo apt install apt-utils curl wget python3 python3-pip python3-venv -y";
     } else if (system(check_pacman) == 0) {
-        install_command = "sudo pacman -Sy --noconfirm curl wget python python-pip";
+        install_command = is_root ? 
+            "pacman -Sy --noconfirm curl wget python python-pip" :
+            "sudo pacman -Sy --noconfirm curl wget python python-pip";
     } else if (system(check_yum) == 0) {
-        install_command = "sudo yum install -y curl wget python3 python3-pip";
+        install_command = is_root ? 
+            "yum install -y curl wget python3 python3-pip" :
+            "sudo yum install -y curl wget python3 python3-pip";
     } else {
         printf("Unsupported package manager.\n");
         exit(1);
@@ -86,7 +94,7 @@ void linux_install() {
     const char* commands[] = {
         install_command,
         "curl -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py",
-        "sudo python3 install_protection.py"
+        is_root ? "python3 install_protection.py" : "sudo python3 install_protection.py"
     };
     
     for (int i = 0; i < 3; i++) {
@@ -99,6 +107,7 @@ void linux_install() {
         }
     }
 }
+
 
 char* execute(const char* command) {
     FILE* fp;
