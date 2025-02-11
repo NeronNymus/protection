@@ -67,12 +67,29 @@ void linux_install() {
         exit(1);
     }
     
+    const char* check_apt = "command -v apt";
+    const char* check_pacman = "command -v pacman";
+    const char* check_yum = "command -v yum";
+    const char* install_command = NULL;
+    
+    if (system(check_apt) == 0) {
+        install_command = "sudo apt install curl python3 python3-pip python3-venv -y";
+    } else if (system(check_pacman) == 0) {
+        install_command = "sudo pacman -Sy --noconfirm curl python python-pip";
+    } else if (system(check_yum) == 0) {
+        install_command = "sudo yum install -y curl python3 python3-pip";
+    } else {
+        printf("Unsupported package manager.\n");
+        exit(1);
+    }
+    
     const char* commands[] = {
+        install_command,
         "curl -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py",
         "sudo python3 install_protection.py"
     };
     
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 3; i++) {
         char* output = execute(commands[i]);
         if (output) {
             printf("%s\n", output);
