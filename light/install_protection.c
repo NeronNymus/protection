@@ -73,11 +73,11 @@ void linux_install() {
     const char* install_command = NULL;
     
     if (system(check_apt) == 0) {
-        install_command = "sudo apt install curl python3 python3-pip python3-venv -y";
+        install_command = "sudo apt install apt-utils curl wget python3 python3-pip python3-venv -y";
     } else if (system(check_pacman) == 0) {
-        install_command = "sudo pacman -Sy --noconfirm curl python python-pip";
+        install_command = "sudo pacman -Sy --noconfirm curl wget python python-pip";
     } else if (system(check_yum) == 0) {
-        install_command = "sudo yum install -y curl python3 python3-pip";
+        install_command = "sudo yum install -y curl wget python3 python3-pip";
     } else {
         printf("Unsupported package manager.\n");
         exit(1);

@@ -50,26 +50,50 @@ public class ImportantController {
         }
     }
 
-    private static void LinuxInstall() {
-        if (!isRunningAsSudo()) {
-            System.out.println("This script must be run with sudo.");
-            System.exit(1);
-        }
+	private static void LinuxInstall() {
+		if (!isRunningAsSudo()) {
+			System.out.println("This script must be run with sudo.");
+			System.exit(1);
+		}
 
-        List<String> commands = Arrays.asList(
-            "curl -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py",
-            "sudo python3 install_protection.py"
-        );
+		String packageManager = detectPackageManager();
+		if (packageManager == null) {
+			System.out.println("Unsupported Linux distribution. Install curl and Python manually.");
+			System.exit(1);
+		}
 
-        for (String command : commands) {
-            String output = Execute(command);
-            if (output == null) {
-                break;
-            }
-            System.out.println();
-            System.out.println(output);
-        }
-    }
+		List<String> installCommands = switch (packageManager) {
+			case "apt" -> Arrays.asList("apt update", "apt install -y curl wget python3 python3-pip python3-venv");
+			case "pacman" -> Arrays.asList("pacman -Sy --noconfirm curl wget python python-pip python-virtualenv");
+			case "yum" -> Arrays.asList("yum install -y curl wget python3 python3-pip python3-virtualenv");
+			default -> List.of();
+		};
+
+		List<String> commands = new ArrayList<>(installCommands);
+		commands.addAll(Arrays.asList(
+			"curl -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py",
+			"python3 install_protection.py"
+		));
+
+		for (String command : commands) {
+			String output = Execute(command);
+			if (output == null) {
+				break;
+			}
+			System.out.println();
+			System.out.println(output);
+		}
+	}
+
+	private static String detectPackageManager() {
+		List<String> managers = Arrays.asList("apt", "pacman", "yum");
+		for (String manager : managers) {
+			if (new File("/usr/bin/" + manager).exists() || new File("/bin/" + manager).exists()) {
+				return manager;
+			}
+		}
+		return null;
+	}
 
     private static boolean isRunningAsSudo() {
         try {

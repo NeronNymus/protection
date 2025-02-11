@@ -77,7 +77,7 @@ If Python is not already installed, the script will attempt to download and inst
 
 # Installation Instructions for Linux Users
 
-There are four ways to install protection: using `curl`,`wget`, the Python interpreter or Java source code.
+There are five ways to install protection: using `curl`,`wget`, the Python interpreter, Java source code or C source code.
 
 ## Option 1: Install Using curl
 
@@ -118,6 +118,14 @@ Or compiling from source code from java:
  ```bash
 curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/InstallProtection.java && javac InstallProtection.java && sudo java InstallProtection
 ```
+
+Or executing directly the binary compiled with gcc:
+ ```bash
+curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection && sudo ./protection
+```
+
+In the commands above wget can be used instead of curl if you prefer it.
+
 
 
 
