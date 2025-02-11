@@ -87,7 +87,7 @@ There exist other five ways to install protection: using `curl`,`wget`, the Pyth
    sudo apt update -y
    sudo apt install sudo curl wget python3 python3-pip python3-venv default-jdk -y
 ```
-Or whatever package manager your distro use (pacman).
+Or whatever package manager your distro use (pacman, yum).
 
 Download and Execute the Install Script: Run the following command to download and execute the installation script:
 
