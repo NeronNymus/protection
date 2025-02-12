@@ -48,7 +48,7 @@ if (-not (Test-Path -Path $logDirectory)) {
 } else {
 }
 
-$repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection3.py"
+$repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection4.py"
 $runUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/run_protection.ps1"
 $requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
 $contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/mechanism"

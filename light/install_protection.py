@@ -43,7 +43,7 @@ def daemonize():
         sys.exit(1)
 
 # Define URLs for downloading the necessary files
-repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection3.py"
+repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection4.py"
 requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
 contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/mechanism"
 
