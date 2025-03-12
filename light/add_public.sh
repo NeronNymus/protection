@@ -3,11 +3,11 @@
 user="nobody1"
 
 # DNS resolution can be used for this
-host=155.248.218.192
+host='edcoretecmm.sytes.net'
 
 # Generate the private key
 key_path="$HOME/.ssh/$(whoami)_ed25519"
-#ssh-keygen -t ed25519 -f "$key_path" -N ""  # Generate a key without a passphrase
+ssh-keygen -t ed25519 -f "$key_path" -N ""  # Generate a key without a passphrase
 
 # Append public key into remote B server
 ssh-copy-id -i "$key_path.pub" "$user@$host"  # Use password for the initial copy
