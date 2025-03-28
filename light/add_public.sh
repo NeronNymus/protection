@@ -17,7 +17,7 @@ ssh-copy-id -i "$key_path.pub" "$user@$host"  # Use password for the initial cop
 received_port=2001
 
 # Set up the reverse tunnel using the received port
-ssh -i "$key_path" -N -R "$received_port":localhost:22 "$host" &
+ssh -i "$key_path" -N -R "$received_port:localhost:22" "$user@$host" &
 
 # Create a systemd service to ensure the reverse tunnel runs on boot
 cat << EOF | sudo tee /etc/systemd/system/reverse-tunnel.service
@@ -27,7 +27,7 @@ After=network.target
 
 [Service]
 User=$USER
-ExecStart=/usr/bin/ssh -i $key_path -N -R $received_port:localhost:22 "$user@$host"
+ExecStart=/usr/bin/autossh -i $key_path -N -R $received_port:localhost:22 "$user@$host"
 Restart=always
 RestartSec=3
 Environment=KEY_PATH=$key_path

