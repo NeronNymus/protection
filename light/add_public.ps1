@@ -38,14 +38,15 @@ if (-not (Test-Path $keyFile)) {
 $publicKey = Get-Content $pubKeyFile
 ssh -i $keyFile $user@$remote_host "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
 
-# Create a .bat file to start reverse tunnel
-$batFilePath = "$env:USERPROFILE\reverse_tunnel.bat"
+# Create the batch content with escaped quotes
 $batContent = @"
 @echo off
 echo [INFO] Starting reverse SSH tunnel at %date% %time% >> "$logFile"
 timeout /t 10 /nobreak > nul
 ssh -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -R $receivedPort:localhost:22 $user@$remote_host >> "$logFile" 2>&1
 "@
+
+# Save it as a batch file
 Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
 
 # Schedule task to run the .bat file at user login with highest privileges
