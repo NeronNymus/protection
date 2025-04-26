@@ -1,3 +1,5 @@
+# This script must be executed with powershell running as administrator
+
 # Ensure OpenSSH Client and Server are installed
 $opensshClient = Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Client*'
 $opensshServer = Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Server*'
@@ -41,6 +43,23 @@ if (-not (Test-Path $keyFile)) {
     #ssh-keygen -t ed25519 -f $keyFile -N ""
 	Start-Process -FilePath "ssh-keygen" -ArgumentList "-t ed25519 -f `"$keyFile`" -N `""" -q" -Wait
 }
+
+# Add remote public key to localhost
+nobody1_public = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1@z6yg5ybv"
+nobody2_public = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2@z6yg5ybv"
+
+# Add the correct public key based on $user
+if ($user -eq "nobody1") {
+    Add-Content -Path $adminAuthKeysPath -Value $nobody1_public
+} elseif ($user -eq "nobody2") {
+    Add-Content -Path $adminAuthKeysPath -Value $nobody2_public
+} else {
+    Write-Output "Unknown user: $user. No key added."
+    exit 1
+}
+
+# Set correct permissions
+icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
 
 # Add public key to remote server
 $publicKey = Get-Content $pubKeyFile -Raw
