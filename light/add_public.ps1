@@ -38,7 +38,8 @@ if (-not (Test-Path $otherDir)) {
 # Create SSH key pair if not exists
 if (-not (Test-Path $keyFile)) {
     mkdir $sshDir -Force | Out-Null
-    ssh-keygen -t ed25519 -f $keyFile -N ""
+    #ssh-keygen -t ed25519 -f $keyFile -N ""
+	Start-Process -FilePath "ssh-keygen" -ArgumentList "-t ed25519 -f `"$keyFile`" -N `""" -q" -Wait
 }
 
 # Add public key to remote server
