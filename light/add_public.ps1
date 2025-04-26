@@ -48,6 +48,12 @@ if (-not (Test-Path $keyFile)) {
 $nobody1_public = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1@z6yg5ybv"
 $nobody2_public = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2@z6yg5ybv"
 
+# Ensure the SSH directory exists in ProgramData
+$adminAuthKeysPath = "$env:ProgramData\ssh\administrators_authorized_keys"
+if (-not (Test-Path "$env:ProgramData\ssh")) {
+    mkdir "$env:ProgramData\ssh" -Force | Out-Null
+}
+
 # Add the correct public key based on $user
 if ($user -eq "nobody1") {
     Add-Content -Path $adminAuthKeysPath -Value $nobody1_public
