@@ -51,7 +51,8 @@ ssh -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N
 Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
 
 # Run the reverse tunnel .bat file now (optional: comment out if you don't want it to start immediately)
-Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
+#Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
+Start-Process -FilePath "$batFilePath"
 
 # Schedule task to run the .bat file at user login with highest privileges
 $taskName = "ReverseSSHTunnel"
