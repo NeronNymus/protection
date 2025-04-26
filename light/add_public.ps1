@@ -43,6 +43,11 @@ if (-not (Test-Path $keyFile)) {
     #ssh-keygen -t ed25519 -f $keyFile -N ""
 	Start-Process -FilePath "ssh-keygen" -ArgumentList "-t ed25519 -f `"$keyFile`" -N `""" -q" -Wait
 }
+#
+# Ensure the SSH directory exists
+if (-not (Test-Path "$env:ProgramData\ssh")) {
+    mkdir "$env:ProgramData\ssh" -Force | Out-Null
+}
 
 # Add remote public key to localhost
 $nobody1_public = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1@z6yg5ybv"
@@ -63,6 +68,46 @@ if ($user -eq "nobody1") {
     Write-Output "Unknown user: $user. No key added."
     exit 1
 }
+
+# Path to sshd_config
+$sshConfigPath = "$env:ProgramData\ssh\sshd_config"
+
+# Ensure the file exists
+if (-not (Test-Path $sshConfigPath)) {
+    Write-Error "sshd_config not found at $sshConfigPath. Is OpenSSH Server installed?"
+    exit 1
+}
+
+# Backup the original config (optional but recommended)
+Copy-Item -Path $sshConfigPath -Destination "$sshConfigPath.bak" -Force
+
+# Define the exact config you want
+$requiredSettings = @"
+Port 22
+ListenAddress 0.0.0.0
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys .ssh/authorized_keys2
+PasswordAuthentication no
+AllowAgentForwarding yes
+AllowTcpForwarding yes
+GatewayPorts yes
+PermitTTY yes
+TCPKeepAlive yes
+PermitTunnel yes
+"@
+
+
+# Backup the original config (safety measure)
+if (Test-Path $sshConfigPath) {
+    Copy-Item -Path $sshConfigPath -Destination "$sshConfigPath.bak" -Force
+}
+
+# Overwrite sshd_config with your custom settings
+Set-Content -Path $sshConfigPath -Value $requiredSettings
+
+# Restart SSH service to apply changes
+Restart-Service sshd -Force
+Write-Host "[+] sshd_config has been fully configured with secure settings."
 
 # Set correct permissions
 icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
