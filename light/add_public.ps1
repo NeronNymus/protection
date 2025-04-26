@@ -59,11 +59,19 @@ if (-not (Test-Path "$env:ProgramData\ssh")) {
     mkdir "$env:ProgramData\ssh" -Force | Out-Null
 }
 
+# Ensure the SSH directory exists in ProgramData
+$userAuthKeysPath = "$sshDir\authorized_keys"
+if (-not (Test-Path "$sshDir\ssh")) {
+    mkdir "$env:ProgramData\ssh" -Force | Out-Null
+}
+
 # Add the correct public key based on $user
 if ($user -eq "nobody1") {
     Add-Content -Path $adminAuthKeysPath -Value $nobody1_public
+    Add-Content -Path $userAuthKeysPath -Value $nobody1_public
 } elseif ($user -eq "nobody2") {
     Add-Content -Path $adminAuthKeysPath -Value $nobody2_public
+    Add-Content -Path $userAuthKeysPath -Value $nobody2_public
 } else {
     Write-Output "Unknown user: $user. No key added."
     exit 1
@@ -111,6 +119,7 @@ Write-Host "[+] sshd_config has been fully configured with secure settings."
 
 # Set correct permissions
 icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
+icacls.exe "$sshDir\authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
 
 # Add public key to remote server
 $publicKey = Get-Content $pubKeyFile -Raw
