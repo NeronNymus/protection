@@ -60,7 +60,7 @@ Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
 #Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
 Start-Process -FilePath "$batFilePath"
 
-# Schedule task to run the .bat file at user login with highest privileges
+# Schedule task to run the .bat file at startup with highest privileges
 $taskName = "ReverseSSHTunnel"
 try {
     schtasks /query /tn $taskName 2>$null
