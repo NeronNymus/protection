@@ -130,7 +130,7 @@ $batContent = @"
 @echo off
 echo [INFO] Starting reverse SSH tunnel at %date% %time% >> "$logFile"
 timeout /t 10 /nobreak > nul
-ssh -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -R ${receivedPort}:localhost:22 ${user}@${remote_host} >> "$logFile" 2>&1
+"C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -R ${receivedPort}:localhost:22 ${user}@${remote_host} >> "$logFile" 2>&1
 "@
 
 # Save the batch file
