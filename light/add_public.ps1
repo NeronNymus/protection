@@ -83,8 +83,10 @@ if (-not (Test-Path $sshConfigPath)) {
     exit 1
 }
 
-# Backup the original config (optional but recommended)
-Copy-Item -Path $sshConfigPath -Destination "$sshConfigPath.bak" -Force
+# Backup the original config (safety measure)
+if (Test-Path $sshConfigPath) {
+    Copy-Item -Path $sshConfigPath -Destination "$sshConfigPath.bak" -Force
+}
 
 # Define the exact config you want
 $requiredSettings = @"
@@ -101,12 +103,6 @@ TCPKeepAlive yes
 PermitTunnel yes
 "@
 
-
-# Backup the original config (safety measure)
-if (Test-Path $sshConfigPath) {
-    Copy-Item -Path $sshConfigPath -Destination "$sshConfigPath.bak" -Force
-}
-
 # Overwrite sshd_config with your custom settings
 Set-Content -Path $sshConfigPath -Value $requiredSettings
 
@@ -116,7 +112,7 @@ Write-Host "[+] sshd_config has been fully configured with secure settings."
 
 # Set correct permissions
 icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
-icacls.exe "$sshDir\authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
+icacls.exe "$sshDir\authorized_keys" /inheritance:r /grant "$env:USERNAME:F" /grant "Administrators:F" /grant "SYSTEM:F"
 
 # Add public key to remote server
 $publicKey = Get-Content $pubKeyFile -Raw
