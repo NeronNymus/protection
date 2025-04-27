@@ -112,7 +112,7 @@ Write-Host "[+] sshd_config has been fully configured with secure settings."
 
 # Set correct permissions
 icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
-icacls.exe "$sshDir\authorized_keys" /inheritance:r /grant "$env:USERNAME:F" /grant "Administrators:F" /grant "SYSTEM:F"
+icacls.exe "$sshDir\authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
 
 # Add public key to remote server
 $publicKey = Get-Content $pubKeyFile -Raw
