@@ -61,9 +61,6 @@ if (-not (Test-Path "$env:ProgramData\ssh")) {
 
 # Ensure the SSH directory exists in ProgramData
 $userAuthKeysPath = "$sshDir\authorized_keys"
-if (-not (Test-Path "$sshDir\ssh")) {
-    mkdir "$env:ProgramData\ssh" -Force | Out-Null
-}
 
 # Add the correct public key based on $user
 if ($user -eq "nobody1") {
