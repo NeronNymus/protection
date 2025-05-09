@@ -165,17 +165,14 @@ if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
     Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
 }
 
-# Create a trigger to start at system boot
+# Schedule the task
 $trigger = New-ScheduledTaskTrigger -AtStartup
-
-# Define the action to run the batch file
-$action = New-ScheduledTaskAction -Execute $batFilePath
-
-# Set the task to run with highest privileges under SYSTEM
+$settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit 0
 Register-ScheduledTask -TaskName $taskName `
     -Trigger $trigger `
     -Action $action `
+    -Settings $settings `
     -RunLevel Highest `
-    -User "SYSTEM"
+    -User "$username"
 
 Write-Host "[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
