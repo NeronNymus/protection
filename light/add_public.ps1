@@ -127,6 +127,7 @@ icacls.exe "$env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r 
 $authorizedKey = Get-Content -Path $pubKeyFile -Raw
 
 # Escape double quotes for embedding into remote PowerShell string
+$publicKey = Get-Content -Path $pubKeyFile -Raw
 $escapedKey = $publicKey.Replace('"', '""')
 
 # Construct the remote PowerShell command
