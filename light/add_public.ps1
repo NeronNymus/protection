@@ -124,13 +124,13 @@ icacls.exe "$env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r 
 #icacls.exe "$keyFile" /grant "SYSTEM:F"
 
 # Get the public key file generated previously on your client.
-$authorizedKey = Get-Content -Path $pubKeyFile -Raw
+#$authorizedKey = Get-Content -Path $pubKeyFile -Raw
 
 ## Generate the PowerShell command to run remotely that copies the public key file generated previously on your client to the authorized_keys file on your server.
-$remotePowershell = "powershell New-Item -Force -ItemType Directory -Path $env:USERPROFILE\.ssh; Add-Content -Force -Path $env:USERPROFILE\.ssh\authorized_keys -Value '$authorizedKey'"
+#$remotePowershell = "powershell New-Item -Force -ItemType Directory -Path $env:USERPROFILE\.ssh; Add-Content -Force -Path $env:USERPROFILE\.ssh\authorized_keys -Value '$authorizedKey'"
 #
 # Connect to your server and run the PowerShell command by using the $remotePowerShell variable.
-ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host $remotePowershell
+#ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host $remotePowershell
 
 ## Add public key to remote server
 #$publicKey = Get-Content $pubKeyFile -Raw
