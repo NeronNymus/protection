@@ -123,14 +123,40 @@ icacls.exe "$env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r 
 #icacls.exe "$keyFile" /grant "${env:USERNAME}:(F)"
 #icacls.exe "$keyFile" /grant "SYSTEM:F"
 
-# Add public key to remote server
-$publicKey = Get-Content $pubKeyFile -Raw
-ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+# Get the public key file generated previously on your client.
+$authorizedKey = Get-Content -Path $pubKeyFile -Raw
+
+# Escape double quotes for embedding into remote PowerShell string
+$escapedKey = $publicKey.Replace('"', '""')
+
+# Construct the remote PowerShell command
+$remoteCommand = @"
+\$pubkey = "`"$escapedKey`""
+\$keyFile = "\$env:USERPROFILE\.ssh\authorized_keys"
+if (-not (Test-Path \$keyFile)) {
+    New-Item -Force -ItemType Directory -Path (Split-Path \$keyFile)
+    Set-Content -Path \$keyFile -Value \$pubkey
+} elseif (-not (Select-String -Path \$keyFile -SimpleMatch -Pattern \$pubkey -Quiet)) {
+    Add-Content -Path \$keyFile -Value \$pubkey
+}
+"@
+
+# Run the command on the remote server
+ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "powershell -Command `$remoteCommand"
+
+## Generate the PowerShell command to run remotely that copies the public key file generated previously on your client to the authorized_keys file on your server.
+#$remotePowershell = "powershell New-Item -Force -ItemType Directory -Path $env:USERPROFILE\.ssh; Add-Content -Force -Path $env:USERPROFILE\.ssh\authorized_keys -Value '$authorizedKey'"
+# Connect to your server and run the PowerShell command by using the $remotePowerShell variable.
+#ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host $remotePowershell
+
+## Add public key to remote server
+#$publicKey = Get-Content $pubKeyFile -Raw
+#ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
 
 # Create the batch content with properly escaped quotes
 $batContent = @"
 @echo off
-echo [INFO] Starting reverse SSH tunnel at %date% %time% >> "$logFile"
+echo [INFO] Starting reverse SSH tunnel at %date% %time% by %USERNAME% >> "$logFile"
 timeout /t 10 /nobreak > nul
 "C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:127.0.0.1:22 ${user}@${remote_host} >> "$logFile" 2>&1
 "@
