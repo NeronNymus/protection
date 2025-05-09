@@ -133,7 +133,7 @@ icacls.exe "$env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r 
 #ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host $remotePowershell
 
 # Add public key to remote server
-$publicKey = Get-Content $pubKeyFile -Raw
+$publicKey = (Get-Content $pubKeyFile -Raw).Trim()
 ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
 
 # Create the batch content with properly escaped quotes
