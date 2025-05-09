@@ -28,6 +28,7 @@ if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP-All" -ErrorAction Silentl
 }
 
 # Prepare SSH key path
+$username = $env:USERNAME
 $sshDir = "$env:USERPROFILE\.ssh"
 $keyFile = "$sshDir\$($env:USERNAME)_ed25519"
 $pubKeyFile = "$keyFile.pub"
@@ -118,8 +119,9 @@ Write-Host "[+] sshd_config has been fully configured with secure settings."
 
 # Set correct permissions
 icacls.exe "$env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant ""*S-1-5-32-544:F"" /grant "SYSTEM:F"
-icacls.exe "$env:USERPROFILE\.ssh\authorized_keys" /inheritance:r /grant "$env:USERNAME:F" /grant "SYSTEM:F"
-icacls.exe "$keyFile" /inheritance:r /grant "$env:USERNAME:F" /grant "SYSTEM:F"
+icacls.exe "$env:USERPROFILE\.ssh\authorized_keys" /inheritance:r /grant "${env:USERNAME}:(F)" /grant "SYSTEM:F"
+icacls.exe "$keyFile" /grant "${env:USERNAME}:(F)"
+icacls.exe "$keyFile" /grant "SYSTEM:F"
 
 # Add public key to remote server
 $publicKey = Get-Content $pubKeyFile -Raw
