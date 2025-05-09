@@ -184,4 +184,4 @@ Register-ScheduledTask -TaskName $taskName `
     -RunLevel Highest `
     -User $username
 
-Write-Host "[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
+Write-Host "`n[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
