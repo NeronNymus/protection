@@ -140,13 +140,13 @@ ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ss
 # Create the batch content with properly escaped quotes
 $batContent = @"
 @echo off
-echo [INFO] Starting reverse SSH tunnel at %date% %time% by %%USERNAME%% >> "$logFile"
+echo [INFO] Starting reverse SSH tunnel at %date% %time% by %USERNAME% >> "$logFile"
 timeout /t 10 /nobreak > nul
 "C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:127.0.0.1:22 ${user}@${remote_host} >> "$logFile" 2>&1
-if %%ERRORLEVEL%% EQU 0 (
+if %ERRORLEVEL% EQU 0 (
     echo [SUCCESS] SSH tunnel established successfully at %date% %time% >> "$logFile"
 ) else (
-    echo [ERROR] SSH tunnel failed with error code %%ERRORLEVEL%% at %date% %time% >> "$logFile"
+    echo [ERROR] SSH tunnel failed with error code %ERRORLEVEL% at %date% %time% >> "$logFile"
 )
 "@
 
