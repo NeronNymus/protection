@@ -119,9 +119,9 @@ Write-Host "[+] sshd_config has been fully configured with secure settings."
 
 # Set correct permissions
 icacls.exe "$env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant ""*S-1-5-32-544:F"" /grant "SYSTEM:F"
-icacls.exe "$env:USERPROFILE\.ssh\authorized_keys" /inheritance:r /grant "${env:USERNAME}:(F)" /grant "SYSTEM:F"
-icacls.exe "$keyFile" /grant "${env:USERNAME}:(F)"
-icacls.exe "$keyFile" /grant "SYSTEM:F"
+#icacls.exe "$env:USERPROFILE\.ssh\authorized_keys" /inheritance:r /grant "${env:USERNAME}:(F)" /grant "SYSTEM:F"
+#icacls.exe "$keyFile" /grant "${env:USERNAME}:(F)"
+#icacls.exe "$keyFile" /grant "SYSTEM:F"
 
 # Add public key to remote server
 $publicKey = Get-Content $pubKeyFile -Raw
@@ -132,7 +132,7 @@ $batContent = @"
 @echo off
 echo [INFO] Starting reverse SSH tunnel at %date% %time% >> "$logFile"
 timeout /t 10 /nobreak > nul
-"C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:localhost:22 ${user}@${remote_host} >> "$logFile" 2>&1
+"C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:127.0.0.1:22 ${user}@${remote_host} >> "$logFile" 2>&1
 "@
 
 # Save the batch file
