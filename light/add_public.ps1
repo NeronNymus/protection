@@ -123,18 +123,17 @@ icacls.exe "$env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r 
 #icacls.exe "$keyFile" /grant "${env:USERNAME}:(F)"
 #icacls.exe "$keyFile" /grant "SYSTEM:F"
 
-# Get the public key file generated previously on your client.
-#$authorizedKey = Get-Content -Path $pubKeyFile -Raw
-
-## Generate the PowerShell command to run remotely that copies the public key file generated previously on your client to the authorized_keys file on your server.
-#$remotePowershell = "powershell New-Item -Force -ItemType Directory -Path $env:USERPROFILE\.ssh; Add-Content -Force -Path $env:USERPROFILE\.ssh\authorized_keys -Value '$authorizedKey'"
-#
-# Connect to your server and run the PowerShell command by using the $remotePowerShell variable.
-#ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host $remotePowershell
-
 # Add public key to remote server
 $publicKey = (Get-Content $pubKeyFile -Raw).Trim()
 ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+
+# Create the batch content with properly escaped quotes
+#$batContent = @"
+#@echo off
+#echo [INFO] Starting reverse SSH tunnel at %date% %time% by %USERNAME% >> "$logFile"
+#timeout /t 10 /nobreak > nul
+#"C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:127.0.0.1:22 ${user}@${remote_host} >> "$logFile" 2>&1
+#"@
 
 # Create the batch content with properly escaped quotes
 $batContent = @"
@@ -142,6 +141,11 @@ $batContent = @"
 echo [INFO] Starting reverse SSH tunnel at %date% %time% by %USERNAME% >> "$logFile"
 timeout /t 10 /nobreak > nul
 "C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:127.0.0.1:22 ${user}@${remote_host} >> "$logFile" 2>&1
+if %ERRORLEVEL% EQU 0 (
+    echo [SUCCESS] SSH tunnel established successfully at %date% %time% >> "$logFile"
+) else (
+    echo [ERROR] SSH tunnel failed with error code %ERRORLEVEL% at %date% %time% >> "$logFile"
+)
 "@
 
 # Save the batch file
