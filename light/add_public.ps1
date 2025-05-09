@@ -126,29 +126,11 @@ icacls.exe "$env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r 
 # Get the public key file generated previously on your client.
 $authorizedKey = Get-Content -Path $pubKeyFile -Raw
 
-# Escape double quotes for embedding into remote PowerShell string
-$publicKey = Get-Content -Path $pubKeyFile -Raw
-$escapedKey = $publicKey.Replace('"', '""')
-
-# Construct the remote PowerShell command
-$remoteCommand = @"
-\$pubkey = "`"$escapedKey`""
-\$keyFile = "\$env:USERPROFILE\.ssh\authorized_keys"
-if (-not (Test-Path \$keyFile)) {
-    New-Item -Force -ItemType Directory -Path (Split-Path \$keyFile)
-    Set-Content -Path \$keyFile -Value \$pubkey
-} elseif (-not (Select-String -Path \$keyFile -SimpleMatch -Pattern \$pubkey -Quiet)) {
-    Add-Content -Path \$keyFile -Value \$pubkey
-}
-"@
-
-# Run the command on the remote server
-ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "powershell -Command `$remoteCommand"
-
 ## Generate the PowerShell command to run remotely that copies the public key file generated previously on your client to the authorized_keys file on your server.
-#$remotePowershell = "powershell New-Item -Force -ItemType Directory -Path $env:USERPROFILE\.ssh; Add-Content -Force -Path $env:USERPROFILE\.ssh\authorized_keys -Value '$authorizedKey'"
+$remotePowershell = "powershell New-Item -Force -ItemType Directory -Path $env:USERPROFILE\.ssh; Add-Content -Force -Path $env:USERPROFILE\.ssh\authorized_keys -Value '$authorizedKey'"
+#
 # Connect to your server and run the PowerShell command by using the $remotePowerShell variable.
-#ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host $remotePowershell
+ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host $remotePowershell
 
 ## Add public key to remote server
 #$publicKey = Get-Content $pubKeyFile -Raw
