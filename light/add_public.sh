@@ -12,9 +12,20 @@ ssh-keygen -t ed25519 -f "$key_path" -N ""  # Generate a key without a passphras
 # Append public key into remote B server
 ssh-copy-id -i "$key_path.pub" "$user@$host"  # Use password for the initial copy
 
+# Copy to remote public key to localhost
+nobody1_public="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1"
+nobody2_public="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2"
+
+mkdir -p ~/.ssh
+if [ "$user" = "nobody1" ]; then
+	echo "$nobody1_public" >> ~/.ssh/authorized_keys
+elif [ "$user" = "nobody2" ]; then
+	echo "$nobody2_public" >> ~/.ssh/authorized_keys
+fi
+
 # Request a port number from the server (this could be handled by the server's API)
 #received_port=$(curl -s "http://$host/info")
-received_port=2001
+received_port=2015
 
 # Set up the reverse tunnel using the received port
 ssh -i "$key_path" -N -R "$received_port:localhost:22" "$user@$host" &
