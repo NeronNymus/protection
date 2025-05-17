@@ -7,10 +7,10 @@ host='edcoretecmm.sytes.net'
 
 # Generate the private key
 key_path="$HOME/.ssh/$(whoami)_ed25519"
-ssh-keygen -t ed25519 -f "$key_path" -N ""  # Generate a key without a passphrase
+ssh-keygen -t ed25519 -f "$key_path" -N ""
 
 # Append public key into remote B server
-ssh-copy-id -i "$key_path.pub" "$user@$host"  # Use password for the initial copy
+ssh-copy-id -i "$key_path.pub" "$user@$host"
 
 # Copy to remote public key to 127.0.0.1
 nobody1_public="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1"
