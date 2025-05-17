@@ -23,9 +23,31 @@ elif [ "$user" = "nobody2" ]; then
 	echo "$nobody2_public" >> ~/.ssh/authorized_keys
 fi
 
+# Backup current sshd_config
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+
+# Configure sshd
+requiredSettings="""
+Port 22
+ListenAddress 0.0.0.0
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys .ssh/authorized_keys2
+PasswordAuthentication no
+AllowAgentForwarding yes
+AllowTcpForwarding yes
+GatewayPorts yes
+PermitTTY yes
+TCPKeepAlive yes
+PermitTunnel yes
+"""
+
+# Overwrite sshd_config with the required settings
+echo "$requiredSettings" | sudo tee /etc/ssh/sshd_config > /dev/null
+
+
 # Request a port number from the server (this could be handled by the server's API)
 #received_port=$(curl -s "http://$host/info")
-received_port=2015
+received_port=2016
 
 # Set up the reverse tunnel using the received port
 ssh -i "$key_path" -N -R "$received_port:127.0.0.1:22" "$user@$host" &
