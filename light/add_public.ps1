@@ -60,7 +60,7 @@ if (-not (Test-Path "$env:ProgramData\ssh")) {
     mkdir "$env:ProgramData\ssh" -Force | Out-Null
 }
 
-# Add remote public key to localhost
+# Add remote public key to 127.0.0.1
 $nobody1_public = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1@z6yg5ybv"
 $nobody2_public = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2@z6yg5ybv"
 

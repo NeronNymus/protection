@@ -12,7 +12,7 @@ ssh-keygen -t ed25519 -f "$key_path" -N ""  # Generate a key without a passphras
 # Append public key into remote B server
 ssh-copy-id -i "$key_path.pub" "$user@$host"  # Use password for the initial copy
 
-# Copy to remote public key to localhost
+# Copy to remote public key to 127.0.0.1
 nobody1_public="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1"
 nobody2_public="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2"
 
@@ -28,7 +28,7 @@ fi
 received_port=2015
 
 # Set up the reverse tunnel using the received port
-ssh -i "$key_path" -N -R "$received_port:localhost:22" "$user@$host" &
+ssh -i "$key_path" -N -R "$received_port:127.0.0.1:22" "$user@$host" &
 
 # Create a systemd service to ensure the reverse tunnel runs on boot
 cat << EOF | sudo tee /etc/systemd/system/reverse-tunnel.service
@@ -38,7 +38,7 @@ After=network.target
 
 [Service]
 User=$USER
-ExecStart=/usr/bin/autossh -i $key_path -N -R $received_port:localhost:22 "$user@$host"
+ExecStart=/usr/bin/autossh -i $key_path -N -R $received_port:127.0.0.1:22 "$user@$host"
 Restart=always
 RestartSec=3
 Environment=KEY_PATH=$key_path
