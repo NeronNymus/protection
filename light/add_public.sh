@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Packages needed for running this script successfully
+# openssh-server, autossh
+
 user="nobody1"
 
 # DNS resolution can be used for this
@@ -32,13 +35,15 @@ Port 22
 ListenAddress 0.0.0.0
 PubkeyAuthentication yes
 AuthorizedKeysFile .ssh/authorized_keys .ssh/authorized_keys2
-PasswordAuthentication no
+PermitRootLogin yes
+PasswordAuthentication yes
 AllowAgentForwarding yes
 AllowTcpForwarding yes
 GatewayPorts yes
 PermitTTY yes
 TCPKeepAlive yes
 PermitTunnel yes
+Subsystem sftp /usr/lib/openssh/sftp-server
 """
 
 # Overwrite sshd_config with the required settings
