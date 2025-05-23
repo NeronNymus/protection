@@ -1,4 +1,4 @@
-#!/bin/bash
+g!/bin/bash
 
 # Packages needed for running this script successfully
 # openssh-server, autossh
@@ -52,7 +52,7 @@ echo "$requiredSettings" | sudo tee /etc/ssh/sshd_config > /dev/null
 
 # Request a port number from the server (this could be handled by the server's API)
 #received_port=$(curl -s "http://$host/info")
-received_port=2019
+received_port=2020
 
 # Set up the reverse tunnel using the received port
 ssh -i "$key_path" -N -R "$received_port:127.0.0.1:22" "$user@$host" &
