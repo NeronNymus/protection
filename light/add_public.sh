@@ -19,7 +19,7 @@ done
 
 # Generate the key pair
 key_path="$HOME/.ssh/$(whoami)_ed25519"
-ssh-keygen -t ed25519 -f "$key_path" -N ""
+[ ! -e "$key_path" ] && ssh-keygen -t ed25519 -f "$key_path" -N ""
 
 # Setup sshd
 cat <<EOF >> ~/.ssh/authorized_keys
