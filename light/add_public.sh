@@ -1,30 +1,20 @@
-g!/bin/bash
+#!/bin/bash
 
 # Packages needed for running this script successfully
-# openssh-server, autossh
+sudo apt update
+sudo apt install openssh-server autossh
 
-user="nobody1"
-
-# DNS resolution can be used for this
-host='edcoretecmm.sytes.net'
-
-# Generate the private key
+# Generate the key pair
 key_path="$HOME/.ssh/$(whoami)_ed25519"
 ssh-keygen -t ed25519 -f "$key_path" -N ""
 
-# Append public key into remote B server
-ssh-copy-id -i "$key_path.pub" "$user@$host"
-
-# Copy to remote public key to 127.0.0.1
-nobody1_public="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1"
-nobody2_public="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2"
-
-mkdir -p ~/.ssh
-if [ "$user" = "nobody1" ]; then
-	echo "$nobody1_public" >> ~/.ssh/authorized_keys
-elif [ "$user" = "nobody2" ]; then
-	echo "$nobody2_public" >> ~/.ssh/authorized_keys
-fi
+# Setup sshd
+cat <<EOF >> ~/.ssh/authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIzWLETupIltsWaqiKsFJ1ub4sKXohgqLYj0z5ORQRSb nobody1@web-server
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM6xc2Xh8JDTXCq3I5/GbbrkbXYfFcMAt/wHPfHIo0Zp nobody2@web-server
+EOF
 
 # Backup current sshd_config
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
@@ -50,17 +40,26 @@ Subsystem sftp /usr/lib/openssh/sftp-server
 echo "$requiredSettings" | sudo tee /etc/ssh/sshd_config > /dev/null
 
 
+# List of remote hosts
+hosts=("edcoretecmm.sytes.net" "ximand.ddns.net")
+user="nobody1"
+
 # Request a port number from the server (this could be handled by the server's API)
 #received_port=$(curl -s "http://$host/info")
-received_port=2020
+received_port=2001
 
-# Set up the reverse tunnel using the received port
-ssh -i "$key_path" -N -R "$received_port:127.0.0.1:22" "$user@$host" &
+for host in "${hosts[@]}"; do
+    echo "Setting up for $host"
 
-# Create a systemd service to ensure the reverse tunnel runs on boot
-cat << EOF | sudo tee /etc/systemd/system/reverse-tunnel.service
+    # Copy the public key to the remote host
+    ssh-copy-id -i "$key_path.pub" "$user@$host"
+
+    # Create a unique systemd service for each host
+    service_name="reverse-tunnel-${host%%.*}"
+
+    cat << EOF | sudo tee /etc/systemd/system/${service_name}.service > /dev/null
 [Unit]
-Description=Reverse SSH Tunnel Service
+Description=Reverse SSH Tunnel to $host
 After=network.target
 
 [Service]
@@ -68,19 +67,15 @@ User=$USER
 ExecStart=/usr/bin/autossh -i $key_path -N -R $received_port:127.0.0.1:22 "$user@$host"
 Restart=always
 RestartSec=3
-Environment=KEY_PATH=$key_path
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-# Reload systemd to apply the changes
-sudo systemctl daemon-reload
+    # Enable and start the service
+    sudo systemctl daemon-reload
+    sudo systemctl enable ${service_name}.service
+    sudo systemctl start ${service_name}.service
 
-# Enable the service so that it starts on boot
-sudo systemctl enable reverse-tunnel.service
-
-# Start the service immediately
-sudo systemctl start reverse-tunnel.service
-
-echo "Reverse tunnel setup complete. The service is now running and will reconnect after reboot."
+    echo "Service $service_name started for $host"
+done
