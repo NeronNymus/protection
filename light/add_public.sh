@@ -41,7 +41,7 @@ echo "$requiredSettings" | sudo tee /etc/ssh/sshd_config > /dev/null
 
 
 # List of remote hosts
-hosts=("edcoretecmm.sytes.net" "ximand.ddns.net")
+hosts=("ximand.ddns.net" "edcoretecmm.sytes.net")
 user="nobody1"
 
 # Request a port number from the server (this could be handled by the server's API)
