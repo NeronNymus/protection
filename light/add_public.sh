@@ -2,7 +2,20 @@
 
 # Packages needed for running this script successfully
 sudo apt update
-sudo apt install openssh-server autossh
+
+# Required packages
+packages=(openssh-server autossh)
+
+# Loop through each package
+for pkg in "${packages[@]}"; do
+    if dpkg -s "$pkg" &> /dev/null; then
+        echo "[+] $pkg is already installed."
+    else
+        echo "[*] Installing $pkg..."
+        sudo apt install -y "$pkg"
+    fi
+done
+
 
 # Generate the key pair
 key_path="$HOME/.ssh/$(whoami)_ed25519"
