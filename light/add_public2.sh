@@ -46,6 +46,16 @@ GatewayPorts yes
 PermitTTY yes
 TCPKeepAlive yes
 PermitTunnel yes
+
+PermitOpen any
+X11Forwarding yes
+PrintMotd no
+PrintLastLog yes
+TCPKeepAlive yes
+ClientAliveInterval 60
+ClientAliveCountMax 10
+UseDNS yes
+
 Subsystem sftp /usr/lib/openssh/sftp-server
 """
 
