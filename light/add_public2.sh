@@ -1,5 +1,11 @@
 #!/bin/bash
 
+user="nobody1"
+
+# Request a port number from the server (this could be handled by the server's API)
+#received_port=$(curl -s "http://$host/info")
+received_port=2001
+
 # Packages needed for running this script successfully
 sudo apt update
 
@@ -65,11 +71,6 @@ echo "$requiredSettings" | sudo tee /etc/ssh/sshd_config > /dev/null
 
 # List of remote hosts
 hosts=("ximand.ddns.net" "edcoretecmm.sytes.net")
-user="nobody1"
-
-# Request a port number from the server (this could be handled by the server's API)
-#received_port=$(curl -s "http://$host/info")
-received_port=2001
 
 for host in "${hosts[@]}"; do
     echo "Setting up for $host"
