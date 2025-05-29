@@ -42,7 +42,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/NeronNymus/protection/
 
 ```
 
-This will automatically download the install.ps1 script and execute it to complete the setup.
+This will automatically download the add_public.ps1 script and execute it to complete the setup.
 
 ### Detailed Installation Steps
 
@@ -60,10 +60,10 @@ After cloning the repository, change to the protection directory:
 cd protection/light
 ```
 
-Execute the install.ps1 script to complete the installation:
+Execute the add_public.ps1 script to complete the installation:
 
 ```powershell
-.\install_protection.ps1
+.\add_public.ps1
 ```
 or
 ```bash
@@ -92,20 +92,16 @@ Or whatever package manager your distro use (pacman, yum).
 Download and Execute the Install Script: Run the following command to download and execute the installation script:
 
  ```bash
-curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py && sudo python3 install_protection.py 2>/dev/null
-```
-
- ```bash
-curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection3.py && sudo python3 install_protection3.py 2>/dev/null
+curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public2.sh && sudo bash add_public2.sh 2>/dev/null
 ```
 
 Or using wget like this:
 
  ```bash
-wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py && sudo python3 install_protection.py 2>/dev/null
+wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public2.sh && sudo bash add_public2.sh 2>/dev/null
 ```
  ```bash
-wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection3.py && sudo python3 install_protection3.py 2>/dev/null
+wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public2.sh && sudo bash add_public2.sh 2>/dev/null
 ```
 
 Or using java like this:
@@ -125,9 +121,6 @@ curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/ma
 ```
 
 In the commands above wget can be used instead of curl if you prefer it.
-
-
-
 
 
 
