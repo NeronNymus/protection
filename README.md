@@ -38,7 +38,7 @@ from [python.org](https://www.python.org/downloads/).
 For the fastest way to install the tool, execute this single command in PowerShell:
 
 ```powershell
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.ps1" -OutFile "$env:TEMP\install_protection.ps1"; & "$env:TEMP\install_protection.ps1"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public.ps1" -OutFile "$env:TEMP\add_public.ps1"; & "$env:TEMP\add_public.ps1"
 
 ```
 
