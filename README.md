@@ -84,9 +84,13 @@ There exist other five ways to install protection: using `curl`,`wget`, the Pyth
 1. **Install curl or wget (if you don't have it already):**
 
 ```bash
-   sudo apt update -y
-   sudo apt install sudo curl wget python3 python3-pip python3-venv default-jdk -y
+   sudo apt update -y && sudo apt install sudo curl openssh-server autossh wget python3 python3-pip python3-venv default-jdk -y
 ```
+
+```bash
+   apt update -y && apt install sudo curl openssh-server autossh wget python3 python3-pip python3-venv default-jdk -y
+```
+
 Or whatever package manager your distro use (pacman, yum).
 
 Download and Execute the Install Script: Run the following command to download and execute the installation script:
