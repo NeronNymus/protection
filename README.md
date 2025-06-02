@@ -67,7 +67,7 @@ Execute the add_public.ps1 script to complete the installation:
 ```
 or
 ```bash
-.\install_protection.py
+.\add_public2.sh
 ```
 
 for linux.
