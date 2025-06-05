@@ -73,9 +73,12 @@ if (-not (Test-Path "$env:ProgramData\ssh")) {
     mkdir "$env:ProgramData\ssh" -Force | Out-Null
 }
 
-# Add remote public key to 127.0.0.1
-$nobody1_public = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1@z6yg5ybv"
-$nobody2_public = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2@z6yg5ybv"
+# Remote public keys
+$publicKeys = @(
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1@z6yg5ybv",
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2@z6yg5ybv",
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDRLi7rEJe7OkorAvywhr6QRLN1p0FmWDAKRTpDPtJwa suser@z6yg5ybv"
+)
 
 # Ensure the SSH directory exists in ProgramData
 $adminAuthKeysPath = "$env:ProgramData\ssh\administrators_authorized_keys"
@@ -86,16 +89,10 @@ if (-not (Test-Path "$env:ProgramData\ssh")) {
 # Ensure the SSH directory exists in ProgramData
 $userAuthKeysPath = "$sshDir\authorized_keys"
 
-# Add the correct public key based on $user
-if ($user -eq "nobody1") {
-    Add-Content -Path $adminAuthKeysPath -Value $nobody1_public
-    Add-Content -Path $userAuthKeysPath -Value $nobody1_public
-} elseif ($user -eq "nobody2") {
-    Add-Content -Path $adminAuthKeysPath -Value $nobody2_public
-    Add-Content -Path $userAuthKeysPath -Value $nobody2_public
-} else {
-    Write-Output "Unknown user: $user. No key added."
-    exit 1
+# Add all keys to both files
+foreach ($key in $publicKeys) {
+    Add-Content -Path $adminAuthKeysPath -Value $key
+    Add-Content -Path $userAuthKeysPath -Value $key
 }
 
 # Path to sshd_config
