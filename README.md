@@ -93,6 +93,14 @@ There exist other five ways to install protection: using `curl`,`wget`, the Pyth
 
 Or whatever package manager your distro use (pacman, yum).
 
+A single command:
+
+```bash
+   apt update -y && apt install sudo curl openssh-server autossh -y && curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public2.sh && sudo bash add_public2.sh 2>/dev/null
+```
+
+
+
 Download and Execute the Install Script: Run the following command to download and execute the installation script:
 
  ```bash
