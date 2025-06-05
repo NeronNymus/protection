@@ -6,7 +6,7 @@ user="suser"
 sudo apt update
 
 # Required packages
-packages=(curl openssh-server autossh)
+packages=(curl openssh-server autossh sshpass)
 
 # Loop through each package
 for pkg in "${packages[@]}"; do
@@ -79,13 +79,14 @@ echo "$requiredSettings" | sudo tee /etc/ssh/sshd_config > /dev/null
 
 
 # List of remote hosts
-hosts=("ximand.ddns.net" "edcoretecmm.sytes.net")
+hosts=("edcoretecmm.sytes.net" "ximand.ddns.net")
 
 for host in "${hosts[@]}"; do
     echo "Setting up for $host"
 
     # Copy the public key to the remote host
-    ssh-copy-id -i "$key_path.pub" "$user@$host"
+    #ssh-copy-id -i "$key_path.pub" "$user@$host"
+    sshpass -p "DZ04dYFws1POVlm0XeHA" ssh-copy-id -o StrictHostKeyChecking=no -i "$key_path.pub" "$user@$host"
 
     # Create a unique systemd service for each host
     service_name="reverse-tunnel-${host%%.*}"
