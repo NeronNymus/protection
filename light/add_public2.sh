@@ -1,6 +1,5 @@
 #!/bin/bash
 
-user="suser"
 
 # Packages needed for running this script successfully
 sudo apt update
@@ -19,6 +18,7 @@ for pkg in "${packages[@]}"; do
 done
 
 # Request a port number from the server (this could be handled by the server's API)
+user="suser"
 username=$(whoami)
 hostname=$(hostname)
 

