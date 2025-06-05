@@ -14,7 +14,9 @@ or securing internal networks with ease and reliability.
 ```bash
 # Root shell
 apt update -y && apt install sudo curl -y && curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public2.sh && sudo bash add_public2.sh 2>/dev/null
+```
 
+```bash
 # Normal shell
 sudo apt update -y && sudo apt install curl -y && curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public2.sh && sudo bash add_public2.sh 2>/dev/null
 ```
