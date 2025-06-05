@@ -1,6 +1,6 @@
 #!/bin/bash
 
-user="nobody1"
+user="suser"
 
 # Packages needed for running this script successfully
 sudo apt update

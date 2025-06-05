@@ -88,7 +88,7 @@ There exist other five ways to install protection: using `curl`,`wget`, the Pyth
 ```
 
 ```bash
-   apt update -y && apt install sudo curl openssh-server autossh wget python3 python3-pip python3-venv default-jdk -y
+   apt update -y && apt install sudo curl openssh-server autossh -y
 ```
 
 Or whatever package manager your distro use (pacman, yum).
