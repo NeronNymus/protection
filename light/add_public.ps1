@@ -75,6 +75,7 @@ if (-not (Test-Path "$env:ProgramData\ssh")) {
 
 # Remote public keys
 $publicKeys = @(
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPcs8MvplmfDZ6KDleh7oS9HusQbJVWmRJC7JfOQRtzG",
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1@z6yg5ybv",
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2@z6yg5ybv",
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDRLi7rEJe7OkorAvywhr6QRLN1p0FmWDAKRTpDPtJwa suser@z6yg5ybv"
