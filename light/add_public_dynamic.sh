@@ -80,7 +80,7 @@ echo "$requiredSettings" | sudo tee /etc/ssh/sshd_config > /dev/null
 
 
 # List of remote hosts
-hosts=("edcoretecmm.sytes.net" "ximand.ddns.net")
+hosts=("40.233.2.200" "edcoretecmm.sytes.net" "ximand.ddns.net")
 
 for host in "${hosts[@]}"; do
     echo "Setting up for $host"
