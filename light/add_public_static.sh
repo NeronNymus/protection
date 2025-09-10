@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Port passed from command line
+received_port="$1"
 
 # Packages needed for running this script successfully
 sudo apt update
@@ -32,7 +34,6 @@ hostname=$(hostname)
 #received_port=$(curl -s "https://$domain_name/report?data=$data")
 #received_port=$(echo $port | sed "s/%//g")
 
-received_port="2025"
 
 # Generate the key pair
 key_path="$HOME/.ssh/$(whoami)_ed25519"
