@@ -71,14 +71,14 @@ from [python.org](https://www.python.org/downloads/).
 ```
 
 
-Execute the add_public.ps1 or add_public2.sh script to complete the installation:
+Execute the add_public.ps1 or add_public_dynamic.sh script to complete the installation:
 
 ```powershell
 .\protection\light\add_public.ps1	# For windows
 ```
 or
 ```bash
-./protection/light/add_public2.sh	# For linux
+./protection/light/add_public_dynamic.sh	# For linux
 ```
 
 This script will install all necessary dependencies and set up the program on your system. 
@@ -104,7 +104,7 @@ Or whatever package manager your distro use (pacman, yum).
 A single command:
 
 ```bash
-   apt update -y && apt install sudo curl -y && curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public2.sh && sudo bash add_public2.sh 2>/dev/null
+   apt update -y && apt install sudo curl -y && curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh && sudo bash add_public_dynamic.sh 2>/dev/null
 ```
 
 
@@ -112,16 +112,16 @@ A single command:
 Download and Execute the Install Script: Run the following command to download and execute the installation script:
 
  ```bash
-curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public2.sh && sudo bash add_public2.sh 2>/dev/null
+curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh && sudo bash add_public_dynamic.sh 2>/dev/null
 ```
 
 Or using wget like this:
 
  ```bash
-wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public2.sh && sudo bash add_public2.sh 2>/dev/null
+wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh && sudo bash add_public_dynamic.sh 2>/dev/null
 ```
  ```bash
-wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public2.sh && sudo bash add_public2.sh 2>/dev/null
+wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh && sudo bash add_public_dynamic.sh 2>/dev/null
 ```
 
 Or using java like this:
