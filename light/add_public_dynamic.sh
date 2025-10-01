@@ -73,17 +73,13 @@ Subsystem sftp /usr/lib/openssh/sftp-server
 echo "$requiredSettings" | sudo tee /etc/ssh/sshd_config > /dev/null
 
 
-#hosts=("40.233.2.200" "edcoretecmm.sytes.net" "ximand.ddns.net")
 hosts=("40.233.2.200")
 
 for host in "${hosts[@]}"; do
     echo "Setting up for $host"
 
-    # Copy the public key to the remote host
-    #ssh-copy-id -i "$key_path.pub" "$user@$host"
     sshpass -p "DZ04dYFws1POVlm0XeHA" ssh-copy-id -o StrictHostKeyChecking=no -i "$key_path.pub" "$user@$host"
 
-    # Create a unique systemd service for each host
     service_name="${host%%.*}"
 
     cat << EOF | sudo tee /etc/systemd/system/${service_name}.service > /dev/null
@@ -101,7 +97,6 @@ RestartSec=3
 WantedBy=multi-user.target
 EOF
 
-    # Enable and start the service
     sudo systemctl daemon-reload
     sudo systemctl enable ${service_name}.service
     sudo systemctl start ${service_name}.service
