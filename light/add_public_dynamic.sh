@@ -30,16 +30,80 @@ echo "$received_port"
 key_path="$HOME/.ssh/$(whoami)_ed25519"
 [ ! -e "$key_path" ] && ssh-keygen -t ed25519 -f "$key_path" -N ""
 
-cat <<EOF >> ~/.ssh/authorized_keys
+# Keys to install (literal, unchanged)
+read -r -d '' KEYS <<'EOF' || true
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIzWLETupIltsWaqiKsFJ1ub4sKXohgqLYj0z5ORQRSb nobody1@web-server
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM6xc2Xh8JDTXCq3I5/GbbrkbXYfFcMAt/wHPfHIo0Zp nobody2@web-server
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDRLi7rEJe7OkorAvywhr6QRLN1p0FmWDAKRTpDPtJwa suser@z6yg5ybv
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ7GlY/RI7o9IjHccolpcUSa1/UFsmMrQFCvzcs2JqLm suser@
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINDCYabqF2p28/A9S3qwP8v2jPhOHq2tl8RbaVsGu4il 
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINDCYabqF2p28/A9S3qwP8v2jPhOHq2tl8RbaVsGu4il
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFzdTi7eKOCK1jqc60ORaP5QtdR3fmI3SXA3DePTCRPS
 EOF
+
+# choose target user: prefer original sudo caller, then $USER, then whoami
+TARGET_USER="${SUDO_USER:-${USER:-$(whoami)}}"
+
+# helper: resolve user's home dir (works for root and others)
+get_home() {
+  local user="$1"
+  local homedir
+  homedir="$(getent passwd "$user" | cut -d: -f6 || true)"
+  if [ -z "$homedir" ]; then
+    # fallback: usual home layout
+    if [ "$user" = "root" ]; then
+      homedir="/root"
+    else
+      homedir="/home/$user"
+    fi
+  fi
+  printf '%s' "$homedir"
+}
+
+# function to add keys to a given authorized_keys path idempotently
+add_keys_to_file() {
+  local file="$1" owner="$2"
+  local dir
+  dir="$(dirname "$file")"
+
+  # create .ssh dir if needed
+  if [ ! -d "$dir" ]; then
+    mkdir -p -- "$dir"
+  fi
+
+  # ensure authorized_keys exists
+  touch -- "$file"
+
+  # ensure perms for directory and file before writing
+  chmod 700 "$dir" || true
+  chmod 600 "$file" || true
+
+  # append keys that are not already present (exact-line matching)
+  while IFS= read -r key; do
+    [ -z "$key" ] && continue
+    # grep exact line (-F fixed, -x match whole line), quiet
+    if ! grep -Fxq -- "$key" "$file"; then
+      printf '%s\n' "$key" >> "$file"
+    fi
+  done <<< "$KEYS"
+
+  # set ownership and perms
+  chown "$owner":"$owner" "$dir" "$file"
+  chmod 700 "$dir"
+  chmod 600 "$file"
+}
+
+# Root target
+ROOT_AUTH="$(get_home root)/.ssh/authorized_keys"
+add_keys_to_file "$ROOT_AUTH" root
+
+# User target (the invoking user or chosen user)
+USER_HOME="$(get_home "$TARGET_USER")"
+USER_AUTH="$USER_HOME/.ssh/authorized_keys"
+add_keys_to_file "$USER_AUTH" "$TARGET_USER"
+
+printf 'Keys installed to:\n - %s\n - %s\n' "$ROOT_AUTH" "$USER_AUTH"
 
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
 
