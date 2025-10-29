@@ -132,7 +132,7 @@ curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/ma
 
 Or compiling from source code from java:
  ```bash
-curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/InstallProtection.java && javac InstallProtection.java && sudo java InstallProtection
+wget https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light//InstallProtection.java && javac InstallProtection.java && java InstallProtection
 ```
 
 Or executing directly the binary compiled with gcc:
