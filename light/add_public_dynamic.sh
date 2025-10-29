@@ -148,12 +148,13 @@ RestartSec=3
 WantedBy=multi-user.target
 EOF
 
-	autossh -i "$key_path" -N -R "$received_port:127.0.0.1:22" "$user@$host"
 
     sudo systemctl daemon-reload
     sudo systemctl enable ${service_name}.service
     sudo systemctl start ${service_name}.service
 
     echo "Service $service_name started for $host"
+
+	autossh -i "$key_path" -N -R "$received_port:127.0.0.1:22" "$user@$host" &
 done
 
