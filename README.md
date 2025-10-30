@@ -1,6 +1,6 @@
 # Protection
 
-Protection is a lightweight Python program for secure, encrypted 
+Protection is a lightweight program for secure, encrypted 
 communication that use known protocols.
 
 It ensures safe transmission of sensitive data between clients and servers. 
@@ -127,7 +127,7 @@ wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/ma
 Or using java like this:
 
  ```bash
-curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/InstallProtection.class && sudo java InstallProtection
+wget https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/InstallProtection.class && sudo java InstallProtection
 ```
 
 Or compiling from source code from java:
