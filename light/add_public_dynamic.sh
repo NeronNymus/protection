@@ -133,7 +133,7 @@ for host in "${hosts[@]}"; do
 
     service_name="svc.service"
 
-    cat << EOF | sudo tee /etc/systemd/system/${service_name}.service > /dev/null
+    cat << EOF | sudo tee /etc/systemd/system/${service_name} > /dev/null
 [Unit]
 Description=Remote Management and Diagnostic Gateway
 After=network-online.target
