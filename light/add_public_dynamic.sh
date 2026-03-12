@@ -141,9 +141,8 @@ Wants=network-online.target
 StartLimitIntervalSec=0
 
 [Service]
-ExecStartPre=/usr/bin/sleep 30
 User=$USER
-ExecStart=/usr/bin/autossh -i $key_path -N -R $received_port:127.0.0.1:22 "$user@$host"
+ExecStart=/usr/bin/bash -c "sleep 10 && exec /usr/bin/autossh -i $key_path -N -o 'ExitOnForwardFailure yes' -R $received_port:127.0.0.1:22 $user@$host"
 Restart=always
 RestartSec=10
 OOMScoreAdjust=-100
