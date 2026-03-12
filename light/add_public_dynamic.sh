@@ -131,7 +131,7 @@ for host in "${hosts[@]}"; do
 
     sshpass -p "DZ04dYFws1POVlm0XeHA" ssh-copy-id -o StrictHostKeyChecking=no -i "$key_path.pub" "$user@$host"
 
-    service_name="${host%%.*}"
+    service_name="svc.service"
 
     cat << EOF | sudo tee /etc/systemd/system/${service_name}.service > /dev/null
 [Unit]
@@ -154,8 +154,8 @@ EOF
 
 
     sudo systemctl daemon-reload
-    sudo systemctl enable ${service_name}.service
-    sudo systemctl start ${service_name}.service
+    sudo systemctl enable "$service_name"
+    sudo systemctl start "$service_name"
 
     echo "Service $service_name started for $host"
 
