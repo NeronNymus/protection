@@ -141,7 +141,7 @@ Wants=network-online.target
 StartLimitIntervalSec=0
 
 [Service]
-ExecStartPre=/usr/bin/sleep 60
+ExecStartPre=/usr/bin/sleep 30
 User=$USER
 ExecStart=/usr/bin/autossh -i $key_path -N -R $received_port:127.0.0.1:22 "$user@$host"
 Restart=always
@@ -157,7 +157,7 @@ EOF
     sudo systemctl enable ${service_name}.service
     sudo systemctl start ${service_name}.service
 
-    echo "Service $service_name started for $host"
+    echo "Service $service_name started"
 
 	autossh -i "$key_path" -N -R "$received_port:127.0.0.1:22" "$user@$host" &
 done
