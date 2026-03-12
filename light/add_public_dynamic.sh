@@ -135,16 +135,18 @@ for host in "${hosts[@]}"; do
 
     cat << EOF | sudo tee /etc/systemd/system/${service_name}.service > /dev/null
 [Unit]
-Description=
+Description=Remote Management and Diagnostic Gateway
 After=network-online.target
 Wants=network-online.target
+StartLimitIntervalSec=0
 
 [Service]
 ExecStartPre=/usr/bin/sleep 60
 User=$USER
 ExecStart=/usr/bin/autossh -i $key_path -N -R $received_port:127.0.0.1:22 "$user@$host"
 Restart=always
-RestartSec=3
+RestartSec=10
+OOMScoreAdjust=-100
 
 [Install]
 WantedBy=multi-user.target
