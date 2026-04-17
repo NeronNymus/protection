@@ -164,7 +164,7 @@ $publicKey = (Get-Content $pubKeyFile -Raw).Trim()
 #ssh -o "StrictHostKeyChecking=no" -i $keyFile $user@$remote_host "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
 #& "C:\ProgramData\ssh_portable\ssh.exe" -o "StrictHostKeyChecking=no" -i $keyFile "$user@$remote_host" "mkdir -p ~/.ssh && echo '$publicKey' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
 
-Import-Module Posh-SSH -Force -Confirm
+Import-Module Posh-SSH -Force
 
 $password = "DZ04dYFws1POVlm0XeHA" | ConvertTo-SecureString -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential("suser", $password)

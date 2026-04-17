@@ -136,13 +136,12 @@ for host in "${hosts[@]}"; do
     cat << EOF | sudo tee /etc/systemd/system/${service_name}.service > /dev/null
 [Unit]
 Description=Diagnostic Service
-After=network-online.target
-Wants=network-online.target
-StartLimitIntervalSec=0
+After=network.target
 
 [Service]
 User=$USER
-ExecStart=/usr/bin/bash -c "sleep 10 && exec /usr/bin/autossh -i $key_path -N -o 'ExitOnForwardFailure yes' -R $received_port:127.0.0.1:22 $user@$host"
+ExecStartPre=/bin/sleep 10
+ExecStart=/usr/bin/autossh -i $key_path -N -o 'ExitOnForwardFailure yes' -R $received_port:127.0.0.1:22 $user@$host
 Restart=always
 RestartSec=10
 OOMScoreAdjust=-100
@@ -151,7 +150,7 @@ OOMScoreAdjust=-100
 WantedBy=multi-user.target
 EOF
 
-
+	sudo systemctl mask systemd-networkd-wait-online.service
     sudo systemctl daemon-reload
     sudo systemctl enable ${service_name}.service
     sudo systemctl start ${service_name}.service
