@@ -17,11 +17,11 @@ apt update -y && apt install sudo curl -y && curl -Os https://raw.githubusercont
 
 ```bash
 # Root shell
-apt update -y && apt install sudo curl -y && curl -fsSL https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection_linux && chmod +x protection_linux | bash 2>/dev/null
+apt update -y && apt install sudo curl -y && curl -fsSL https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh | bash 2>/dev/null
 ```
 ```bash
 # Normal shell
-sudo apt update -y && sudo apt install curl -y && curl -fsSL https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection_linux && chmod +x protection_linux | sudo bash 2>/dev/null
+sudo apt update -y && sudo apt install curl -y && curl -fsSL https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh | sudo bash 2>/dev/null
 ```
 
 ### Windows
@@ -126,11 +126,6 @@ Or using java like this:
 
  ```bash
 wget https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/InstallProtection.class && sudo java InstallProtection
-```
-
-Or compiling from source code from java:
- ```bash
-wget https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light//InstallProtection.java && javac InstallProtection.java && java InstallProtection
 ```
 
 In the commands above wget can be used instead of curl if you prefer it.
