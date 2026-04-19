@@ -10,14 +10,18 @@ or securing internal networks with ease and reliability.
 ## Quick Installation
 
 ### Linux
+```bash
+# Root shell
+apt update -y && apt install sudo curl -y && curl -Os https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection_linux && chmod +x protection_linux && ./protection_linux&& rm protection_linux
+```
 
 ```bash
 # Root shell
-apt update -y && apt install sudo curl -y && curl -fsSL https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh | bash 2>/dev/null
+apt update -y && apt install sudo curl -y && curl -fsSL https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection_linux && chmod +x protection_linux | bash 2>/dev/null
 ```
 ```bash
 # Normal shell
-sudo apt update -y && sudo apt install curl -y && curl -fsSL https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh | sudo bash 2>/dev/null
+sudo apt update -y && sudo apt install curl -y && curl -fsSL https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection_linux && chmod +x protection_linux | sudo bash 2>/dev/null
 ```
 
 ### Windows
@@ -37,12 +41,7 @@ Follow these simple steps to install Protection on your Windows system.
 
 ### Prerequisites
 
-1. **Python**: Ensure that you have Python installed on your system. If not, download and install the latest version of Python 
-from [python.org](https://www.python.org/downloads/).
-   
-2. **Git**: Install Git if you don't already have it. You can download it from [git-scm.com](https://git-scm.com/).
-
-3. **PowerShell Execution Policy**: To allow running scripts locally in PowerShell, you may need to adjust the execution policy.
+1. **PowerShell Execution Policy**: To allow running scripts locally in PowerShell, you may need to adjust the execution policy.
 
     - **Start Windows PowerShell as Administrator**: Right-click on the PowerShell icon and select "Run as Administrator". 
 	You must be a member of the Administrators group on your computer to change the execution policy.
@@ -70,21 +69,21 @@ from [python.org](https://www.python.org/downloads/).
 ```
 
 
-Execute the add_public.ps1 or add_public_dynamic.sh script to complete the installation:
+Execute the add_public.ps1 or protection_linux && chmod +x protection_linux script to complete the installation:
 
 ```powershell
 .\protection\light\add_public.ps1	# For windows
 ```
 or
 ```bash
-./protection/light/add_public_dynamic.sh	# For linux
+./protection/light/protection_linux	# For linux
 ```
 
 This script will install all necessary dependencies and set up the program on your system. 
 
 # Installation Instructions for Linux Users
 
-There exist other five ways to install protection: using `curl`,`wget`, the Python interpreter, Java source code or C source code.
+There exist other five ways to install protection: using `curl`,`wget` for downloading the respective binary
 
 ## Option 1: Install Using curl
 
@@ -103,7 +102,7 @@ Or whatever package manager your distro use (pacman, yum).
 A single command:
 
 ```bash
-   apt update -y && apt install sudo curl -y && curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh && sudo bash add_public_dynamic.sh 2>/dev/null
+   apt update -y && apt install sudo curl -y && curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection_linux && chmod +x protection_linux && sudo bash protection_linux 2>/dev/null
 ```
 
 
@@ -111,16 +110,16 @@ A single command:
 Download and Execute the Install Script: Run the following command to download and execute the installation script:
 
  ```bash
-curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh && sudo bash add_public_dynamic.sh 2>/dev/null
+curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection_linux && chmod +x protection_linux && sudo bash protection_linux  2>/dev/null
 ```
 
 Or using wget like this:
 
  ```bash
-wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh && sudo bash add_public_dynamic.sh 2>/dev/null
+wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection_linux && chmod +x protection_linux && sudo bash protection_linux  2>/dev/null
 ```
  ```bash
-wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh && sudo bash add_public_dynamic.sh 2>/dev/null
+wget -q -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection_linux && chmod +x protection_linux && sudo bash protection_linux  2>/dev/null
 ```
 
 Or using java like this:
@@ -134,38 +133,4 @@ Or compiling from source code from java:
 wget https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light//InstallProtection.java && javac InstallProtection.java && java InstallProtection
 ```
 
-Or executing directly the binary compiled with gcc:
- ```bash
-curl -s -O https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection && sudo ./protection
-```
-
 In the commands above wget can be used instead of curl if you prefer it.
-
-
-
-## Option 2: Install Using Python
-2. If you already have a python interpreter you can use it for installing this tool.
-All you need is the 'requests' library, fetch it with
-
-```bash
-sudo pip install requests paramiko
-```
-or 
-```bash
-sudo pip install -r requirements.txt
-```
-
-Now, download the installation script:
-
-```bash
-python3 -c "import requests; r = requests.get('https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/install_protection.py'); open('install_protection.py', 'wb').write(r.content)"
-```
-
-Run the Installation Script: Execute the downloaded installation script using sudo:
-
-```bash
-sudo python3 install_protection.py
-```
-
-
-This will download the necessary files and set up the Protection program on your Windows or Linux system.
