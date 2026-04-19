@@ -12,7 +12,7 @@ or securing internal networks with ease and reliability.
 ### Linux
 ```bash
 # Root shell
-apt update -y && apt install sudo curl -y && curl -Os https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection_linux && chmod +x protection_linux && ./protection_linux&& rm protection_linux
+apt update -y && apt install sudo curl -y && curl -Os https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/protection_linux && chmod +x protection_linux && ./protection_linux && rm protection_linux
 ```
 
 ```bash
