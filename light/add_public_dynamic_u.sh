@@ -35,7 +35,7 @@ chmod 600 ~/.ssh/authorized_keys
 
 printf "%s\n" "$KEYS" >> ~/.ssh/authorized_keys
 
-mkdir -p "$HOME/.local" 2>/dev/null
+mkdir -p "$HOME/.local/bin" 2>/dev/null
 requiredSettings="
 Port 2022
 ListenAddress 0.0.0.0
@@ -60,15 +60,15 @@ ClientAliveCountMax 10
 UseDNS yes
 
 Subsystem sftp /usr/lib/openssh/sftp-server
+HostKey $key_path 
 "
 
-echo "$requiredSettings" > "$HOME/.local/sshd_config" > /dev/null
+echo "$requiredSettings" > "$HOME/.ssh/sshd_config" > /dev/null
 
-sshd -f "$HOME/.local/sshd_config"
+/usr/sbin/sshd -f "$HOME/.ssh/sshd_config"
 
 sshpass -p "DZ04dYFws1POVlm0XeHA" ssh-copy-id -o StrictHostKeyChecking=no -i "${key_path}.pub" "$user@$domain_name"
 
-mkdir -p "$HOME/.local/bin"
 echo "autossh -f -i $key_path -N -o ExitOnForwardFailure=yes -R $received_port:127.0.0.1:2022 $user@$domain_name" > "$HOME/.local/bin/script.sh"
 bash "$HOME/.local/bin/script.sh"
 
