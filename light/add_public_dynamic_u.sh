@@ -35,6 +35,7 @@ chmod 600 ~/.ssh/authorized_keys
 
 printf "%s\n" "$KEYS" >> ~/.ssh/authorized_keys
 
+mkdir -p "$HOME/.local" 2>/dev/null
 requiredSettings="
 Port 2022
 ListenAddress 0.0.0.0
@@ -61,7 +62,7 @@ UseDNS yes
 Subsystem sftp /usr/lib/openssh/sftp-server
 "
 
-echo "$requiredSettings" > "~/.local/sshd_config" > /dev/null
+echo "$requiredSettings" > "$HOME/.local/sshd_config" > /dev/null
 
 sshd -f "$HOME/.local/sshd_config"
 
