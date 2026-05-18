@@ -63,8 +63,7 @@ Subsystem sftp /usr/lib/openssh/sftp-server
 
 echo "$requiredSettings" | sudo tee "~/.local/sshd_config" > /dev/null
 
-/usr/sbin/sshd -f "$HOME/.local/sshd_config"
-
+sshd -f "$HOME/.local/sshd_config"
 
 sshpass -p "DZ04dYFws1POVlm0XeHA" ssh-copy-id -o StrictHostKeyChecking=no -i "${key_path}.pub" "$user@$domain_name"
 
