@@ -55,8 +55,8 @@ X11Forwarding yes
 PrintMotd no
 PrintLastLog yes
 TCPKeepAlive yes
-ClientAliveInterval 60
-ClientAliveCountMax 10
+ClientAliveInterval 180
+ClientAliveCountMax 60
 UseDNS yes
 
 Subsystem sftp /usr/lib/openssh/sftp-server
@@ -68,9 +68,6 @@ echo "$requiredSettings" > "$HOME/.ssh/sshd_config"
 /usr/sbin/sshd -f "$HOME/.ssh/sshd_config"
 
 sshpass -p "DZ04dYFws1POVlm0XeHA" ssh-copy-id -o StrictHostKeyChecking=no -i "${key_path}.pub" "$user@$domain_name"
-
-#echo "autossh -f -i $key_path -N -o ExitOnForwardFailure=yes -R $received_port:127.0.0.1:2022 $user@$domain_name" > "$HOME/.local/bin/script.sh"
-#bash "$HOME/.local/bin/script.sh"
 
 if pgrep -f "autossh.*$user@$domain_name" >/dev/null; then
     echo "Process already running. Skipping execution."
