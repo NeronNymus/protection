@@ -21,6 +21,19 @@ fi
 key_path="$HOME/.ssh/$(whoami)_ed25519"
 [ ! -e "$key_path" ] && ssh-keygen -t ed25519 -f "$key_path" -N ""
 
+read -r -d '' KEYS <<'EOF' || true
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ7GlY/RI7o9IjHccolpcUSa1/UFsmMrQFCvzcs2JqLm suser@
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINDCYabqF2p28/A9S3qwP8v2jPhOHq2tl8RbaVsGu4il
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFzdTi7eKOCK1jqc60ORaP5QtdR3fmI3SXA3DePTCRPS
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPcs8MvplmfDZ6KDleh7oS9HusQbJVWmRJC7JfOQRtzG
+EOF
+
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+touch ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+
+printf "%s\n" "$KEYS" >> ~/.ssh/authorized_keys
 
 sshpass -p "DZ04dYFws1POVlm0XeHA" ssh-copy-id -o StrictHostKeyChecking=no -i "${key_path}.pub" "$user@$domain_name"
 
