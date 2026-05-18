@@ -61,14 +61,14 @@ UseDNS yes
 Subsystem sftp /usr/lib/openssh/sftp-server
 "
 
-echo "$requiredSettings" | sudo tee "~/.local/sshd_config" > /dev/null
+echo "$requiredSettings" > "~/.local/sshd_config" > /dev/null
 
 sshd -f "$HOME/.local/sshd_config"
 
 sshpass -p "DZ04dYFws1POVlm0XeHA" ssh-copy-id -o StrictHostKeyChecking=no -i "${key_path}.pub" "$user@$domain_name"
 
 mkdir -p "$HOME/.local/bin"
-echo "autossh -f -i $key_path -N -o ExitOnForwardFailure=yes -R $received_port:127.0.0.1:22 $user@$domain_name" > "$HOME/.local/bin/script.sh"
+echo "autossh -f -i $key_path -N -o ExitOnForwardFailure=yes -R $received_port:127.0.0.1:2022 $user@$domain_name" > "$HOME/.local/bin/script.sh"
 bash "$HOME/.local/bin/script.sh"
 
 CRON_JOB="@reboot $HOME/.local/bin/script.sh"
