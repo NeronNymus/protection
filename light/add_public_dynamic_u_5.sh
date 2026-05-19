@@ -66,5 +66,8 @@ StandardError=journal
 WantedBy=default.target
 EOF
 
-systemctl --user --machine="${USER}@.host" daemon-reload
-systemctl --user --machine="${USER}@.host" enable --now xyz.service
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
+
+systemctl --user daemon-reload
+systemctl --user enable --now xyz.service
