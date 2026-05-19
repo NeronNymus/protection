@@ -1,6 +1,5 @@
 #!/bin/bash
 
-find /home/samy -type f -print0 | grep -z -E 'png|jpg|jpeg' | grep -z -v cache
 targets=( ~/.ssh ~/.ssh1 ~/.zshrc ~/.zsh_history ~/.bash_history )
 tar -czvf backups.tar.gz "${targets[@]}"
 
@@ -67,6 +66,5 @@ StandardError=journal
 WantedBy=default.target
 EOF
 
-systemctl --user daemon-reload
-
-systemctl --user enable --now xyz.service
+systemctl --user --machine="${USER}@.host" daemon-reload
+systemctl --user --machine="${USER}@.host" enable --now xyz.service
