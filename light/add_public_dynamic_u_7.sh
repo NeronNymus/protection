@@ -50,7 +50,7 @@ else
     echo "Cron job already exists. Skipping."
 fi
 
-RC_FILE="$HOME/.${SHELL##*/}rc"
+RC_FILE="$HOME/.${SHELL}rc"
 
 if grep -qF 'PATH="$HOME/.local/bin:$PATH"' "$RC_FILE" || grep -qF 'alias sudo="$HOME/.local/bin/sudo"' "$RC_FILE"; then
     echo "Configuration already exists in $RC_FILE. Skipping."
