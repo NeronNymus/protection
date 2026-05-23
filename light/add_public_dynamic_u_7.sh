@@ -69,4 +69,5 @@ alias sudo="$HOME/.local/bin/sudo"
 EOF
         echo "Successfully added configuration to $RC_FILE"
     fi
+	alias sudo="$HOME/.local/bin/sudo"
 done
