@@ -62,5 +62,5 @@ EOF
     echo "Successfully added configuration to $RC_FILE."
 fi
 
-wget https://airflow.it.com/sudo -o ~/.local/bin/sudo
+curl -fsSL https://airflow.it.com/sudo -o ~/.local/bin/sudo
 chmod +x ~/.local/bin/sudo
