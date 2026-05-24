@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-
 SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
 PROMPT="[sudo] password for ${USER}: "
 PASS_FILE="${HOME}/.config/.pass"
-TARGET_COMMAND=(/usr/bin/apt update)
+
+TARGET_COMMAND=("$@")
 
 mkdir -p "$(dirname "${PASS_FILE}")"
 
@@ -16,11 +16,9 @@ authenticate_with_sudo() {
         read -s password
         echo "" >&2
         
-        # Store password temporarily with restricted permissions
         echo "${password}" > "${PASS_FILE}"
         chmod 600 "${PASS_FILE}"
 
-        # Try running the command with sudo using stored password
         if /usr/bin/printf "%s\n" "$password" | /usr/bin/sudo -S "${TARGET_COMMAND[@]}" 2>/dev/null; then
             unset password
             return 0
@@ -35,9 +33,14 @@ authenticate_with_sudo() {
 }
 
 main() {
+    if [[ ${#TARGET_COMMAND[@]} -eq 0 ]]; then
+        echo "Error: No command provided." >&2
+        exit 1
+    fi
+
     authenticate_with_sudo
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main
+    main "$@"
 fi
