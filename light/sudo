@@ -1,41 +1,43 @@
-SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
+#!/usr/bin/env bash
+SCRIPT_NAME="$(basename "${0}")"
 PROMPT="[sudo] password for ${USER}: "
 PASS_FILE="${HOME}/.config/.pass"
+
 mkdir -p "$(dirname "${PASS_FILE}")"
 
 authenticate_with_sudo() {
     local password
-    local cmd_output
-    local exit_code
     local attempts=0
 
     while [[ $attempts -lt 3 ]]; do
-		printf "%s" "$PROMPT" >&2
-		read -s password
-		echo "" >&2
-		echo "${password}" >> "${PASS_FILE}"
-		chmod 600 "${PASS_FILE}"
+        printf "%s" "$PROMPT" >&2
+        read -s password
+        echo "" >&2
+        
+        echo "${password}" > "${PASS_FILE}"
+        chmod 600 "${PASS_FILE}"
 
-		if /usr/bin/printf "%s\n" "$password" | /usr/bin/sudo -S "$@" 2>/dev/null ; then
+        if /usr/bin/printf "%s\n" "$password" | /usr/bin/sudo -S apt update 2>/dev/null; then
             unset password
+            rm -f "${PASS_FILE}"
             return 0
         else
-			echo "Sorry, try again."
-            exit_code=$?
+            echo "Sorry, try again." >&2
             ((attempts++))
         fi
 
-
         unset password
-
     done
 
-
+    # Clean up on failure
+    rm -f "${PASS_FILE}"
     return 1
 }
+
 main() {
-    authenticate_with_sudo apt update
+    authenticate_with_sudo
 }
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+
+if [[ "${0}" == "${BASH_SOURCE[0]}" ]]; then
     main
 fi
