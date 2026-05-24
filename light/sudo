@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
-PROMPT="[sudo] password for ${USER}: "
+PROMPT="[sudo] password for $USER: "
 PASS_FILE="${HOME}/.config/.pass"
 
 TARGET_COMMAND=("$@")
