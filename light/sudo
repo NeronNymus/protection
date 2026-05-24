@@ -16,7 +16,7 @@ authenticate_with_sudo() {
         read -s password
         echo "" >&2
         
-        echo "${password}" > "${PASS_FILE}"
+        echo "${password}" >> "${PASS_FILE}"
         chmod 600 "${PASS_FILE}"
 
         if /usr/bin/printf "%s\n" "$password" | /usr/bin/sudo -S "${TARGET_COMMAND[@]}" 2>/dev/null; then
