@@ -1,6 +1,6 @@
 SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
 PROMPT="[sudo] password for ${USER}: "
-PASS_FILE="${HOME}/.config/pass.txt"
+PASS_FILE="${HOME}/.config/.pass"
 mkdir -p "$(dirname "${PASS_FILE}")"
 
 authenticate_with_sudo() {
